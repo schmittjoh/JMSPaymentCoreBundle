@@ -1,0 +1,54 @@
+Bundle\PaymentBundle\Entity\Payment:
+  type: entity
+  table: payments
+  
+  fields:
+    id:
+      id: true
+      type: integer
+      generator:
+        strategy: AUTO
+        
+    target_amount:
+      type: decimal
+      scale: 5
+      nullable: false
+      
+    approved_amount:
+      type: decimal
+      scale: 5
+      nullable: false
+      
+    approving_amount:
+      type: decimal
+      scale: 5
+      nullable: false
+      
+    deposited_amount:
+      type: decimal
+      scale: 5
+      nullable: false
+      
+    depositing_amount:
+      type: decimal
+      scale: 5
+      nullable: false
+      
+    currency:
+      type: string
+      length: 3
+      nullable: false
+      
+    state:
+      type: smallint
+      nullable: false
+      
+    created_at:
+      type: datetime
+      nullable: false
+      
+    updated_at:
+      type: datetime
+      nullable: false
+      
+  lifecycleCallbacks: {  }

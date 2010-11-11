@@ -1,0 +1,36 @@
+Bundle\PaymentBundle\Entity\PaymentData:
+  type: entity
+  table: payment_data
+  fields:
+    payment_id:
+      id: true
+      type: integer
+      length: '11'
+      notnull: false
+    method_class_name:
+      type: string
+      length: '100'
+      notnull: true
+    subject:
+      type: string
+      length: '255'
+      notnull: true
+    internal_reference_number:
+      type: string
+      length: '255'
+      notnull: false
+    external_reference_number:
+      type: string
+      length: '255'
+      notnull: false
+  oneToOne:
+    Payment:
+      targetEntity: Payment
+      cascade: {  }
+      mappedBy: DataContainer
+      inversedBy: null
+      joinColumns:
+        payment_id:
+          referencedColumnName: id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

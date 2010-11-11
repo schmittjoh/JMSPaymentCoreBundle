@@ -1,0 +1,39 @@
+Bundle\PaymentBundle\Entity\FinancialTransaction:
+  type: entity
+  table: financial_transactions
+  fields:
+    id:
+      id: true
+      type: integer
+      length: '11'
+      generator:
+        strategy: AUTO
+    type:
+      type: string
+      length: '25'
+      notnull: true
+    payment_id:
+      type: integer
+      length: '11'
+      notnull: true
+    currency:
+      type: string
+    requested_amount:
+      type: decimal
+      scale: 5
+    processed_amount:
+      type: decimal
+      scale: 5
+    state:
+      type: integer
+      length: '1'
+      notnull: true
+    response_code:
+      type: string
+      length: '255'
+      notnull: false
+    reason_code:
+      type: string
+      length: '255'
+      notnull: false
+  lifecycleCallbacks: {  }

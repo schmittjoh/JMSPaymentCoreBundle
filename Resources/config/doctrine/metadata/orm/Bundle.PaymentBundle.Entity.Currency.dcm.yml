@@ -1,0 +1,19 @@
+Bundle\PaymentBundle\Entity\Currency:
+  type: entity
+  table: currencies
+  fields:
+    id:
+      id: true
+      type: integer
+      length: '11'
+      generator:
+        strategy: AUTO
+    code:
+      type: string
+      length: '3'
+      notnull: true
+      unique: true
+    rate:
+      type: decimal
+      scale: 7
+  lifecycleCallbacks: {  }
