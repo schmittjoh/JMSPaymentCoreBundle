@@ -6,5 +6,4 @@ interface PluginContextInterface
 {
     function getConfiguration();
     function getLocale();
-    function getPaymentConfigurationGroupId();
 }

@@ -21,8 +21,6 @@ interface PaymentInstructionInterface
     function getExtendedData();
     function getId();
     function getPayments();
-    function getOrderId();
-    function getRmaId();
     function getPaymentSystemName();
     function getState();
     function getCreatedAt();
