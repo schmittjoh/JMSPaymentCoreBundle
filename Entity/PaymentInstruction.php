@@ -138,4 +138,21 @@ class PaymentInstruction implements PaymentInstructionInterface
     {
         return $this->updatedAt;
     }
+    
+    public function hasPendingTransaction()
+    {
+        foreach ($this->payments as $payment) {
+            if ($payment->hasPendingTransaction()) {
+                return true;
+            }
+        }
+        
+        foreach ($this->credits as $credit) {
+            if ($credit->hasPendingTransaction()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

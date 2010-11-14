@@ -2,57 +2,84 @@
 
 namespace Bundle\PaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\PluginController\Exception\PaymentNotFoundException;
-use Bundle\PaymentBundle\PluginController\Exception\PaymentInstructionNotFoundException;
+use Bundle\PaymentBundle\Plugin\PluginInterface;
+use Bundle\PaymentBundle\Util\Number;
+use Bundle\PaymentBundle\Entity\PaymentInterface;
+use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
+use Bundle\PaymentBundle\PluginController\Exception\Exception;
 
-// FIXME: implement remaining methods
-class PluginController implements PluginControllerInterface
+abstract class PluginController implements PluginControllerInterface
 {
-    protected $entityManager;
-    protected $paymentInstructionRepository;
-    protected $paymentRepository;
-    protected $creditRepository;
+    protected $options;
+    protected $plugins;
     
-    public function __construct($entityManager, $paymentInstructionClass, $paymentClass, $creditClass)
+    public function __construct(array $options = array())
     {
-        $this->entityManager = $entityManager;
-        $this->paymentInstructionRepository = $entityManager->getRepository($paymentInstructionClass);
-        $this->paymentRepository = $entityManager->getRepository($paymentClass);
-        $this->creditRepository = $entityManager->getRepository($creditClass);
+        $this->options = $options;
+        $this->plugins[] = array();
     }
     
-    public function getPayment($id)
+    public function addPlugin(PluginInterface $plugin)
     {
-        $payment = $this->paymentRepository->findOneBy(array('id' => $id));
-        
-        if (null === $payment) {
-            throw new PaymentNotFoundException(sprintf('The payment with ID "%d" was not found.', $id));
-        }
-        
-        return $payment;
+        $this->plugins[] = $plugin;
     }
     
-    public function getPaymentInstruction($id, $maskSensitiveData = true)
+    public function getPaymentInstruction($instructionId, $maskSensitiveData = true)
     {
-        $paymentInstruction = $this->paymentInstructionRepository->findOneBy(array('id' => $id));
+        $paymentInstruction = $this->doGetPaymentInstruction();
         
-        if (null === $paymentInstruction) {
-            throw new PaymentInstructionNotFoundException(sprintf('The payment instruction with ID "%d" was not found.', $id));
+        if (true === $maskSensitiveData) {
+            // FIXME: mask sensitive data    
         }
-        
-        // FIXME: mask sensitive data
         
         return $paymentInstruction;
     }
+
+    abstract protected function doGetPaymentInstruction($instructionId);
     
-    public function getCredit($id)
+    public function approve($paymentId, $amount)
     {
-        $credit = $this->creditRepository->findOneBy(array('id' => $id));
+        $payment = $this->getPayment($paymentId);
+        $instruction = $payment->getPaymentInstruction();
         
-        if (null === $credit) {
-            throw new CreditNotFoundException(sprintf('The credit with ID "%s" was not found.', $id));
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new Exception('The PaymentInstruction\'s state must be STATE_VALID.');
         }
         
-        return $credit;
+        if (PaymentInterface::STATE_NEW === $payment->getState()) {
+            if (Number::compare($payment->getTargetAmount(), $amount) < 0) {
+                throw new Exception('The Payment\'s target amount is less than the requested amount.');
+            }
+            
+            if ($instruction->hasPendingTransaction()) {
+                throw new Exception('The PaymentInstruction can only ever have one pending transaction.');
+            }
+
+            $class = &$this->options['financial_transaction_class'];
+            $transaction = new $class;
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE);
+            $retry = false;
+        }
+        else if (PaymentInterface::STATE_APPROVING === $payment->getState()) {
+            if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
+                throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
+            }
+            
+            $transaction = $payment->getApproveTransaction();
+            $retry = true;
+        }
+        else {
+            throw new Exception('The Payment\'s state must be STATE_NEW, or STATE_APPROVING.');
+        }
+        
+        $payment->setApprovingAmount($amount);
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+    }
+    
+    protected function findPlugin($name)
+    {
+        
     }
 }

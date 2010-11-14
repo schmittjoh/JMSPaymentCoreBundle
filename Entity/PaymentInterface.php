@@ -26,6 +26,7 @@ interface PaymentInterface
     function getReversingDepositedAmount();
     function getState();
     function getTargetAmount();
+    function hasPendingTransaction();
     function isAttentionRequired();
     function isExpired();
     function setApprovedAmount($amount);
@@ -33,7 +34,7 @@ interface PaymentInterface
     function setAttentionRequired($boolean);
     function setDepositedAmount($amount);
     function setDepositingAmount($amount);
-    function setExpirationDate(\Date $date);
+    function setExpirationDate($date);
     function setExpired($boolean);
     function setReversingApprovedAmount($amount);
     function setReversingDepositedAmount($amount);

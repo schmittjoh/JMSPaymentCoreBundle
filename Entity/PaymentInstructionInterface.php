@@ -25,4 +25,5 @@ interface PaymentInstructionInterface
     function getState();
     function getCreatedAt();
     function getUpdatedAt();
+    function hasPendingTransaction();
 }

@@ -1,6 +1,11 @@
 <?php
 
 namespace Bundle\PaymentBundle\PluginController;
+        
+use Bundle\PaymentBundle\Entity\ExtendedDataInterface;
+use Bundle\PaymentBundle\Entity\CreditInterface;
+use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Entity\PaymentInterface;
 
 interface PluginControllerInterface
 {
@@ -21,7 +26,7 @@ interface PluginControllerInterface
     function getCredit($creditId);
     function getPayment($paymentId);
     function getPaymentInstruction($paymentInstructionId, $maskSensitiveData = true);
-    function getRemainingValueOnPaymentInstruction(PaymentInstruction $paymentInstruction);
+    function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
     function reverseApproval($paymentId, $amount);
     function reverseCredit($creditId, $amount);
     function reverseDeposit($paymentId, $amount);
