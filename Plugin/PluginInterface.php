@@ -12,4 +12,6 @@ interface PluginInterface
     function reverseCredit(PluginContextInterface $context, FinancialTransactionInterface $transaction, $retry);
     function reverseDeposit(PluginContextInterface $context, FinancialTransactionInterface $transaction, $retry);
     function validatePaymentInstruction(PluginContextInterface $context, PaymentInstructionInterface $paymentInstruction);
+    function getName();
+    function isIndependentCreditSupported();
 }
