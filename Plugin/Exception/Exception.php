@@ -1,11 +1,11 @@
 <?php
 
-namespace Bundle\PaymentBundle\PluginController\Exception;
+namespace Bundle\PaymentBundle\Plugin\Exception;
 
 use Bundle\PaymentBundle\Exception\Exception as PaymentBundleException;
 
 /**
- * Base Exception for the payment plugin controller (PPC)
+ * Base Exception for plugins
  * 
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

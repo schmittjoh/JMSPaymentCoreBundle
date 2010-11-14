@@ -16,6 +16,12 @@ class PaymentInstruction implements PaymentInstructionInterface
     protected $payments;
     protected $createdAt;
     protected $updatedAt;
+    protected $approvingAmount;
+    protected $approvedAmount;
+    protected $creditingAmount;
+    protected $creditedAmount;
+    protected $depositedAmount;
+    protected $depositingAmount;
     
     public function __construct($amount, $currency, $paymentSystemName, ExtendedDataInterface $data = null)
     {
@@ -27,6 +33,12 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->credits = new ArrayCollection();
         $this->payments = new ArrayCollection();
         $this->createdAt = new \Date();
+        $this->approvingAmount = 0.0;
+        $this->approvedAmount = 0.0;
+        $this->creditingAmount = 0.0;
+        $this->creditedAmount = 0.0;
+        $this->depositedAmount = 0.0;
+        $this->depositingAmount = 0.0;
     }
     
     public function getAmount()
@@ -61,62 +73,32 @@ class PaymentInstruction implements PaymentInstructionInterface
     
     public function getApprovingAmount()
     {
-        $amount = 0.0;
-        foreach ($this->payments as $payment) {
-            $amount += $payment->getApprovingAmount();
-        }
-        
-        return $amount;
+        return $this->approvingAmount;
     }
     
     public function getApprovedAmount()
     {
-        $amount = 0.0;
-        foreach ($this->payments as $payment) {
-            $amount += $payment->getApprovedAmount();
-        }
-        
-        return $amount;
+        return $this->approvedAmount;
     }
     
     public function getCreditedAmount()
     {
-        $amount = 0.0;
-        foreach ($this->credits as $credit) {
-            $amount += $credit->getCreditedAmount();
-        }
-        
-        return $amount;
+        return $this->creditedAmount;
     }
     
     public function getCreditingAmount()
     {
-        $amount = 0.0;
-        foreach ($this->credits as $credit) {
-            $amount += $credit->getCreditingAmount();
-        }
-        
-        return $amount;
+        return $this->creditingAmount;
     }
     
     public function getDepositedAmount()
     {
-        $amount = 0.0;
-        foreach ($this->payments as $payment) {
-            $amount += $payment->getDepositedAmount();
-        }
-        
-        return $amount;
+        return $this->depositedAmount;
     }
     
     public function getDepositingAmount()
     {
-        $amount = 0.0;
-        foreach ($this->payments as $payment) {
-            $amount += $payment->getDepositingAmount();
-        }
-        
-        return $amount;
+        return $this->depositingAmount;
     }
     
     public function getCredits()
@@ -154,5 +136,35 @@ class PaymentInstruction implements PaymentInstructionInterface
         }
         
         return false;
+    }
+    
+    public function setApprovingAmount($amount) 
+    {
+        $this->approvingAmount = $amount;
+    }
+    
+    public function setApprovedAmount($amount)
+    {
+        $this->approvedAmount = $amount;
+    }
+    
+    public function setCreditedAmount($amount)
+    {
+        $this->creditedAmount = $amount;
+    }
+    
+    public function setCreditingAmount($amount)
+    {
+        $this->creditingAmount = $amount;
+    }
+    
+    public function setDepositedAmount($amount)
+    {
+        $this->depositedAmount = $amount;
+    }
+    
+    public function setDepositingAmount($amount)
+    {
+        $this->depositingAmount = $amount;
     }
 }

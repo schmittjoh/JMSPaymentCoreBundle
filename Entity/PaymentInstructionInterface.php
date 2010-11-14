@@ -26,4 +26,10 @@ interface PaymentInstructionInterface
     function getCreatedAt();
     function getUpdatedAt();
     function hasPendingTransaction();
+    function setApprovedAmount($amount);
+    function setApprovingAmount($amount);
+    function setCreditedAmount($amount);
+    function setCreditingAmount($amount);
+    function setDepositedAmount($amount);
+    function setDepositingAmount($amount);
 }

@@ -13,6 +13,7 @@ class PaymentExtension extends Extension
 	public function configLoad(array $config, ContainerBuilder $container)
 	{
 		$xmlLoader = new XmlFileLoader($container, __DIR__.'/../Resources/config');
+		$xmlLoader->load('payments.xml');
 		$xmlLoader->load('orm.xml');
 	}
 	

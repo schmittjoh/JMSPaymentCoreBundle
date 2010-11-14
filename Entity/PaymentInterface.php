@@ -38,4 +38,5 @@ interface PaymentInterface
     function setExpired($boolean);
     function setReversingApprovedAmount($amount);
     function setReversingDepositedAmount($amount);
+    function setState($state);
 }

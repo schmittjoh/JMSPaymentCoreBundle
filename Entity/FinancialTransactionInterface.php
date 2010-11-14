@@ -39,4 +39,15 @@ interface FinancialTransactionInterface
     function setResponseCode();
     function setState();
     function setTrackingId();
+    function setCredit(CreditInterface $credit);
+    function setExtendedData(ExtendedDataInterface $data);
+    function setPayment(PaymentInterfac $payment);
+    function setProcessedAmount($amount);
+    function setReasonCode($code);
+    function setReferenceNumber($referenceNumber);
+    function setRequestedAmount($amount);
+    function setResponseCode($code);
+    function setState($state);
+    function setTrackingId($id);
+    function setTransactionType($type);
 }
