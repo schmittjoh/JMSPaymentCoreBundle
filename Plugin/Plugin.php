@@ -18,6 +18,14 @@ abstract class Plugin implements PluginInterface
         throw new FunctionNotSupportedException('approveAndDeposit() is not supported by this plugin.');
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
+    {
+        throw new FunctionNotSupportedException('checkPaymentInstruction() is not supported by this plugin.');
+    }
+    
     public function credit(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('credit() is not supported by this plugin.');
@@ -41,5 +49,13 @@ abstract class Plugin implements PluginInterface
     public function reverseDeposit(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('reverseDeposit() is not supported by this plugin.');
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function validatePaymentInstruction(PaymentInstructionInterface $instruction)
+    {
+        throw new FunctionNotSupportedException('validatePaymentInstruction() is not supported by this plugin.');
     }
 }
