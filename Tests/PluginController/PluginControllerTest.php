@@ -2,12 +2,247 @@
 
 namespace Bundle\PaymentBundle\Tests\PluginController;
 
-use Bundle\PaymentBundle\Entity\PaymentInterface;
+use Bundle\PaymentBundle\Plugin\PluginInterface;
 
+use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
+use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use Bundle\PaymentBundle\Entity\PaymentInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\PluginController\Result;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {
+    public function testApprovePluginThrowsTimeoutException()
+    {
+        $controller = $this->getController();
+        
+        $instruction = $this->getInstruction();
+        $instruction   
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('hasPendingTransaction')
+            ->will($this->returnValue(false))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('getApprovingAmount')
+            ->will($this->returnValue(10))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('setApprovingAmount')
+            ->with($this->equalTo(110))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('getPaymentSystemName')
+            ->will($this->returnValue('foo'))
+        ;
+            
+        $payment = $this->getPayment();
+        $payment
+            ->expects($this->exactly(2))
+            ->method('getPaymentInstruction')
+            ->will($this->returnValue($instruction))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInterface::STATE_NEW))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getTargetAmount')
+            ->will($this->returnValue(123))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('setApprovingAmount')
+            ->with($this->equalTo(100))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('setState')
+            ->with(PaymentInterface::STATE_APPROVING)
+        ;
+            
+        $plugin = $this->getPlugin();
+        $plugin
+            ->expects($this->once())
+            ->method('approve')
+            ->will($this->throwException(new PluginTimeoutException('some error occurred')))
+        ;
+        $plugin
+            ->expects($this->once())
+            ->method('processes')
+            ->with($this->equalTo('foo'))
+            ->will($this->returnValue(true))
+        ;
+        $controller->addPlugin($plugin);
+        
+        $controller
+            ->expects($this->once())
+            ->method('getPayment')
+            ->with(123)
+            ->will($this->returnValue($payment))
+        ;
+        
+        $result = $controller->approve(123, 100);
+        $transaction = $result->getFinancialTransaction();
+        
+        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\PaymentBundle\Entity\FinancialTransaction', $transaction);
+        $this->assertInstanceOf('Bundle\PaymentBundle\Plugin\Exception\Exception', $result->getPluginException());
+        $this->assertEquals(PluginInterface::REASON_CODE_TIMEOUT, $result->getReasonCode());
+        $this->assertSame($payment, $result->getPayment());
+        $this->assertSame($instruction, $result->getPaymentInstruction());
+        $this->assertTrue($result->isRecoverable());
+        $this->assertEquals(Result::STATUS_PENDING, $result->getStatus());
+    }
+    
+    public function testApprovePluginThrowsException()
+    {
+        $controller = $this->getController();
+        
+        $instruction = $this->getInstruction();
+        $instruction   
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('hasPendingTransaction')
+            ->will($this->returnValue(false))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('getApprovingAmount')
+            ->will($this->returnValue(10))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('setApprovingAmount')
+            ->with($this->equalTo(110))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('getPaymentSystemName')
+            ->will($this->returnValue('foo'))
+        ;
+            
+        $payment = $this->getPayment();
+        $payment
+            ->expects($this->exactly(2))
+            ->method('getPaymentInstruction')
+            ->will($this->returnValue($instruction))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInterface::STATE_NEW))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getTargetAmount')
+            ->will($this->returnValue(123))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('setApprovingAmount')
+            ->with($this->equalTo(100))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('setState')
+            ->with(PaymentInterface::STATE_APPROVING)
+        ;
+            
+        $plugin = $this->getPlugin();
+        $plugin
+            ->expects($this->once())
+            ->method('approve')
+            ->will($this->throwException(new PluginException('some error occurred')))
+        ;
+        $plugin
+            ->expects($this->once())
+            ->method('processes')
+            ->with($this->equalTo('foo'))
+            ->will($this->returnValue(true))
+        ;
+        $controller->addPlugin($plugin);
+        
+        $controller
+            ->expects($this->once())
+            ->method('getPayment')
+            ->with(123)
+            ->will($this->returnValue($payment))
+        ;
+        
+        $result = $controller->approve(123, 100);
+        $transaction = $result->getFinancialTransaction();
+        
+        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\PaymentBundle\Entity\FinancialTransaction', $transaction);
+        $this->assertInstanceOf('Bundle\PaymentBundle\Plugin\Exception\Exception', $result->getPluginException());
+        $this->assertEquals($transaction->getReasonCode(), $result->getReasonCode());
+        $this->assertSame($payment, $result->getPayment());
+        $this->assertSame($instruction, $result->getPaymentInstruction());
+        $this->assertTrue($result->isPaymentRequiresAttention());
+        $this->assertEquals(Result::STATUS_UNKNOWN, $result->getStatus());
+    }
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedMessage The PaymentInstruction can only ever have one pending transaction.
+     */
+    public function testApproveDoesNotAcceptNewTransactionIfInstructionHasPendingTransaction()
+    {
+        $controller = $this->getController();
+        
+        $instruction = $this->getInstruction();
+        $instruction   
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
+        ;
+        $instruction
+            ->expects($this->once())
+            ->method('hasPendingTransaction')
+            ->will($this->returnValue(true))
+        ;
+            
+        $payment = $this->getPayment();
+        $payment
+            ->expects($this->once())
+            ->method('getPaymentInstruction')
+            ->will($this->returnValue($instruction))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getState')
+            ->will($this->returnValue(PaymentInterface::STATE_NEW))
+        ;
+        $payment
+            ->expects($this->once())
+            ->method('getTargetAmount')
+            ->will($this->returnValue(1234))
+        ;
+            
+        $controller
+            ->expects($this->once())
+            ->method('getPayment')
+            ->with(123)
+            ->will($this->returnValue($payment))
+        ;
+        
+        $controller->approve(123, 100);
+    }
+    
     /**
      * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The Payment's target amount must equal the requested amount in a retry transaction.
@@ -191,6 +426,11 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         );
     }
     
+    protected function getPlugin()
+    {
+        return $this->getMock('Bundle\PaymentBundle\Plugin\PluginInterface');
+    }
+    
     protected function getPayment()
     {
         return $this->getMock('Bundle\PaymentBundle\Entity\PaymentInterface');
@@ -203,6 +443,11 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     
     protected function getController(array $options = array())
     {
+        $options = array_merge(array(
+            'financial_transaction_class' => 'Bundle\PaymentBundle\Entity\FinancialTransaction',
+            'result_class' => 'Bundle\PaymentBundle\PluginController\Result',
+        ), $options);
+        
         return $this->getMockForAbstractClass(
         	'Bundle\PaymentBundle\PluginController\PluginController',
             array($options)
