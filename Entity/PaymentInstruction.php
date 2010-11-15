@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity\PaymentInstruction;
+namespace Bundle\PaymentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -23,22 +23,22 @@ class PaymentInstruction implements PaymentInstructionInterface
     protected $depositedAmount;
     protected $depositingAmount;
     
-    public function __construct($amount, $currency, $paymentSystemName, ExtendedDataInterface $data = null)
+    public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data = null)
     {
         $this->amount = $amount;
-        $this->currency = $currency;
-        $this->paymentSystemName = $paymentSystemName;
-        $this->extendedData = $data;
-        $this->state = self::STATE_NEW;
-        $this->credits = new ArrayCollection();
-        $this->payments = new ArrayCollection();
-        $this->createdAt = new \Date();
-        $this->approvingAmount = 0.0;
         $this->approvedAmount = 0.0;
-        $this->creditingAmount = 0.0;
+        $this->approvingAmount = 0.0;
+        $this->createdAt = new \DateTime;
         $this->creditedAmount = 0.0;
-        $this->depositedAmount = 0.0;
+        $this->creditingAmount = 0.0;
+        $this->credits = new ArrayCollection();
+        $this->currency = $currency;
         $this->depositingAmount = 0.0;
+        $this->depositedAmount = 0.0;
+        $this->extendedData = $data;
+        $this->payments = new ArrayCollection();
+        $this->paymentSystemName = $paymentSystemName;
+        $this->state = self::STATE_NEW;
     }
     
     public function addPayment(PaymentInterface $payment)
