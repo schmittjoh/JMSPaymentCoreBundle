@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://www.symfony-project.org/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="payment.plugin_controller.class">Bundle\PaymentBundle\PluginController\EntityPluginController</parameter>
+        <parameter key="payment.plugin_controller.options.result_class">Bundle\PaymentBundle\PluginController\Result</parameter>
+    </parameters>
+
+    <services>
+        <service id="payment.plugin_controller" class="%payment.plugin_controller.class%" alias="ppc">
+            <argument type="collection">
+                <argument key="result_class">%payment.plugin_controller.options.result_class%</argument>
+            </argument>
+        </service>
+    </services>
+</container>
