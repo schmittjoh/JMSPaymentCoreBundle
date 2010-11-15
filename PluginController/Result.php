@@ -19,7 +19,7 @@ class Result
     protected $paymentRequiresAttention;
     protected $recoverable;
     
-    public function __construct(FinacialTransactionInterface $transaction, $status, $reasonCode)
+    public function __construct(FinancialTransactionInterface $transaction, $status, $reasonCode)
     {
         $this->transaction = $transaction;
         $this->status = $status;

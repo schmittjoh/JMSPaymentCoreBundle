@@ -2,7 +2,6 @@
 
 namespace Bundle\PaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\Plugin\PluginInterface;
 use Bundle\PaymentBundle\Util\Number;
 use Bundle\PaymentBundle\Entity\PaymentInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
@@ -21,7 +20,7 @@ abstract class PluginController implements PluginControllerInterface
     public function __construct(array $options = array())
     {
         $this->options = $options;
-        $this->plugins[] = array();
+        $this->plugins = array();
     }
     
     public function addPlugin(PluginInterface $plugin)
@@ -52,7 +51,8 @@ abstract class PluginController implements PluginControllerInterface
             throw new Exception('The PaymentInstruction\'s state must be STATE_VALID.');
         }
         
-        if (PaymentInterface::STATE_NEW === $payment->getState()) {
+        $paymentState = $payment->getState();
+        if (PaymentInterface::STATE_NEW === $paymentState) {
             if (Number::compare($payment->getTargetAmount(), $amount) < 0) {
                 throw new Exception('The Payment\'s target amount is less than the requested amount.');
             }
@@ -71,7 +71,7 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setApprovingAmount($amount);
             $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
         }
-        else if (PaymentInterface::STATE_APPROVING === $payment->getState()) {
+        else if (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
                 throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
             }
