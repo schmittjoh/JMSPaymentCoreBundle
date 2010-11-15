@@ -34,7 +34,7 @@ interface PaymentInterface
     function setAttentionRequired($boolean);
     function setDepositedAmount($amount);
     function setDepositingAmount($amount);
-    function setExpirationDate($date);
+    function setExpirationDate(\DateTime $date);
     function setExpired($boolean);
     function setReversingApprovedAmount($amount);
     function setReversingDepositedAmount($amount);

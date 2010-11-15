@@ -42,4 +42,9 @@ class ExtendedData implements ExtendedDataInterface
         
         return $this->data[$name][0];
     }
+    
+    public function has($name)
+    {
+        return array_key_exists($name, $this->data);
+    }
 }
