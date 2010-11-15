@@ -11,6 +11,7 @@ interface PaymentInterface
     const STATE_FAILED = 5;
     const STATE_NEW = 6;
     
+    function addTransaction(FinancialTransactionInterface $transaction);
     function getApprovedAmount();
     function getApproveTransaction();
     function getApprovingAmount();
@@ -20,6 +21,7 @@ interface PaymentInterface
     function getExpirationDate();
     function getId();
     function getPaymentInstruction();
+    function getPendingTransaction();
     function getReverseApprovalTransactions();
     function getReverseDepositTransactions();
     function getReversingApprovedAmount();

@@ -22,6 +22,7 @@ interface PaymentInstructionInterface
     function getId();
     function getPayments();
     function getPaymentSystemName();
+    function getPendingTransaction();
     function getState();
     function getCreatedAt();
     function getUpdatedAt();

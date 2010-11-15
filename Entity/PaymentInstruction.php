@@ -41,6 +41,12 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->depositingAmount = 0.0;
     }
     
+    public function addPayment(PaymentInterface $payment)
+    {
+        $this->payments->add($payment);
+        $payment->setPaymentInstruction($this);
+    }
+    
     public function getAmount()
     {
         return $this->amount;
@@ -111,6 +117,23 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->payments;
     }
     
+    public function getPendingTransaction()
+    {
+        foreach ($this->payments as $payment) {
+            if (null !== $transaction = $payment->getPendingTransaction()) {
+                return $transaction;
+            }
+        }
+        
+        foreach ($this->credits as $credit) {
+            if (null !== $transaction = $credit->getPendingTransaction()) {
+                return $transaction;
+            }
+        }
+        
+        return null;
+    }
+    
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -123,19 +146,7 @@ class PaymentInstruction implements PaymentInstructionInterface
     
     public function hasPendingTransaction()
     {
-        foreach ($this->payments as $payment) {
-            if ($payment->hasPendingTransaction()) {
-                return true;
-            }
-        }
-        
-        foreach ($this->credits as $credit) {
-            if ($credit->hasPendingTransaction()) {
-                return true;
-            }
-        }
-        
-        return false;
+        return null !== $this->getPendingTransaction();
     }
     
     public function setApprovingAmount($amount) 
