@@ -12,20 +12,30 @@ class Result
     const STATUS_SUCCESS = 3;
     const STATUS_UNKNOWN = 4;
     
-    protected $transaction;
-    protected $status;
-    protected $reasonCode;
-    protected $pluginException;
+    protected $credit;
+    protected $financialTransaction;
+    protected $payment;
+    protected $paymentInstruction;
     protected $paymentRequiresAttention;
+    protected $pluginException;
+    protected $reasonCode;
     protected $recoverable;
+    protected $status;
     
-    public function __construct(FinancialTransactionInterface $transaction, $status, $reasonCode)
+    public function __construct()
     {
-        $this->transaction = $transaction;
-        $this->status = $status;
-        $this->reasonCode = $reasonCode;
-        $this->paymentRequiresAttention = false;
-        $this->recoverable = false;
+        $args = func_get_args();
+        $nbArgs = count($args);
+        
+        if (3 === $nbArgs && $args[0] instanceof FinancialTransactionInterface) {
+            $this->constructFinancialTransactionResult($args[0], $args[1], $args[2]);
+        }
+        else if (3 === $nbArgs && $args[0] instanceof PaymentInstructionInterface) {
+            $this->constructPaymentInstructionResult($args[0], $args[1], $args[2]);
+        }
+        else {
+            throw new \InvalidArgumentException('The given arguments are not supported.');
+        }
     }
     
     public function getPluginException()
@@ -35,7 +45,7 @@ class Result
     
     public function getFinancialTransaction()
     {
-        return $this->transaction;
+        return $this->financialTransaction;
     }
     
     public function getStatus()
@@ -50,26 +60,17 @@ class Result
     
     public function getCredit()
     {
-        return $this->transaction->getCredit();
+        return $this->credit;
     }
     
     public function getPayment()
     {
-        return $this->transaction->getPayment();
+        return $this->payment;
     }
     
     public function getPaymentInstruction()
     {
-        $type = $this->transaction->getTransactionType();
-        
-        if (FinancialTransactionInterface::TRANSACTION_TYPE_CREDIT === $type
-            || FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_CREDIT === $type) {
-
-            return $this->transaction->getCredit()->getPaymentInstruction();
-        }
-        else {
-            return $this->transaction->getPayment()->getPaymentInstruction();
-        }
+        return $this->paymentInstruction;
     }
     
     public function isPaymentRequiresAttention()
@@ -95,5 +96,26 @@ class Result
     public function setRecoverable($boolean = true) 
     {
         $this->recoverable = !!$boolean;
+    }
+
+    protected function constructFinancialTransactionResult(FinancialTransactionInterface $transaction, $status, $reasonCode)
+    {
+        $this->financialTransaction = $transaction;
+        $this->credit = $transaction->getCredit();
+        $this->payment = $transaction->getPayment();
+        $this->paymentInstruction = null !== $this->credit ? $this->credit->getPaymentInstruction() : $this->payment->getPaymentInstruction();
+        $this->status = $status;
+        $this->reasonCode = $reasonCode;
+        $this->paymentRequiresAttention = false;
+        $this->recoverable = false;
+    }
+    
+    protected function constructPaymentInstructionResult(PaymentInstructionInterface $instruction, $status, $reasonCode)
+    {
+        $this->paymentInstruction = $instruction;
+        $this->status = $status;
+        $this->reasonCode = $reasonCode;
+        $this->paymentRequiresAttention = false;
+        $this->recoverable = false;
     }
 }
