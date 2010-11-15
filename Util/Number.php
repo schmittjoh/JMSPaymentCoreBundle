@@ -2,7 +2,7 @@
 
 namespace Bundle\PaymentBundle\Util;
 
-abstract class Number
+class Number
 {
     const EPSILON = 1.0E-8;
     
@@ -14,4 +14,6 @@ abstract class Number
 
         return $float1 > $float2 ? 1 : -1;
     }
+    
+    private final function __construct() {}
 }

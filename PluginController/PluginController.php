@@ -33,86 +33,6 @@ abstract class PluginController implements PluginControllerInterface
         $this->plugins[] = $plugin;
     }
     
-    // FIXME: Add transaction management / locking
-    public function approve($paymentId, $amount)
-    {
-        $payment = $this->getPayment($paymentId);
-        $instruction = $payment->getPaymentInstruction();
-        
-        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
-            throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be STATE_VALID.');
-        }
-        
-        $paymentState = $payment->getState();
-        if (PaymentInterface::STATE_NEW === $paymentState) {
-            if (Number::compare($payment->getTargetAmount(), $amount) < 0) {
-                throw new Exception('The Payment\'s target amount is less than the requested amount.');
-            }
-            
-            if ($instruction->hasPendingTransaction()) {
-                throw new InvalidPaymentInstructionException('The PaymentInstruction can only ever have one pending transaction.');
-            }
-
-            $retry = false;
-            
-            $transaction = $this->createFinancialTransaction($payment);
-            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE);
-            $transaction->setRequestedAmount($amount);
-
-            $payment->setState(PaymentInterface::STATE_APPROVING);
-            $payment->setApprovingAmount($amount);
-            $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
-        }
-        else if (PaymentInterface::STATE_APPROVING === $paymentState) {
-            if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
-                throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
-            }
-            
-            $transaction = $payment->getApproveTransaction();
-            $retry = true;
-        }
-        else {
-            throw new InvalidPaymentException('The Payment\'s state must be STATE_NEW, or STATE_APPROVING.');
-        }
-        
-        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
-        
-        try {
-            $plugin->approve($transaction, $retry);
-            
-            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
-                $payment->setState(PaymentInterface::STATE_APPROVED);
-                $payment->setApprovingAmount(0.0);
-                $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
-                $instruction->setApprovedAmount($instruction->getApprovedAmount() + $transaction->getProcessedAmount());
-                
-                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
-                $payment->setState(PaymentInterface::STATE_FAILED);
-                $payment->setApprovingAmount(0.0);
-                $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
-                
-                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-            }
-        }
-        catch (PluginTimeoutException $timeout) {
-            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
-            $result->setPluginException($timeout);
-            $result->setRecoverable();
-            
-            return $result;
-        }
-        // FIXME: These should be catched, and rethrown by the controller which actually implements Transaction Management
-        //        such as EntityPluginController
-//        catch (PluginException $failed) {
-//            // FIXME: rollback the entire changes
-//            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_UNKNOWN, $transaction->getReasonCode());
-//            $result->setPluginException($failed);
-//            $result->setPaymentRequiresAttention();
-//        }
-    }
-    
     /**
      * {@inheritDoc}
      */
@@ -323,6 +243,85 @@ abstract class PluginController implements PluginControllerInterface
     }
     
     abstract protected function createFinancialTransaction(PaymentInterface $payment);
+    
+    
+    protected function doApprove(PaymentInterface $payment, $amount)
+    {
+        $instruction = $payment->getPaymentInstruction();
+        
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be STATE_VALID.');
+        }
+        
+        $paymentState = $payment->getState();
+        if (PaymentInterface::STATE_NEW === $paymentState) {
+            if (Number::compare($payment->getTargetAmount(), $amount) < 0) {
+                throw new Exception('The Payment\'s target amount is less than the requested amount.');
+            }
+            
+            if ($instruction->hasPendingTransaction()) {
+                throw new InvalidPaymentInstructionException('The PaymentInstruction can only ever have one pending transaction.');
+            }
+
+            $retry = false;
+            
+            $transaction = $this->createFinancialTransaction($payment);
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE);
+            $transaction->setRequestedAmount($amount);
+
+            $payment->setState(PaymentInterface::STATE_APPROVING);
+            $payment->setApprovingAmount($amount);
+            $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
+        }
+        else if (PaymentInterface::STATE_APPROVING === $paymentState) {
+            if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
+                throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
+            }
+            
+            $transaction = $payment->getApproveTransaction();
+            $retry = true;
+        }
+        else {
+            throw new InvalidPaymentException('The Payment\'s state must be STATE_NEW, or STATE_APPROVING.');
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->approve($transaction, $retry);
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $payment->setState(PaymentInterface::STATE_APPROVED);
+                $payment->setApprovingAmount(0.0);
+                $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
+                $instruction->setApprovedAmount($instruction->getApprovedAmount() + $transaction->getProcessedAmount());
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $payment->setState(PaymentInterface::STATE_FAILED);
+                $payment->setApprovingAmount(0.0);
+                $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+        // FIXME: These should be catched, and rethrown by the controller which actually implements Transaction Management
+        //        such as EntityPluginController
+//        catch (PluginException $failed) {
+//            // FIXME: rollback the entire changes
+//            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_UNKNOWN, $transaction->getReasonCode());
+//            $result->setPluginException($failed);
+//            $result->setPaymentRequiresAttention();
+//        }
+    }
     
     abstract protected function doCreatePayment($instruction);
     
