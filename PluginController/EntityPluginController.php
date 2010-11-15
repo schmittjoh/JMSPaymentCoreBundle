@@ -38,7 +38,7 @@ class EntityPluginController extends PluginController
         try {
             $payment = $this->getPayment($paymentId, LockMode::PESSIMISTIC_WRITE);
             
-            $result = parent::approve($paymentId, $amount);
+            $result = $this->doApprove($payment, $amount);
             
             $this->entityManager->persist($payment);
             $this->entityManager->persist($result->getFinancialTransaction());
