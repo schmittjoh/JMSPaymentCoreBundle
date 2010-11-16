@@ -84,105 +84,6 @@ abstract class PluginController implements PluginControllerInterface
         return $payment;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public function deposit($paymentId, $amount)
-    {
-        $payment = $this->getPayment($paymentId);
-        $instruction = $payment->getPaymentInstruction();
-        
-        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
-            throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
-        }
-        
-        $paymentState = $payment->getState();
-        if (PaymentInstructionInterface::STATE_APPROVED === $paymentState) {
-            if ($instruction->hasPendingTransaction()) {
-                throw new InvalidPaymentInstructionException('The PaymentInstruction can only have one pending transaction at a time.');
-            }
-            
-            if (Number::compare($amount, $payment->getApprovedAmount()) === 1) {
-                throw new Exception('The amount cannot be greater than the approved amount of the Payment.');
-            }
-            
-            $retry = false;
-            
-            $transaction = $this->createFinancialTransaction($payment);
-            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
-            $transaction->setRequestedAmount($amount);
-            
-            $payment->setState(PaymentInterface::STATE_DEPOSITING);
-            $payment->setDepositingAmount($amount);
-            $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
-        }
-        else if (PaymentInstructionInterface::STATE_DEPOSITING === $paymentState) {
-            $transaction = $instructin->getPendingTransaction();
-            if (null === $transaction) {
-                if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
-                    throw new Exception('The amount cannot be greater than the approved amount minus the already deposited amount.');
-                }
-                
-                $retry = false;
-                
-                $transaction = $this->createFinancialTransaction($payment);
-                $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
-                $transaction->setRequestedAmount($amount);
-                
-                $payment->setDepositingAmount($amount);
-                $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
-            }
-            else {
-                if ($transaction->getPayment()->getId() !== $payment->getId()) {
-                    throw new InvalidPaymentInstructionException('The PaymentInstruction has a pending transaction on another Payment.');
-                }
-                
-                if (Number::compare($transaction->getRequestedAmount(), $amount) !== 0) {
-                    throw new Exception('The requested amount must be equal to the transaction\'s amount when retrying.');
-                }
-                
-                $retry = true;
-            }
-        }
-        else {
-            throw new InvalidPaymentException('The Payment must be in STATE_APPROVED, or STATE_DEPOSITING.');
-        }
-        
-        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
-        
-        try {
-            $plugin->deposit($transaction, $retry);
-            
-            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
-                $payment->setDepositingAmount(0.0);
-                $payment->setDepositedAmount($depositedAmount = $payment->getDepositedAmount() + $transaction->getProcessedAmount());
-                
-                if (Number::compare($depositedAmount, $payment->getApprovedAmount()) >= 0) {
-                    $payment->setState(PaymentInterface::STATE_DEPOSITED);
-                }
-                
-                $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
-                $instruction->setDepositedAmount($instruction->getDepositedAmount() + $transaction->getProcessedAmount());
-                
-                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
-                $payment->setState(PaymentInterface::STATE_FAILED);
-                $payment->setDepositingAmount(0.0);
-                $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
-                
-                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-            }
-        }
-        catch (PluginTimeoutException $timeout) {
-            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
-            $result->setPluginException($timeout);
-            $result->setRecoverable();
-            
-            return $result;
-        }
-    }
-    
     public function getPaymentInstruction($instructionId, $maskSensitiveData = true)
     {
         $paymentInstruction = $this->doGetPaymentInstruction($instructionId);
@@ -324,6 +225,101 @@ abstract class PluginController implements PluginControllerInterface
     }
     
     abstract protected function doCreatePayment($instruction);
+
+    protected function doDeposit(PaymentInterface $payment, $amount)
+    {
+        $instruction = $payment->getPaymentInstruction();
+        
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
+        }
+        
+        $paymentState = $payment->getState();
+        if (PaymentInstructionInterface::STATE_APPROVED === $paymentState) {
+            if ($instruction->hasPendingTransaction()) {
+                throw new InvalidPaymentInstructionException('The PaymentInstruction can only have one pending transaction at a time.');
+            }
+            
+            if (Number::compare($amount, $payment->getApprovedAmount()) === 1) {
+                throw new Exception('The amount cannot be greater than the approved amount of the Payment.');
+            }
+            
+            $retry = false;
+            
+            $transaction = $this->createFinancialTransaction($payment);
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
+            $transaction->setRequestedAmount($amount);
+            
+            $payment->setState(PaymentInterface::STATE_DEPOSITING);
+            $payment->setDepositingAmount($amount);
+            $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
+        }
+        else if (PaymentInstructionInterface::STATE_DEPOSITING === $paymentState) {
+            $transaction = $instructin->getPendingTransaction();
+            if (null === $transaction) {
+                if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
+                    throw new Exception('The amount cannot be greater than the approved amount minus the already deposited amount.');
+                }
+                
+                $retry = false;
+                
+                $transaction = $this->createFinancialTransaction($payment);
+                $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
+                $transaction->setRequestedAmount($amount);
+                
+                $payment->setDepositingAmount($amount);
+                $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
+            }
+            else {
+                if ($transaction->getPayment()->getId() !== $payment->getId()) {
+                    throw new InvalidPaymentInstructionException('The PaymentInstruction has a pending transaction on another Payment.');
+                }
+                
+                if (Number::compare($transaction->getRequestedAmount(), $amount) !== 0) {
+                    throw new Exception('The requested amount must be equal to the transaction\'s amount when retrying.');
+                }
+                
+                $retry = true;
+            }
+        }
+        else {
+            throw new InvalidPaymentException('The Payment must be in STATE_APPROVED, or STATE_DEPOSITING.');
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->deposit($transaction, $retry);
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $payment->setDepositingAmount(0.0);
+                $payment->setDepositedAmount($depositedAmount = $payment->getDepositedAmount() + $transaction->getProcessedAmount());
+                
+                if (Number::compare($depositedAmount, $payment->getApprovedAmount()) >= 0) {
+                    $payment->setState(PaymentInterface::STATE_DEPOSITED);
+                }
+                
+                $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
+                $instruction->setDepositedAmount($instruction->getDepositedAmount() + $transaction->getProcessedAmount());
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $payment->setState(PaymentInterface::STATE_FAILED);
+                $payment->setDepositingAmount(0.0);
+                $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+    }    
     
     abstract protected function doGetPaymentInstruction($instructionId);
     

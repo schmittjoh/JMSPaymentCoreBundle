@@ -31,14 +31,45 @@ class EntityPluginController extends PluginController
         $this->paymentInstructionClass = $paymentInstructionClass;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public function approve($paymentId, $amount) 
     {
         $this->entityManager->getConnection()->beginTransaction();
         
         try {
-            $payment = $this->getPayment($paymentId, LockMode::PESSIMISTIC_WRITE);
+            $payment = $this->getPayment($paymentId);
             
-            $result = parent::approve($paymentId, $amount);
+            $result = $this->doApprove($payment, $amount);
+            
+            $this->entityManager->persist($payment);
+            $this->entityManager->persist($result->getFinancialTransaction());
+            $this->entityManager->persist($result->getPaymentInstruction());
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+            
+            return $result;
+        }
+        catch (\Exception $failure) {
+            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->close();
+            
+            throw $failure;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function deposit($paymentId, $amount)
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        
+        try {
+            $payment = $this->getPayment($paymentId);
+            
+            $result = $this->doDeposit($payment, $amount);
             
             $this->entityManager->persist($payment);
             $this->entityManager->persist($result->getFinancialTransaction());
@@ -67,14 +98,13 @@ class EntityPluginController extends PluginController
         return $credit;
     }
     
-    public function getPayment($id, $lockMode = LockMode::NONE)
+    public function getPayment($id)
     {
         $payments = $this->entityManager->createQuery('SELECT p FROM '.$paymentClass.' p JOIN p.PaymentInstruction i JOIN p.Transactions t WHERE u.id = :id')
-                      ->setLockMode($lockMode)
+                      ->setLockMode(LockMode::PESSIMISTIC_WRITE)
                       ->setParameter('id', $id)
                       ->getResult()
         ;
-        
                     
         $payment = $this->paymentRepository->findOneBy(array('id' => $id));
         
