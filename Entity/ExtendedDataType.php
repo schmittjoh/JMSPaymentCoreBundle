@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\ObjectType;
 
 class ExtendedDataType extends ObjectType
 {
+    const NAME = 'extended_payment_data';
+    
     protected static $encryptionService;
     
     public static function setEncryptionService(EncryptionServiceInterface $service)
@@ -29,7 +31,7 @@ class ExtendedDataType extends ObjectType
         foreach ($data as $name => $fixedArray) {
             if (true === $fixedArray[1]) {
                 $fixedArray = clone $fixedArray;
-                $fixedArray[0] = self::$encryptionService->encrypt($fixedArray[0]);
+                $fixedArray[0] = self::$encryptionService->encrypt(serialize($fixedArray[0]));
                 $data[$name] = $fixedArray;
             }
         }
@@ -47,7 +49,7 @@ class ExtendedDataType extends ObjectType
         
         foreach ($data as $name => $fixedArray) {
             if (true === $fixedArray[1]) {
-                $fixedArray[0] = self::$encryptionService->decrypt($fixedArray[0]);
+                $fixedArray[0] = unserialize(self::$encryptionService->decrypt($fixedArray[0]));
             }
         }
         
@@ -58,5 +60,10 @@ class ExtendedDataType extends ObjectType
         $reflection->setAccessible(false);
         
         return $extendedData;
+    }
+    
+    public function getName()
+    {
+        return self::NAME;
     }
 }

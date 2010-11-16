@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class PaymentInstruction implements PaymentInstructionInterface
 {
     protected $id;
+    protected $account;
     protected $amount;
     protected $currency;
     protected $paymentSystemName;

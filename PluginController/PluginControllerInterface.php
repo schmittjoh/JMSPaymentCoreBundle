@@ -81,6 +81,9 @@ interface PluginControllerInterface
      * Any pending transaction will be allowed to finish; however, new transactions
      * must not be created anymore.
      * 
+     * The implementation will also remove the complete set of name-value pairs from 
+     * the ExtendedData container associated with the given PaymentInstruction.
+     * 
      * @param PaymentInstructionInterface $paymentInstruction
      * @return void
      */
