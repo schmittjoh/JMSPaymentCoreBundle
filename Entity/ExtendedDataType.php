@@ -2,7 +2,10 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
+use Doctrine\DBAL\Types\ConversionException;
+
 use Bundle\PaymentBundle\Cryptography\EncryptionServiceInterface;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ObjectType;
 
 class ExtendedDataType extends ObjectType
@@ -21,45 +24,47 @@ class ExtendedDataType extends ObjectType
         return self::$encryptionService;
     }
     
-    public function convertToDatabaseValue(ExtendedData $extendedData, \Doctrine\DBAL\Platforms\AbstractPlatform $platform)
+    public function convertToDatabaseValue(ExtendedData $extendedData, AbstractPlatform $platform)
     {
-        $reflection = new ReflectionPropery($extendedData, 'data');
+        $reflection = new \ReflectionProperty($extendedData, 'data');
         $reflection->setAccessible(true);
         $data = $reflection->getValue($extendedData);
         $reflection->setAccessible(false);
         
-        foreach ($data as $name => $fixedArray) {
-            if (true === $fixedArray[1]) {
-                $fixedArray = clone $fixedArray;
-                $fixedArray[0] = self::$encryptionService->encrypt(serialize($fixedArray[0]));
-                $data[$name] = $fixedArray;
+        foreach ($data as $name => $value) {
+            if (true === $value[1]) {
+                $data[$name][0] = self::$encryptionService->encrypt(serialize($value[0]));
             }
         }
         
         return parent::convertToDatabaseValue($data, $platform);
     }
     
-    public function convertToPHPValue($value, \Doctrine\DBAL\Platforms\AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         $data = parent::convertToPHPValue($value, $platform);
         
-        if (!is_array($data)) {
-            return new ExtendedData;
+        if (null === $data) {
+            return null;
         }
-        
-        foreach ($data as $name => $fixedArray) {
-            if (true === $fixedArray[1]) {
-                $fixedArray[0] = unserialize(self::$encryptionService->decrypt($fixedArray[0]));
+        else if (is_array($data)) {
+            foreach ($data as $name => $value) {
+                if (true === $value[1]) {
+                    $data[$name][0] = unserialize(self::$encryptionService->decrypt($value[0]));
+                }
             }
+            
+            $extendedData = new ExtendedData;
+            $reflection = new \ReflectionProperty($extendedData, 'data');
+            $reflection->setAccessible(true);
+            $reflection->setValue($extendedData, $data);
+            $reflection->setAccessible(false);
+            
+            return $extendedData;
         }
-        
-        $extendedData = new ExtendedData();
-        $reflection = new ReflectionProperty($extendedData, 'data');
-        $reflection->setAccessible(true);
-        $reflection->setValue($extendedData, $data);
-        $reflection->setAccessible(false);
-        
-        return $extendedData;
+        else {
+            throw ConversionException::conversionFailed($value, $this->getName());
+        }
     }
     
     public function getName()
