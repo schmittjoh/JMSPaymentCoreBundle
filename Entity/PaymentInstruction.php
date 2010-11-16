@@ -41,10 +41,38 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->state = self::STATE_NEW;
     }
     
-    public function addPayment(PaymentInterface $payment)
+    /**
+     * This method adds a Credit container to this PaymentInstruction.
+     * 
+     * This method is called automatically from Credit::__construct().
+     * 
+     * @param Credit $credit
+     * @return void
+     */
+    public function addCredit(Credit $credit)
     {
+        if ($credit->getPaymentInstruction() !== $this) {
+            throw new \InvalidArgumentException('This credit container belongs to another instruction.');
+        }
+        
+        $this->credits->add($credit);
+    }
+    
+    /**
+     * This method adds a Payment container to this PaymentInstruction.
+     * 
+     * This method is called automatically from Payment::__construct().
+     * 
+     * @param Payment $payment
+     * @return void
+     */
+    public function addPayment(Payment $payment)
+    {
+        if ($payment->getPaymentInstruction() !== $this) {
+            throw new \InvalidArgumentException('This payment container belongs to another instruction.');
+        }
+        
         $this->payments->add($payment);
-        $payment->setPaymentInstruction($this);
     }
     
     public function getAmount()

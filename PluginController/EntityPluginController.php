@@ -103,8 +103,7 @@ class EntityPluginController extends PluginController
             throw new Exception('This controller only supports Doctrine2 entities as PaymentInstruction objects.');
         }
         
-        $payment = new Payment();
-        $instruction->addPayment($payment);
+        $payment = new Payment($instruction);
         
         return $payment;
     }

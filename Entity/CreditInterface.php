@@ -16,7 +16,7 @@ interface CreditInterface
     function getId();
     function getPaymentInstruction();
     function getPendingTransaction();
-    function getReverseCreditTransaction();
+    function getReverseCreditTransactions();
     function getReversingAmount();
     function getState();
     function getTargetAmount();
