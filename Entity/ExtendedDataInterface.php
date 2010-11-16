@@ -6,6 +6,6 @@ interface ExtendedDataInterface
 {
     function isEncryptionRequired($name);
     function remove($name);
-    function set($name, $value, $encrypt = false);
+    function set($name, $value, $encrypt = true);
     function get($name);
 }

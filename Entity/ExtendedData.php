@@ -25,7 +25,7 @@ class ExtendedData implements ExtendedDataInterface
         return $this->data[$name][1];
     }
     
-    public function set($name, $value, $encrypt = false)
+    public function set($name, $value, $encrypt = true)
     {
         $data = new \SplFixedArray(2);
         $data[0] = $value;
