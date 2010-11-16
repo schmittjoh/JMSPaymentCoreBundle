@@ -45,7 +45,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
             throw new \InvalidArgumentException('$secret must not be empty.');
         }
         
-        $key = hash('sha512', $secret, true);
+        $key = hash('sha256', $secret, true);
         if (strlen($key) > $size = mcrypt_get_key_size($this->cipher, $this->mode)) {
             $key = substr($key, 0, $size);
         }
