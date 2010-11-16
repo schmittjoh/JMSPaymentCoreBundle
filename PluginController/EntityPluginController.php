@@ -16,19 +16,13 @@ use Doctrine\ORM\EntityManager;
 // FIXME: implement remaining methods
 class EntityPluginController extends PluginController
 {
-    protected $creditClass;
     protected $entityManager;
-    protected $paymentClass;
-    protected $paymentInstructionClass;
     
-    public function __construct(EntityManager $entityManager, $paymentInstructionClass, $paymentClass, $creditClass, $options = array())
+    public function __construct(EntityManager $entityManager, $options = array())
     {
         parent::__construct($options);
         
-        $this->creditClass = $creditClass;
         $this->entityManager = $entityManager;
-        $this->paymentClass = $paymentClass;
-        $this->paymentInstructionClass = $paymentInstructionClass;
     }
     
     /**
@@ -121,7 +115,8 @@ class EntityPluginController extends PluginController
             throw new Exception('This controller only supports Doctrine2 entities as Payment objects.');
         }
         
-        $transaction = new FinancialTransaction();
+        $class =& $this->options['financial_transaction_class'];
+        $transaction = new $class();
         $payment->addTransaction($transaction);
         
         return $transaction;
@@ -133,7 +128,8 @@ class EntityPluginController extends PluginController
             throw new Exception('This controller only supports Doctrine2 entities as PaymentInstruction objects.');
         }
         
-        $payment = new Payment($instruction);
+        $class =& $this->options['payment_class'];
+        $payment = new $class($instruction);
         
         return $payment;
     }
