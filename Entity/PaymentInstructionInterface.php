@@ -9,6 +9,7 @@ interface PaymentInstructionInterface
     const STATE_NEW = 3;
     const STATE_VALID = 4;
     
+//    function getAccount();
     function getAmount();
     function getApprovedAmount();
     function getApprovingAmount();
@@ -27,6 +28,20 @@ interface PaymentInstructionInterface
     function getCreatedAt();
     function getUpdatedAt();
     function hasPendingTransaction();
+    
+    /**
+     * This method sets the account identifier associated with this PaymentInstruction
+     * 
+     * Usually, this is a number, but an alphanumeric string is also permissible.
+     * 
+     * The implementation should populate this with the value of "account" in the
+     * ExtendedData value object. If this key is not set, it is the responsibility
+     * of the plugin to set an account identifier.
+     * 
+     * @param string $account
+     * @return void
+     */
+//    function setAccount($account);
     function setApprovedAmount($amount);
     function setApprovingAmount($amount);
     function setCreditedAmount($amount);

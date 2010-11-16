@@ -57,11 +57,10 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
     public function testAddPayment()
     {
         $instruction = $this->getInstruction();
-        $payment = new Payment();
-        
+
         $this->assertEquals(0, count($instruction->getPayments()));
         
-        $instruction->addPayment($payment);
+        $payment = new Payment($instruction);
         
         $this->assertEquals(1, count($instruction->getPayments()));
         $this->assertSame($payment, $instruction->getPayments()->get(0));

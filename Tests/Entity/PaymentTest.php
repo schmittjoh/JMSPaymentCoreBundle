@@ -12,7 +12,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $payment = new Payment();
+        $payment = new Payment($instruction = $this->getInstruction());
         
         $this->assertEquals(0.0, $payment->getApprovedAmount());
         $this->assertEquals(0.0, $payment->getApprovingAmount());
@@ -27,11 +27,12 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($payment->isAttentionRequired());
         $this->assertFalse($payment->isExpired());
         $this->assertNull($payment->getId());
+        $this->assertSame($instruction, $payment->getPaymentInstruction());
     }
     
     public function testAddTransaction()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         $transaction = new FinancialTransaction;
         
         $this->assertEquals(0, count($payment->getTransactions()));
@@ -46,7 +47,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetApproveTransaction($approveType)
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $transaction = new FinancialTransaction;
         $transaction->setTransactionType(FinancialTransaction::TRANSACTION_TYPE_DEPOSIT);
@@ -85,25 +86,16 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testGetSetExpirationDate()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertNull($payment->getExpirationDate());
         $payment->setExpirationDate($date = new \DateTime());
         $this->assertSame($date, $payment->getExpirationDate());
     }
     
-    public function testGetSetPaymentInstruction()
-    {
-        $payment = new Payment;
-        
-        $this->assertNull($payment->getPaymentInstruction());
-        $payment->setPaymentInstruction($instruction = new PaymentInstruction(123, 'EUR', 'foo'));
-        $this->assertSame($instruction, $payment->getPaymentInstruction());
-    }
-    
     public function testGetPendingTransaction()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertNull($payment->getPendingTransaction());
         
@@ -150,7 +142,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testGetSetState()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertSame(Payment::STATE_NEW, $payment->getState());
         $payment->setState(Payment::STATE_APPROVED);
@@ -172,7 +164,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testHasPendingTransaction()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertFalse($payment->hasPendingTransaction());
         
@@ -190,7 +182,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testIsSetAttentionRequired()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertFalse($payment->isAttentionRequired());
         $payment->setAttentionRequired(true);
@@ -201,7 +193,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testIsExpiredDueToExpirationDate()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertFalse($payment->isExpired());
         $payment->setExpirationDate(new \DateTime('yesterday'));
@@ -213,7 +205,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     public function testIsSetExpired()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertFalse($payment->isExpired());
         
@@ -231,7 +223,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     {
         $setter = 'set'.$propertyName;
         $getter = 'get'.$propertyName;
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $this->assertEquals($default, $payment->$getter());
         $payment->$setter($value);
@@ -267,7 +259,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
      */
     protected function getPayment()
     {
-        $payment = new Payment;
+        $payment = new Payment($this->getInstruction());
         
         $transaction = new FinancialTransaction;
         $transaction->setTransactionType(FinancialTransaction::TRANSACTION_TYPE_APPROVE);
@@ -310,5 +302,10 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         $payment->addTransaction($transaction);
         
         return $payment;
+    }
+    
+    protected function getInstruction()
+    {
+        return new PaymentInstruction(123, 'EUR', 'foo');
     }
 }

@@ -11,7 +11,6 @@ interface PaymentInterface
     const STATE_FAILED = 5;
     const STATE_NEW = 6;
     
-    function addTransaction(FinancialTransactionInterface $transaction);
     function getApprovedAmount();
     function getApproveTransaction();
     function getApprovingAmount();

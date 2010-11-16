@@ -7,13 +7,33 @@
     <parameters>
         <parameter key="payment.plugin_controller.class">Bundle\PaymentBundle\PluginController\EntityPluginController</parameter>
         <parameter key="payment.plugin_controller.options.result_class">Bundle\PaymentBundle\PluginController\Result</parameter>
+        <parameter key="payment.plugin_controller.options.payment_class">Bundle\PaymentBundle\Entity\Payment</parameter>
+        <parameter key="payment.plugin_controller.options.payment_instruction_class">Bundle\PaymentBundle\Entity\PaymentInstruction</parameter>
+        <parameter key="payment.plugin_controller.options.financial_transaction_class">Bundle\PaymentBundle\Entity\FinancialTransaction</parameter>
+        <parameter key="payment.plugin_controller.options.credit_class">Bundle\PaymentBundle\Entity\Credit</parameter>
+        
+        <parameter key="payment.encryption_service.class">Bundle\PaymentBundle\Cryptography\MCryptEncryptionService</parameter>
+        <parameter key="payment.encryption_service.key"></parameter>
+        <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
+        <parameter key="payment.encryption_service.mode">ctr</parameter>
     </parameters>
 
     <services>
         <service id="payment.plugin_controller" class="%payment.plugin_controller.class%" alias="ppc">
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
             <argument type="collection">
                 <argument key="result_class">%payment.plugin_controller.options.result_class%</argument>
+                <argument key="payment_instruction_class">%payment.plugin_controller.options.payment_instruction_class%</argument>
+                <argument key="payment_class">%payment.plugin_controller.options.payment_class%</argument>
+                <argument key="financial_transaction_class">%payment.plugin_controller.options.financial_transaction_class%</argument>
+                <argument key="credit_class">%payment.plugin_controller.options.credit_class%</argument>
             </argument>
+        </service>
+        
+        <service id="payment.encryption_service" class="%payment.encryption_service.class%">
+            <argument>%payment.encryption_service.key%</argument>
+            <argument>%payment.encryption_service.cipher%</argument>
+            <argument>%payment.encryption_service.mode%</argument>
         </service>
     </services>
 </container>
