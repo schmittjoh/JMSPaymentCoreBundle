@@ -13,7 +13,7 @@ class MCryptEncryptionServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('rijndael-256', $service->getCipher());
         $this->assertEquals('ctr', $service->getMode());
         $this->assertTrue('foo' != $service->getKey());
-        $this->assertTrue(preg_match('/[^\x00-\x7F]/S', $service->getKey()) > 0, 'Key is not ASCII');
+        $this->assertTrue(preg_match('/[^\x00-\x7F]/S', $service->getKey()) > 0, 'Key must not be ASCII');
     }
     
     /**
