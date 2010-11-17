@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+	<entity name="Bundle\PaymentBundle\Entity\Payment" table="payments">
+		<id name="id" type="integer"><generator strategy="AUTO"/></id>
+		
+		<field name="approvedAmount" type="decimal" scale="5" />
+		<field name="approvingAmount" type="decimal" scale="5" />
+		<field name="depositedAmount" type="decimal" scale="5" />
+		<field name="depositingAmount" type="decimal" scale="5" />
+		<field name="expirationDate" type="datetime" />
+		<field name="reversingApprovedAmount" type="decimal" scale="5" />
+		<field name="reversingDepositedAmount" type="decimal" scale="5" />
+		<field name="state" type="smallint" />
+		<field name="targetAmount" type="decimal" scale="5" />
+		<field name="attentionRequired" type="boolean" />
+		<field name="expired" type="boolean" />
+		
+		<many-to-one field="paymentInstruction" target-entity="PaymentInstruction" inversed-by="payments">
+			<join-column name="payment_instruction_id" 
+						 referenced-column-name="id" 
+						 nullable="false" 
+						 on-delete="CASCADE" />
+		</many-to-one>
+		
+		<one-to-many field="transactions" mapped-by="payment" target-entity="FinancialTransaction">
+			<cascade>
+				<cascade-remove/>
+				<cascade-refresh/>
+			</cascade>
+		</one-to-many>
+	</entity>
+	
+</doctrine-mapping> 

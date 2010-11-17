@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://github.com/doctrine/doctrine2/raw/master/doctrine-mapping.xsd">
+
+	<entity name="Bundle\PaymentBundle\Entity\PaymentInstruction" table="payment_instructions">
+		<id name="id" type="integer"><generator strategy="AUTO"/></id>
+		
+		<field name="amount" type="decimal" scale="5" />
+		<field name="approvedAmount" type="decimal" scale="5" />
+		<field name="approvingAmount" type="decimal" scale="5" />
+		<field name="createdAt" type="datetime" nullable="false" />
+		<field name="creditedAmount" type="decimal" scale="5" />
+		<field name="creditingAmount" type="decimal" scale="5" />
+		<field name="currency" type="string" length="3" nullable="false" />
+		<field name="depositedAmount" type="decimal" scale="5" />
+		<field name="depositingAmount" type="decimal" scale="5" />
+		<field name="extendedData" type="extended_payment_data" nullable="false" />
+		<field name="paymentSystemName" type="string" length="100" />
+		<field name="state" type="smallint" nullable="false" />
+		<field name="updatedAt" type="datetime" />
+		
+		<one-to-many field="credits" mapped-by="paymentInstruction" target-entity="Credit">
+			<cascade>
+				<cascade-remove/>
+				<cascade-refresh/>
+			</cascade>
+		</one-to-many>
+		
+		<one-to-many field="payments" mapped-by="paymentInstruction" target-entity="Payment">
+			<cascade>
+				<cascade-remove/>
+				<cascade-refresh/>
+			</cascade>
+		</one-to-many>
+
+		<lifecycle-callbacks>
+			<lifecycle-callback type="prePersist" method="onPrePersist"/>
+		</lifecycle-callbacks>
+	</entity>
+	
+</doctrine-mapping>

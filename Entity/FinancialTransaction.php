@@ -97,6 +97,13 @@ class FinancialTransaction implements FinancialTransactionInterface
         return $this->transactionType;
     }
     
+    public function onPrePersist()
+    {
+        if (null !== $this->id) {
+            $this->updatedAt = new \DateTime;
+        }
+    }
+    
     public function setCredit(CreditInterface $credit)
     {
         $this->credit = $credit;

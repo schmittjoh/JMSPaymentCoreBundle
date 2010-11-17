@@ -2,10 +2,9 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
-use Doctrine\DBAL\Types\ConversionException;
-
 use Bundle\PaymentBundle\Cryptography\EncryptionServiceInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\ObjectType;
 
 class ExtendedDataType extends ObjectType
@@ -24,7 +23,7 @@ class ExtendedDataType extends ObjectType
         return self::$encryptionService;
     }
     
-    public function convertToDatabaseValue(ExtendedData $extendedData, AbstractPlatform $platform)
+    public function convertToDatabaseValue($extendedData, AbstractPlatform $platform)
     {
         $reflection = new \ReflectionProperty($extendedData, 'data');
         $reflection->setAccessible(true);

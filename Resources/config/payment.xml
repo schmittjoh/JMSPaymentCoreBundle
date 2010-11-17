@@ -13,7 +13,7 @@
         <parameter key="payment.plugin_controller.options.credit_class">Bundle\PaymentBundle\Entity\Credit</parameter>
         
         <parameter key="payment.encryption_service.class">Bundle\PaymentBundle\Cryptography\MCryptEncryptionService</parameter>
-        <parameter key="payment.encryption_service.key"></parameter>
+        <parameter key="payment.encryption_service.secret"></parameter>
         <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
         <parameter key="payment.encryption_service.mode">ctr</parameter>
     </parameters>
@@ -31,7 +31,7 @@
         </service>
         
         <service id="payment.encryption_service" class="%payment.encryption_service.class%">
-            <argument>%payment.encryption_service.key%</argument>
+            <argument>%payment.encryption_service.secret%</argument>
             <argument>%payment.encryption_service.cipher%</argument>
             <argument>%payment.encryption_service.mode%</argument>
         </service>

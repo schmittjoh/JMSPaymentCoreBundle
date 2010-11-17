@@ -13,7 +13,10 @@ class PaymentExtension extends Extension
 	{
 		$xmlLoader = new XmlFileLoader($container, __DIR__.'/../Resources/config');
 		$xmlLoader->load('payment.xml');
-		$xmlLoader->load('orm.xml');
+
+		if (isset($config['secret'])) {
+		    $container->setParameter('payment.encryption_service.secret', $config['secret']);
+		}
 		
 		if (isset($config['plugins'])) {
 		    $controller = $container->getDefinition('payment.plugin_controller');
@@ -31,12 +34,12 @@ class PaymentExtension extends Extension
 	
 	public function getNamespace()
 	{
-		
+		return 'http://www.symfony-project.org/schema/dic/payment';
 	}
 	
 	public function getXsdValidationBasePath()
 	{
-		
+		return __DIR__.'/../Resources/config/schema';
 	}
 	
 	public function getAlias()

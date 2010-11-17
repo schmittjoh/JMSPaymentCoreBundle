@@ -21,7 +21,7 @@ interface CreditInterface
     function getState();
     function getTargetAmount();
     function hasPendingTransaction();
-    function setCreditedAmount();
-    function setCreditingAmount();
-    function setReversingAmount();
+    function setCreditedAmount($amount);
+    function setCreditingAmount($amount);
+    function setReversingAmount($amount);
 }

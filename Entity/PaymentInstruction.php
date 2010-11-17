@@ -6,23 +6,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class PaymentInstruction implements PaymentInstructionInterface
 {
-    protected $id;
     protected $account;
     protected $amount;
-    protected $currency;
-    protected $paymentSystemName;
-    protected $extendedData;
-    protected $state;
-    protected $credits;
-    protected $payments;
-    protected $createdAt;
-    protected $updatedAt;
-    protected $approvingAmount;
     protected $approvedAmount;
-    protected $creditingAmount;
+    protected $approvingAmount;
+    protected $createdAt;
     protected $creditedAmount;
+    protected $creditingAmount;
+    protected $credits;
+    protected $currency;
     protected $depositedAmount;
     protected $depositingAmount;
+    protected $extendedData;
+    protected $id;
+    protected $payments;
+    protected $paymentSystemName;
+    protected $state;
+    protected $updatedAt;
     
     public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data = null)
     {
@@ -176,6 +176,13 @@ class PaymentInstruction implements PaymentInstructionInterface
     public function hasPendingTransaction()
     {
         return null !== $this->getPendingTransaction();
+    }
+    
+    public function onPrePersist()
+    {
+        if (null !== $this->id) {
+            $this->updatedAt = new \Datetime;
+        }
     }
     
     public function setApprovingAmount($amount) 
