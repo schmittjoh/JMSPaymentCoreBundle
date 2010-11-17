@@ -48,4 +48,5 @@ interface PaymentInstructionInterface
     function setCreditingAmount($amount);
     function setDepositedAmount($amount);
     function setDepositingAmount($amount);
+    function setState($state);
 }

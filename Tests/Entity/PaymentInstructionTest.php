@@ -2,6 +2,8 @@
 
 namespace Bundle\PaymentBundle\Tests\Entity;
 
+use Bundle\PaymentBundle\Entity\Credit;
+
 use Bundle\PaymentBundle\Entity\Payment;
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
 use Bundle\PaymentBundle\Entity\PaymentInstruction;
@@ -9,28 +11,6 @@ use Bundle\PaymentBundle\Entity\ExtendedData;
 
 class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstructorDoesNotRequireExtendedData()
-    {
-        $instruction = new PaymentInstruction(123.12, 'EUR', 'foosystem');
-        
-        $this->assertEquals(123.12, $instruction->getAmount());
-        $this->assertEquals('EUR', $instruction->getCurrency());
-        $this->assertEquals('foosystem', $instruction->getPaymentSystemName());
-        $this->assertNull($instruction->getExtendedData());
-        $this->assertSame(FinancialTransaction::STATE_NEW, $instruction->getState());
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $instruction->getCredits());
-        $this->assertinstanceOf('Doctrine\Common\Collections\ArrayCollection', $instruction->getPayments());
-        $this->assertEquals(0.0, $instruction->getApprovingAmount());
-        $this->assertEquals(0.0, $instruction->getApprovedAmount());
-        $this->assertEquals(0.0, $instruction->getDepositingAmount());
-        $this->assertEquals(0.0, $instruction->getDepositedAmount());
-        $this->assertEquals(0.0, $instruction->getCreditingAmount());
-        $this->assertEquals(0.0, $instruction->getCreditedAmount());
-        $this->assertNull($instruction->getId());
-        $this->assertTrue(time() - $instruction->getCreatedAt()->getTimestamp() < 10);
-        $this->assertNull($instruction->getUpdatedAt());
-    }
-    
     public function testConstructor()
     {
         $data = new ExtendedData();
@@ -42,7 +22,9 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data, $instruction->getExtendedData());
         $this->assertSame(FinancialTransaction::STATE_NEW, $instruction->getState());
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $instruction->getCredits());
+        $this->assertEquals(0, count($instruction->getCredits()));
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $instruction->getPayments());
+        $this->assertEquals(0, count($instruction->getPayments()));
         $this->assertEquals(0.0, $instruction->getApprovingAmount());
         $this->assertEquals(0.0, $instruction->getApprovedAmount());
         $this->assertEquals(0.0, $instruction->getDepositingAmount());
@@ -52,6 +34,31 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($instruction->getId());
         $this->assertTrue(time() - $instruction->getCreatedAt()->getTimestamp() < 10);
         $this->assertNull($instruction->getUpdatedAt());
+    }
+    
+    public function testAddCredit()
+    {
+        $instruction = $this->getInstruction();
+        
+        $this->assertEquals(0, count($instruction->getCredits()));
+        
+        $credit = new Credit($instruction, 123.12);
+        
+        $this->assertEquals(1, count($instruction->getCredits()));
+        $this->assertSame($credit, $instruction->getCredits()->get(0));
+        $this->assertSame($credit->getPaymentInstruction(), $instruction);
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddCreditDoesNotAcceptCreditFromAnotherInstruction()
+    {
+        $instruction1 = $this->getInstruction();
+        $instruction2 = $this->getInstruction();
+        
+        $credit = new Credit($instruction1, 123);
+        $instruction2->addCredit($credit);
     }
     
     public function testAddPayment()
@@ -65,6 +72,96 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($instruction->getPayments()));
         $this->assertSame($payment, $instruction->getPayments()->get(0));
         $this->assertSame($payment->getPaymentInstruction(), $instruction);
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddPaymentDoesNotAcceptPaymentFromAnotherInstruction()
+    {
+        $instruction1 = $this->getInstruction();
+        $instruction2 = $this->getInstruction();
+        
+        $payment = new Payment($instruction1);
+        $instruction2->addPayment($payment);
+    }
+    
+    public function testOnPrePersistDoesNotSetUpdatedAtWhenNewEntity()
+    {
+        $instruction = $this->getInstruction();
+        
+        $this->assertNull($instruction->getUpdatedAt());
+        $instruction->onPrePersist();
+        $this->assertNull($instruction->getUpdatedAt());
+    }
+    
+    public function testOnPrePersist()
+    {
+        $instruction = $this->getInstruction();
+        $reflection = new \ReflectionProperty($instruction, 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($instruction, 1234);
+        
+        $this->assertNull($instruction->getUpdatedAt());
+        $instruction->onPrePersist();
+        $this->assertInstanceOf('\DateTime', $instruction->getUpdatedAt());
+        $this->assertTrue(time() - $instruction->getUpdatedAt()->getTimestamp() < 10);
+    }
+    
+    public function testGetPendingTransactionOnPayment()
+    {
+        $instruction = $this->getInstruction();
+        $payment = new Payment($instruction);
+        
+        $this->assertNull($instruction->getPendingTransaction());
+        
+        $transaction = new FinancialTransaction();
+        $payment->addTransaction($transaction);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        
+        $this->assertSame($transaction, $instruction->getPendingTransaction());
+    }
+    
+    public function testGetPendingTransactionOnCredit()
+    {
+        $instruction = $this->getInstruction();
+        $credit = new Credit($instruction, 123);
+        
+        $this->assertNull($instruction->getPendingTransaction());
+        
+        $transaction = new FinancialTransaction();
+        $credit->addTransaction($transaction);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        
+        $this->assertSame($transaction, $instruction->getPendingTransaction());
+    }
+    
+    public function testHasPendingTransactionOnPayment()
+    {
+        $instruction = $this->getInstruction();
+        $payment = new Payment($instruction);
+        
+        $this->assertFalse($instruction->hasPendingTransaction());
+        
+        $transaction = new FinancialTransaction;
+        $payment->addTransaction($transaction);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        
+        $this->assertTrue($instruction->hasPendingTransaction());
+    }
+    
+    public function testHasPendingTransactionOnCredit()
+    {
+        $instruction = $this->getInstruction();
+        $credit = new Credit($instruction, 123.45);
+        
+        $this->assertFalse($instruction->hasPendingTransaction());
+        
+        $transaction = new FinancialTransaction;
+        $credit->addTransaction($transaction);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        
+        $this->assertTrue($instruction->hasPendingTransaction());
     }
     
     /**
@@ -96,11 +193,12 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
             array('CreditedAmount', 583, 0.0),
             array('CreditingAmount', 123.45, 0.0),
             array('CreditingAmount', 583, 0.0),
+            array('State', PaymentInstruction::STATE_INVALID, PaymentInstruction::STATE_NEW),
         );
     }
     
     protected function getInstruction()
     {
-        return new PaymentInstruction(123.45, 'EUR', 'foo');
+        return new PaymentInstruction(123.45, 'EUR', 'foo', new ExtendedData());
     }
 }

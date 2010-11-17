@@ -24,7 +24,7 @@ class PaymentInstruction implements PaymentInstructionInterface
     protected $state;
     protected $updatedAt;
     
-    public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data = null)
+    public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data)
     {
         $this->amount = $amount;
         $this->approvedAmount = 0.0;
@@ -213,5 +213,10 @@ class PaymentInstruction implements PaymentInstructionInterface
     public function setDepositingAmount($amount)
     {
         $this->depositingAmount = $amount;
+    }
+    
+    public function setState($state)
+    {
+        $this->state = $state;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Bundle\PaymentBundle\Tests\Entity;
 
+use Bundle\PaymentBundle\Entity\ExtendedData;
+
 use Bundle\PaymentBundle\Entity\PaymentInstruction;
 
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
@@ -306,6 +308,6 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     
     protected function getInstruction()
     {
-        return new PaymentInstruction(123, 'EUR', 'foo');
+        return new PaymentInstruction(123, 'EUR', 'foo', new ExtendedData());
     }
 }
