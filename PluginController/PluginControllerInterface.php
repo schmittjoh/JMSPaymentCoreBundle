@@ -94,6 +94,7 @@ interface PluginControllerInterface
      * - set Payment's deposited amount to processed amount
      * - increase PaymentInstruction's approved amount by processed amount
      * - increase PaymentInstruction's deposited amount by processed amount
+     * - set reason code to PluginInterface::REASON_CODE_SUCCESS
      * 
      * On unsuccessful response, the implementation will:
      * - set Payment's state to FAILED
