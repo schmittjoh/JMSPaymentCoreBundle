@@ -3,6 +3,7 @@
 namespace Bundle\PaymentBundle\PluginController;
 
 use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
 
 class Result
@@ -75,17 +76,16 @@ class Result
     
     public function isPaymentRequiresAttention()
     {
-        return $this->paymentRequiresAttention;
+        if (null === $this->payment) {
+            throw new \LogicException('The result contains no payment.');
+        }
+        
+        return $this->payment->isAttentionRequired();
     }
     
     public function isRecoverable()
     {
         return $this->recoverable;
-    }
-    
-    public function setPaymentRequiresAttention($boolean = true)
-    {
-        $this->paymentRequiresAttention = !!$boolean;
     }
     
     public function setPluginException(PluginException $exception)

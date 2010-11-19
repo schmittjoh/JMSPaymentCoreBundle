@@ -2,198 +2,141 @@
 
 namespace Bundle\PaymentBundle\Tests\PluginController;
 
-use Bundle\PaymentBundle\Plugin\PluginInterface;
+use Bundle\PaymentBundle\Entity\FinancialTransaction;
 
+use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Entity\ExtendedData;
+use Bundle\PaymentBundle\Entity\Payment;
+use Bundle\PaymentBundle\Entity\PaymentInstruction;
+use Bundle\PaymentBundle\Plugin\PluginInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
 use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
 use Bundle\PaymentBundle\Entity\PaymentInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
 use Bundle\PaymentBundle\PluginController\Result;
+use Bundle\PaymentBundle\PluginController\PluginController;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {
+    public function testApprovePluginReturnsSuccessfulResponse()
+    {
+        $controller = $this->getController(array(), false);
+        $payment = $this->getPayment();
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $plugin = $this->getPlugin();
+        $plugin
+            ->expects($this->once())
+            ->method('approve')
+        ;
+        $controller->addPlugin($plugin);
+        
+        $transaction = new FinancialTransaction;
+        $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
+        $transaction->setProcessedAmount(50.12);
+        $controller
+            ->expects($this->once())
+            ->method('buildFinancialTransaction')
+            ->will($this->returnValue($transaction))
+        ;
+        
+        $result = $this->callApprove($controller, array($payment, 100));
+        
+        $this->assertSame($transaction, $result->getFinancialTransaction());
+        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertTrue(PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode());
+        $this->assertSame(PluginInterface::RESPONSE_CODE_SUCCESS, $transaction->getResponseCode());
+        $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
+        $this->assertSame(PluginInterface::REASON_CODE_SUCCESS, $result->getReasonCode());
+        $this->assertSame(PaymentInterface::STATE_APPROVED, $payment->getState());
+        $this->assertSame(FinancialTransactionInterface::STATE_SUCCESS, $transaction->getState());
+        $this->assertEquals(0, $payment->getApprovingAmount());
+        $this->assertEquals(50.12, $payment->getApprovedAmount());
+        $this->assertEquals(0, $instruction->getApprovingAmount());
+        $this->assertEquals(50.12, $instruction->getApprovedAmount());
+    }
+    
+    public function testApprovePluginReturnsUnsuccessfulResponse()
+    {
+        $controller = $this->getController();
+        $payment = $this->getPayment();
+        $instruction  = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $plugin = $this->getPlugin();
+        $plugin
+            ->expects($this->once())
+            ->method('approve')
+        ;
+        $controller->addPlugin($plugin);
+        
+        $result = $this->callApprove($controller, array($payment, 100));
+        
+        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertSame(Result::STATUS_FAILED, $result->getStatus());
+        $this->assertSame(PaymentInterface::STATE_FAILED, $payment->getState());
+        $this->assertSame(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE, $result->getFinancialTransaction()->getTransactionType());
+        $this->assertSame(FinancialTransactionInterface::STATE_FAILED, $result->getFinancialTransaction()->getState());
+        $this->assertSame($result->getFinancialTransaction()->getReasonCode(), $result->getReasonCode());
+        $this->assertEquals(0, $payment->getApprovingAmount());
+        $this->assertEquals(0, $payment->getApprovedAmount());
+        $this->assertEquals(0, $instruction->getApprovingAmount());
+        $this->assertEquals(0, $instruction->getApprovedAmount());
+    }
+    
     public function testApprovePluginThrowsTimeoutException()
     {
         $controller = $this->getController();
-        
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('hasPendingTransaction')
-            ->will($this->returnValue(false))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('getApprovingAmount')
-            ->will($this->returnValue(10))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('setApprovingAmount')
-            ->with($this->equalTo(110))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('getPaymentSystemName')
-            ->will($this->returnValue('foo'))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->exactly(2))
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInterface::STATE_NEW))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getTargetAmount')
-            ->will($this->returnValue(123))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('setApprovingAmount')
-            ->with($this->equalTo(100))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('setState')
-            ->with(PaymentInterface::STATE_APPROVING)
-        ;
-            
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstruction::STATE_VALID);
+
         $plugin = $this->getPlugin();
         $plugin
             ->expects($this->once())
             ->method('approve')
             ->will($this->throwException(new PluginTimeoutException('some error occurred')))
         ;
-        $plugin
-            ->expects($this->once())
-            ->method('processes')
-            ->with($this->equalTo('foo'))
-            ->will($this->returnValue(true))
-        ;
         $controller->addPlugin($plugin);
         
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+        $this->assertEquals(0.0, $instruction->getApprovingAmount());
+        $this->assertEquals(0.0, $payment->getApprovingAmount());
+        $this->assertSame(PaymentInterface::STATE_NEW, $payment->getState());
         
-        $result = $controller->approve(123, 100);
-        $transaction = $result->getFinancialTransaction();
-        
+        $result = $this->callApprove($controller, array($payment, 123.45));
+
         $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
-        $this->assertInstanceOf('Bundle\PaymentBundle\Entity\FinancialTransaction', $transaction);
-        $this->assertInstanceOf('Bundle\PaymentBundle\Plugin\Exception\Exception', $result->getPluginException());
-        $this->assertEquals(PluginInterface::REASON_CODE_TIMEOUT, $result->getReasonCode());
-        $this->assertSame($payment, $result->getPayment());
-        $this->assertSame($instruction, $result->getPaymentInstruction());
+        $this->assertEquals(123.45, $instruction->getApprovingAmount());
+        $this->assertEquals(123.45, $payment->getApprovingAmount());
+        $this->assertSame(PaymentInterface::STATE_APPROVING, $payment->getState());
+        $this->assertSame(Result::STATUS_PENDING, $result->getStatus());
+        $this->assertSame(PluginInterface::REASON_CODE_TIMEOUT, $result->getReasonCode());
+        $this->assertSame(FinancialTransactionInterface::STATE_PENDING, $result->getFinancialTransaction()->getState());
         $this->assertTrue($result->isRecoverable());
-        $this->assertEquals(Result::STATUS_PENDING, $result->getStatus());
     }
     
+    /**
+     * @expectedException \Exception
+     */
     public function testApprovePluginThrowsException()
     {
         $controller = $this->getController();
-        
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('hasPendingTransaction')
-            ->will($this->returnValue(false))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('getApprovingAmount')
-            ->will($this->returnValue(10))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('setApprovingAmount')
-            ->with($this->equalTo(110))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('getPaymentSystemName')
-            ->will($this->returnValue('foo'))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->exactly(2))
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInterface::STATE_NEW))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getTargetAmount')
-            ->will($this->returnValue(123))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('setApprovingAmount')
-            ->with($this->equalTo(100))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('setState')
-            ->with(PaymentInterface::STATE_APPROVING)
-        ;
+        $instruction = $payment->getPaymentInstruction();
+        
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        $instruction->setApprovingAmount(10);
             
         $plugin = $this->getPlugin();
         $plugin
             ->expects($this->once())
             ->method('approve')
-            ->will($this->throwException(new PluginException('some error occurred')))
-        ;
-        $plugin
-            ->expects($this->once())
-            ->method('processes')
-            ->with($this->equalTo('foo'))
-            ->will($this->returnValue(true))
+            ->will($this->throwException(new \Exception('some error occurred')))
         ;
         $controller->addPlugin($plugin);
         
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
-        
-        $result = $controller->approve(123, 100);
-        $transaction = $result->getFinancialTransaction();
-        
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
-        $this->assertInstanceOf('Bundle\PaymentBundle\Entity\FinancialTransaction', $transaction);
-        $this->assertInstanceOf('Bundle\PaymentBundle\Plugin\Exception\Exception', $result->getPluginException());
-        $this->assertEquals($transaction->getReasonCode(), $result->getReasonCode());
-        $this->assertSame($payment, $result->getPayment());
-        $this->assertSame($instruction, $result->getPaymentInstruction());
-        $this->assertTrue($result->isPaymentRequiresAttention());
-        $this->assertEquals(Result::STATUS_UNKNOWN, $result->getStatus());
+        $this->callApprove($controller, array($payment, 100));
     }
     
     /**
@@ -203,44 +146,16 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     public function testApproveDoesNotAcceptNewTransactionIfInstructionHasPendingTransaction()
     {
         $controller = $this->getController();
-        
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-        $instruction
-            ->expects($this->once())
-            ->method('hasPendingTransaction')
-            ->will($this->returnValue(true))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->once())
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInterface::STATE_NEW))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getTargetAmount')
-            ->will($this->returnValue(1234))
-        ;
-            
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
         
-        $controller->approve(123, 100);
+        $transaction = new FinancialTransaction();
+        $payment->addTransaction($transaction);
+        $payment->setState(FinancialTransactionInterface::STATE_PENDING);
+            
+        $this->callApprove($controller, array($payment, 100));
     }
     
     /**
@@ -252,38 +167,13 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     {
         $controller = $this->getController();
         
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->once())
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInterface::STATE_APPROVING))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getTargetAmount')
-            ->will($this->returnValue($amount))
-        ;
-            
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+        $payment->setState(PaymentInterface::STATE_APPROVING);
         
-        $controller->approve(123, 100);
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $this->callApprove($controller, array($payment, 100));
     }
     
     public function getApprovalTestAmounts()
@@ -302,38 +192,12 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     {
         $controller = $this->getController();
         
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-            
-        $payment = $this->getPayment();
-        $payment
-            ->expects($this->once())
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInterface::STATE_NEW))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getTargetAmount')
-            ->will($this->returnValue(50))
-        ;
-            
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+        $payment = $this->getPayment(array(), array(1 => 50));
         
-        $controller->approve(123, 100);
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $this->callApprove($controller, array($payment, 100));
     }
     
     /**
@@ -344,34 +208,13 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     public function testApprovePaymentMustHaveValidState($invalidState)
     {
         $controller = $this->getController();
-        
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue(PaymentInstructionInterface::STATE_VALID))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->once())
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
-        $payment
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue($invalidState))
-        ;
-            
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+        $payment->setState($invalidState);
         
-        $controller->approve(123, 1);
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $this->callApprove($controller, array($payment, 1));
     }
     
     public function getInvalidPaymentStatesForApproval()
@@ -392,29 +235,12 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     public function testApprovePaymentInstructionMustHaveValidState($invalidState)
     {
         $controller = $this->getController();
-        
-        $instruction = $this->getInstruction();
-        $instruction   
-            ->expects($this->once())
-            ->method('getState')
-            ->will($this->returnValue($invalidState))
-        ;
-            
         $payment = $this->getPayment();
-        $payment
-            ->expects($this->once())
-            ->method('getPaymentInstruction')
-            ->will($this->returnValue($instruction))
-        ;
         
-        $controller
-            ->expects($this->once())
-            ->method('getPayment')
-            ->with(123)
-            ->will($this->returnValue($payment))
-        ;
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState($invalidState);
         
-        $controller->approve(123, 1);
+        $this->callApprove($controller, array($payment, 1));
     }
     
     public function getInvalidInstructionStatesForApproval()
@@ -426,31 +252,87 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         );
     }
     
+    
+    
     protected function getPlugin()
     {
-        return $this->getMock('Bundle\PaymentBundle\Plugin\PluginInterface');
+        $plugin = $this->getMock('Bundle\PaymentBundle\Plugin\PluginInterface');
+        $plugin
+            ->expects($this->once())
+            ->method('processes')
+            ->with($this->equalTo('foo'))
+            ->will($this->returnValue(true))
+        ;
+        
+        return $plugin;
     }
     
-    protected function getPayment()
+    protected function getPayment($mockMethods = array(), $arguments = array())
     {
-        return $this->getMock('Bundle\PaymentBundle\Entity\PaymentInterface');
+        $arguments = $arguments + array(
+            $this->getInstruction(),
+            123.45
+        );
+        
+        if (count($mockMethods) === 0) {
+            return new Payment($arguments[0], $arguments[1]);
+        }
+        
+        return $this->getMock(
+        	'Bundle\PaymentBundle\Entity\Payment',
+            $mockMethods,
+            $arguments
+        );
     }
     
-    protected function getInstruction()
+    protected function getInstruction($mockMethods = array(), $arguments = array())
     {
-        return $this->getMock('Bundle\PaymentBundle\Entity\PaymentInstructionInterface');
+        $arguments = $arguments + array(
+            123.45,
+            'EUR',
+            'foo',
+            new ExtendedData()
+        );
+        
+        if (count($mockMethods) === 0) {
+            return new PaymentInstruction($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+        }
+        
+        return $this->getMock(
+        	'Bundle\PaymentBundle\Entity\PaymentInstruction',
+            $mockMethods, 
+            $arguments
+        );
     }
     
-    protected function getController(array $options = array())
+    protected function getController(array $options = array(), $addTransaction = true)
     {
         $options = array_merge(array(
             'financial_transaction_class' => 'Bundle\PaymentBundle\Entity\FinancialTransaction',
             'result_class' => 'Bundle\PaymentBundle\PluginController\Result',
         ), $options);
         
-        return $this->getMockForAbstractClass(
+        $mock = $this->getMockForAbstractClass(
         	'Bundle\PaymentBundle\PluginController\PluginController',
             array($options)
         );
+        
+        if ($addTransaction) {
+            $mock
+                ->expects($this->any())
+                ->method('buildFinancialTransaction')
+                ->will($this->returnValue(new FinancialTransaction()))
+            ;
+        }
+            
+        return $mock;
+    }
+    
+    protected function callApprove(PluginController $controller, array $args)
+    {
+        $reflection = new \ReflectionMethod($controller, 'doApprove');
+        $reflection->setAccessible(true);
+        
+        return $reflection->invokeArgs($controller, $args);
     }
 }

@@ -78,10 +78,23 @@ abstract class PluginController implements PluginControllerInterface
 //            throw new Exception('The Payment\'s target amount must not be greater than the PaymentInstruction\'s amount.');
 //        }
         
-        $payment = $this->doCreatePayment($instruction);
-        $payment->setTargetAmount($amount);
+        return $this->doCreatePayment($instruction, $amount);
+    }
+    
+    public function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction)
+    {
+        if (PaymentInstructionInterface::STATE_NEW === $paymentInstruction->getState()) {
+            $result = $this->validatePaymentInstruction($paymentInstruction);
+            
+            if (Result::STATUS_SUCCESS !== $result->getStatus()) {
+                throw new InvalidPaymentInstructionException('The PaymentInstruction could not be validated.');
+            }
+        }
+        else if (PaymentInstructionInterface::STATE_VALID !== $paymentInstruction->getState()) {
+            throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be VALID, or NEW.');
+        }
         
-        return $payment;
+        return $this->doCreatePaymentInstruction($paymentInstruction);
     }
     
     public function getPaymentInstruction($instructionId, $maskSensitiveData = true)
@@ -143,8 +156,7 @@ abstract class PluginController implements PluginControllerInterface
         return new $class($instruction, $status, $reasonCode);
     }
     
-    abstract protected function createFinancialTransaction(PaymentInterface $payment);
-    
+    abstract protected function buildFinancialTransaction();
     
     protected function doApprove(PaymentInterface $payment, $amount)
     {
@@ -166,7 +178,8 @@ abstract class PluginController implements PluginControllerInterface
 
             $retry = false;
             
-            $transaction = $this->createFinancialTransaction($payment);
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setPayment($payment);
             $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE);
             $transaction->setRequestedAmount($amount);
 
@@ -197,6 +210,7 @@ abstract class PluginController implements PluginControllerInterface
                 $payment->setApprovedAmount($transaction->getProcessedAmount());
                 $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
                 $instruction->setApprovedAmount($instruction->getApprovedAmount() + $transaction->getProcessedAmount());
+                $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
             }
@@ -204,11 +218,14 @@ abstract class PluginController implements PluginControllerInterface
                 $payment->setState(PaymentInterface::STATE_FAILED);
                 $payment->setApprovingAmount(0.0);
                 $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
         }
         catch (PluginTimeoutException $timeout) {
+            $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+            
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
             $result->setPluginException($timeout);
             $result->setRecoverable();
@@ -225,8 +242,10 @@ abstract class PluginController implements PluginControllerInterface
 //        }
     }
     
-    abstract protected function doCreatePayment($instruction);
+    abstract protected function doCreatePayment($instruction, $amount);
 
+    abstract protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction);
+    
     protected function doDeposit(PaymentInterface $payment, $amount)
     {
         $instruction = $payment->getPaymentInstruction();

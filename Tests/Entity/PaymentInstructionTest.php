@@ -67,7 +67,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, count($instruction->getPayments()));
         
-        $payment = new Payment($instruction);
+        $payment = new Payment($instruction, 100);
         
         $this->assertEquals(1, count($instruction->getPayments()));
         $this->assertSame($payment, $instruction->getPayments()->get(0));
@@ -82,7 +82,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $instruction1 = $this->getInstruction();
         $instruction2 = $this->getInstruction();
         
-        $payment = new Payment($instruction1);
+        $payment = new Payment($instruction1, 100);
         $instruction2->addPayment($payment);
     }
     
@@ -111,7 +111,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
     public function testGetPendingTransactionOnPayment()
     {
         $instruction = $this->getInstruction();
-        $payment = new Payment($instruction);
+        $payment = new Payment($instruction, 100);
         
         $this->assertNull($instruction->getPendingTransaction());
         
@@ -139,7 +139,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
     public function testHasPendingTransactionOnPayment()
     {
         $instruction = $this->getInstruction();
-        $payment = new Payment($instruction);
+        $payment = new Payment($instruction, 100);
         
         $this->assertFalse($instruction->hasPendingTransaction());
         

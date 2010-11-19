@@ -21,7 +21,7 @@ class Payment implements PaymentInterface
     protected $attentionRequired;
     protected $expired;
     
-    public function __construct(PaymentInstruction $paymentInstruction)
+    public function __construct(PaymentInstruction $paymentInstruction, $amount)
     {
         $this->approvedAmount = 0.0;
         $this->approvingAmount = 0.0;
@@ -31,7 +31,7 @@ class Payment implements PaymentInterface
         $this->reversingApprovedAmount = 0.0;
         $this->reversingDepositedAmount = 0.0;
         $this->state = self::STATE_NEW;
-        $this->targetAmount = 0.0;
+        $this->targetAmount = $amount;
         $this->transactions = new ArrayCollection;
         $this->attentionRequired = false;
         $this->expired = false;

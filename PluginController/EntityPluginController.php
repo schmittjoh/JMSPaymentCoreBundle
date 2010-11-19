@@ -122,7 +122,7 @@ class EntityPluginController extends PluginController
         return $transaction;
     }
     
-    protected function doCreatePayment(PaymentInstructionInterface $instruction)
+    protected function doCreatePayment(PaymentInstructionInterface $instruction, $amount)
     {
         if (!$instruction instanceof PaymentInstruction) {
             throw new Exception('This controller only supports Doctrine2 entities as PaymentInstruction objects.');
@@ -130,6 +130,7 @@ class EntityPluginController extends PluginController
         
         $class =& $this->options['payment_class'];
         $payment = new $class($instruction);
+        $payment->setTargetAmount($amount);
         
         return $payment;
     }
