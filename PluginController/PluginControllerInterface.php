@@ -38,7 +38,7 @@ interface PluginControllerInterface
      * - change Payment's state to FAILED
      * - decrease the approving amount in PaymentInstruction by the requested amount
      * 
-     * On PluginTimeoutException (including child classes), the implementation will:
+     * On TimeoutException (including child classes), the implementation will:
      * - keep approving amounts in Payment, and PaymentInstruction unchanged
      * - keep Payment's state unchanged
      * - set reasonCode to PluginInterface::REASON_CODE_TIMEOUT
@@ -56,6 +56,62 @@ interface PluginControllerInterface
      * @return Result
      */
     function approve($paymentId, $amount);
+    
+    /**
+     * This method executes an approveAndDeposit transaction against a payment
+     * (aka "sale" transaction or "authorization with capture"). 
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction's state is VALID
+     * - Payment's state is NEW, or APPROVING
+     * - PaymentInstruction only ever has one pending transaction
+     * 
+     * In addition, if the Payment is NEW, the implementation will ensure:
+     * - Payment's target amount is greater or equal to the requested amount
+     * 
+     * In addition, if the Payment is APPROVING, the implementation will ensure:
+     * - Payment's approving amount is equal to the requested amount
+     * - Payment's depositing amount is equal to the requested amount
+     * 
+     * For NEW payments, the implementation will:
+     * - set Payment's state to APPROVING
+     * - set Payment's approving amount to requested amount
+     * - set Payment's depositing amount to requested amount
+     * - increase PaymentInstruction's approving amount by requested amount
+     * - increase PaymentInstruction's depositing amount by requested amount
+     * - delegate the new transaction to an appropriate plugin implementation
+     * 
+     * For APPROVING payments, the implementation will:
+     * - delegate the pending transaction to an appropriate plugin implementation
+     * 
+     * On successful response, the implementation will:
+     * - set Payment's state to APPROVED
+     * - set Payment's approving amount to zero
+     * - set Payment's depositing amount to zero
+     * - decrease PaymentInstruction's approving amount by requested amount
+     * - decrease PaymentInstruction's depositing amount by requested amount
+     * - set Payment's approved amount to processed amount
+     * - set Payment's deposited amount to processed amount
+     * - increase PaymentInstruction's approved amount by processed amount
+     * - increase PaymentInstruction's deposited amount by processed amount
+     * 
+     * On unsuccessful response, the implementation will:
+     * - set Payment's state to FAILED
+     * - set Payment's approving amount to zero
+     * - set Payment's depositing amount to zero
+     * - decrease PaymentInstruction's approving amount by requested amount
+     * - decrease PaymentInstruction's depositing amount by requested amount
+     * 
+     * On TimeoutException (including child classes), the implementation will:
+     * - keep Payment's state unchanged
+     * - keep Payment's approving/depositing amounts unchanged
+     * - keep PaymentInstruction's approving/depositing amounts unchanged
+     * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
+     * 
+     * @param integer $paymentId
+     * @param float $amount
+     * @return Result
+     */
     function approveAndDeposit($paymentId, $amount);
     
     /**
@@ -138,7 +194,6 @@ interface PluginControllerInterface
      * - decrease depositing amount in PaymentInstruction by requested amount
      * - increase deposited amount in Payment by processed amount
      * - increase deposited amount in PaymentInstruction by processed amount
-     * - set Payment's state to DEPOSITED if deposited amount is greater or equal to approved amount
      * 
      * On unsuccessful transaction, the implementation will:
      * - reset depositing amount in Payment to zero

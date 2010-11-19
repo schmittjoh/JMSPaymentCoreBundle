@@ -242,6 +242,14 @@ abstract class PluginController implements PluginControllerInterface
 //        }
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    protected function doApproveAndDeposit(PaymentInterface $payment, $amount)
+    {
+        // FIXME
+    }
+    
     abstract protected function doCreatePayment($instruction, $amount);
 
     abstract protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction);
