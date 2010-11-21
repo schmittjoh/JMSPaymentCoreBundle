@@ -84,13 +84,23 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result->isRecoverable());
     }
     
-    public function testIsPaymentAttentionRequired()
+    public function testIsAttentionRequiredWithPayment()
     {
         $result = $this->buildResult();
         
-        $this->assertFalse($result->isPaymentRequiresAttention());
+        $this->assertFalse($result->isAttentionRequired());
         $result->getPayment()->setAttentionRequired(true);
-        $this->assertTrue($result->isPaymentRequiresAttention());
+        $this->assertTrue($result->isAttentionRequired());
+    }
+    
+    public function testIsAttentionRequiredWithCredit()
+    {
+        $transaction = $this->getTransaction(true);
+        $result = new Result($transaction, Result::STATUS_FAILED, 'foo');
+        
+        $this->assertFalse($result->isAttentionRequired());
+        $result->getCredit()->setAttentionRequired(true);
+        $this->assertTrue($result->isAttentionRequired());
     }
     
     /**
@@ -98,10 +108,9 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsPaymentAttentionRequiredThrowsExceptionWhenResultHasNoPayment()
     {
-        $transaction = $this->getTransaction(true);
-        $result = new Result($transaction, Result::STATUS_FAILED, 'foo');
+        $result = new Result(new PaymentInstruction(123.45, 'EUR', 'foo', new ExtendedData()), Result::STATUS_FAILED, 'foo');
         
-        $result->isPaymentRequiresAttention();
+        $result->isAttentionRequired();
     }
     
     protected function buildResult()

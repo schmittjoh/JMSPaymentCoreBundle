@@ -5,6 +5,14 @@ namespace Bundle\PaymentBundle\Plugin;
 use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
 
+/**
+ * This plugin must be implemented by all payment service plugins.
+ * 
+ * If a transaction does not make sense because the functionality is not provided
+ * by the payment backend system, you can throw a FunctionNotSupportedException.
+ * 
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 interface PluginInterface
 {
     const RESPONSE_CODE_SUCCESS = 'success';
@@ -12,7 +20,35 @@ interface PluginInterface
     const REASON_CODE_TIMEOUT = 'timeout';
     const REASON_CODE_INVALID = 'invalid';
     
+    /**
+     * This method executes an approve transaction.
+     * 
+     * By an approval, funds are reserved but no actual money is transferred. A
+     * subsequent deposit transaction must be performed to actually transfer the
+     * money.
+     * 
+     * A typical use case, would be Credit Card payments where funds are first
+     * authorized.
+     * 
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry Whether this is a retry transaction
+     * @return void
+     */
     function approve(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method executes a deposit transaction without prior approval
+     * (aka "sale", or "authorization with capture" transaction).
+     * 
+     * A typical use case for this method is an electronic check payments
+     * where authorization is not supported. It can also be used to deposit
+     * money in only one transaction, and thus saving processing fees for
+     * another transaction.
+     * 
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function approveAndDeposit(FinancialTransactionInterface $transaction, $retry);
     
     /**
@@ -30,11 +66,79 @@ interface PluginInterface
      * @return void
      */
     function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    
+    /**
+     * This method executes a credit transaction (aka refund transaction).
+     * 
+     * This method is called for dependent (has prior deposit), and independent
+     * credits. The associated payment can be retrieved via the Credit object
+     * associated with the transaction.
+     * 
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function credit(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method executes a deposit transaction (aka capture transaction).
+     * 
+     * This method requires that the Payment has already been approved in
+     * a prior transaction. 
+     * 
+     * A typical use case are Credit Card payments.
+     * 
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function deposit(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method cancels a previously approved payment.
+     * 
+     * @throws InvalidDataException if a partial amount is passed, but this is
+     *                              not supported by the payment backend system
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function reverseApproval(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method cancels a previously issued Credit.
+     * 
+     * @throws InvalidDataException if a partial amount is passed, but this is
+     *                              not supported by the payment backend system
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function reverseCredit(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method cancels a previously deposited amount.
+     * 
+     * @throws InvalidDataException if a partial amount is passed, but this is
+     *                              not supported by the payment backend system
+     * @param FinancialTransactionInterface $transaction
+     * @param boolean $retry
+     * @return void
+     */
     function reverseDeposit(FinancialTransactionInterface $transaction, $retry);
+    
+    /**
+     * This method validates the correctness, and existence of any account
+     * associated with the PaymentInstruction object.
+     * 
+     * This method performs a more thorough validation than checkPaymentInstruction, 
+     * in that it may actually connect to the payment backend system; no funds should
+     * be transferred, though. 
+     * 
+     * @throws Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not valid
+     * @param PaymentInstructionInterface $paymentInstruction
+     * @return void
+     */
     function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
     
     /**

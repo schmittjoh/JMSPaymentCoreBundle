@@ -14,6 +14,7 @@ interface CreditInterface
     function getCreditingAmount();
     function getCreditTransaction();
     function getId();
+    function getPayment();
     function getPaymentInstruction();
     function getPendingTransaction();
     function getReverseCreditTransactions();
@@ -21,7 +22,12 @@ interface CreditInterface
     function getState();
     function getTargetAmount();
     function hasPendingTransaction();
+    function isAttentionRequired();
+    function isIndependent();
     function setCreditedAmount($amount);
     function setCreditingAmount($amount);
+    function setAttentionRequired($boolean);
+    function setPayment(PaymentInterface $payment);
     function setReversingAmount($amount);
+    function setState($state);
 }

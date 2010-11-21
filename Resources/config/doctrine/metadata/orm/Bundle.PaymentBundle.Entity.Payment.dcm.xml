@@ -10,15 +10,20 @@
 		
 		<field name="approvedAmount" type="decimal" scale="5" />
 		<field name="approvingAmount" type="decimal" scale="5" />
+		<field name="creditedAmount" type="decimal" scale="5" />
+		<field name="creditingAmount" type="decimal" scale="5" />
 		<field name="depositedAmount" type="decimal" scale="5" />
 		<field name="depositingAmount" type="decimal" scale="5" />
 		<field name="expirationDate" type="datetime" />
 		<field name="reversingApprovedAmount" type="decimal" scale="5" />
+		<field name="reversingCreditedAmount" type="decimal" scale="5" />
 		<field name="reversingDepositedAmount" type="decimal" scale="5" />
 		<field name="state" type="smallint" />
 		<field name="targetAmount" type="decimal" scale="5" />
 		<field name="attentionRequired" type="boolean" />
 		<field name="expired" type="boolean" />
+		<field name="createdAt" type="datetime" />
+		<field name="updatedAt" type="datetime" />
 		
 		<many-to-one field="paymentInstruction" target-entity="PaymentInstruction" inversed-by="payments">
 			<join-column name="payment_instruction_id" 

@@ -19,6 +19,9 @@
 		<field name="depositingAmount" type="decimal" scale="5" />
 		<field name="extendedData" type="extended_payment_data" nullable="false" />
 		<field name="paymentSystemName" type="string" length="100" />
+		<field name="reversingApprovedAmount" type="decimal" scale="5" />
+		<field name="reversingCreditedAmount" type="decimal" scale="5" />
+		<field name="reversingDepositedAmount" type="decimal" scale="5" />
 		<field name="state" type="smallint" nullable="false" />
 		<field name="updatedAt" type="datetime" />
 		

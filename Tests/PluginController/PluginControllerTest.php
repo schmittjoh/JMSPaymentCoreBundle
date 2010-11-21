@@ -2,8 +2,9 @@
 
 namespace Bundle\PaymentBundle\Tests\PluginController;
 
+use Bundle\PaymentBundle\Entity\CreditInterface;
+use Bundle\PaymentBundle\Entity\Credit;
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
-
 use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
 use Bundle\PaymentBundle\Entity\ExtendedData;
 use Bundle\PaymentBundle\Entity\Payment;
@@ -18,6 +19,288 @@ use Bundle\PaymentBundle\PluginController\PluginController;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {
+    
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException
+     * @dataProvider getInvalidPaymentStatesForDependentCredit
+     */
+    public function testCreditOnlyAcceptsValidPaymentStatesOnDependentCredit($invalidState)
+    {
+        $controller = $this->getController();
+        
+        $credit = $this->getCredit(false);
+        $instruction = $credit->getPaymentInstruction();
+        $instruction->setState(PaymentInstruction::STATE_VALID);
+        $payment = $credit->getPayment();
+        $instruction->setDepositedAmount(100);
+        $payment->setDepositedAmount(100);
+        $payment->setState($invalidState);
+        
+        $this->callCredit($controller, array($credit, 10));
+    }
+    
+    public function getInvalidPaymentStatesForDependentCredit()
+    {
+        return array(
+            array(PaymentInterface::STATE_APPROVING),
+            array(PaymentInterface::STATE_CANCELED),
+            array(PaymentInterface::STATE_FAILED),
+            array(PaymentInterface::STATE_NEW),
+        );
+    }
+    
+    /**
+     * @dataProvider getTestAmountsForDependentCreditOnRetry
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreditOnlyAcceptsValidAmountsForDependentCreditOnRetry($amount)
+    {
+        $controller = $this->getController();
+        
+        $instruction = new PaymentInstruction(111, 'EUR', 'foo', new ExtendedData());
+        $instruction->setState(PaymentInstruction::STATE_VALID);
+        $credit = new Credit($instruction, 100);
+        $payment = new Payment($instruction, 10);
+        $payment->setState(Payment::STATE_APPROVED);
+        $credit->setPayment($payment);
+        $credit->setCreditingAmount(7.12);
+        
+        $instruction->setDepositedAmount(10);
+        $payment->setDepositedAmount(5.0);
+        $payment->setCreditingAmount(0.01);
+        $payment->setCreditedAmount(0.01);
+        $payment->setReversingDepositedAmount(0.01);
+        
+        $transaction = new FinancialTransaction();
+        $transaction->setTransactionType(FinancialTransaction::TRANSACTION_TYPE_CREDIT);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        $credit->addTransaction($transaction);
+        
+        $this->callCredit($controller, array($credit, $amount));
+    }
+    
+    public function getTestAmountsForDependentCreditOnRetry()
+    {
+        return array(
+            array(0.0),
+            array(0.01),
+            array(7.12),
+            array(100.0),
+        );
+    }
+    
+    /**
+     * @dataProvider getTestAmountsForDependentCredit
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreditOnlyAcceptsValidAmountsForDependentCredit($amount)
+    {
+        $controller = $this->getController();
+        
+        $instruction = new PaymentInstruction(111, 'EUR', 'foo', new ExtendedData());
+        $instruction->setState(PaymentInstruction::STATE_VALID);
+        $credit = new Credit($instruction, 100);
+        $payment = new Payment($instruction, 10);
+        $payment->setState(Payment::STATE_APPROVED);
+        $credit->setPayment($payment);
+        
+        $instruction->setDepositedAmount(10);
+        $payment->setDepositedAmount(5.0);
+        $payment->setCreditingAmount(0.01);
+        $payment->setCreditedAmount(0.01);
+        $payment->setReversingDepositedAmount(0.01);
+        
+        $this->callCredit($controller, array($credit, $amount));
+    }
+    
+    public function getTestAmountsForDependentCredit()
+    {
+        return array(
+            array(4.98),
+            array(4.99),
+            array(5.00),
+            array(12345),
+        );
+    }
+    
+    /**
+     * @dataProvider getTestAmountsForIndependentCreditRetryTransaction
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreditOnlyAcceptsValidAmountsForIndependentCreditsOnRetry($amount)
+    {
+        $controller = $this->getController();
+        
+        $credit = $this->getCredit();
+        $instruction = $credit->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        $instruction->setCreditingAmount(123.44);
+        
+        $transaction = new FinancialTransaction();
+        $transaction->setTransactionType(FinancialTransaction::TRANSACTION_TYPE_CREDIT);
+        $transaction->setState(FinancialTransaction::STATE_PENDING);
+        $credit->addTransaction($transaction);
+        
+        $this->callCredit($controller, array($credit, $amount));
+    }
+    
+    public function getTestAmountsForIndependentCreditRetryTransaction()
+    {
+        return array(
+            array(12.345),
+            array(123.43),
+            array(123.44),
+            array(123.45),
+            array(123.46),
+            array(123456),
+        );
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     * @dataProvider getTestAmountsForIndependentCredit
+     */
+    public function testCreditOnlyAcceptsValidAmountsForIndependentCredits($amount)
+    {
+        $controller = $this->getController();
+        
+        $instruction = new PaymentInstruction(150.0, 'EUR', 'foo', new ExtendedData());
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        $credit = new Credit($instruction, 50);
+        
+        $instruction->setDepositedAmount(10.0);
+        $instruction->setReversingDepositedAmount(0.01);
+        $instruction->setCreditedAmount(0.01);
+        $instruction->setCreditingAmount(0.01);
+        
+        $this->callCredit($controller, array($credit, $amount));
+    }
+    
+    public function getTestAmountsForIndependentCredit()
+    {
+        return array(
+            array(10.0),
+            array(9.99),
+            array(9.98),
+            array(50.01),
+            array(40.0),
+            array(1032),
+        );
+    }
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidCreditException
+     * @dataProvider getInvalidCreditStatesForCredit
+     */
+    public function testCreditDoesNotAcceptInvalidCreditState($invalidState)
+    {
+        $controller = $this->getController();
+        $credit = $this->getCredit();
+        $credit->setState($invalidState);
+        $credit->getPaymentInstruction()->setState(PaymentInstruction::STATE_VALID);
+        
+        $this->callCredit($controller, array($credit, 100));
+    }
+    
+    public function getInvalidCreditStatesForCredit()
+    {
+        return array(
+            array(CreditInterface::STATE_CANCELED),
+            array(CreditInterface::STATE_CREDITED),
+            array(CreditInterface::STATE_FAILED),
+        );
+    }
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @dataProvider getInvalidPaymentInstructionStatesForCredit
+     */
+    public function testCreditDoesNotAcceptInvalidPaymentInstructionState($invalidState)
+    {
+        $controller = $this->getController();
+        $credit = $this->getCredit();
+        $credit->getPaymentInstruction()->setState($invalidState);
+        
+        $this->callCredit($controller, array($credit, 100));
+    }
+    
+    public function getInvalidPaymentInstructionStatesForCredit()
+    {
+        return array(
+            array(PaymentInstructionInterface::STATE_CLOSED),
+            array(PaymentInstructionInterface::STATE_INVALID),
+            array(PaymentInstructionInterface::STATE_NEW),
+        );
+    }
+    
+    public function testCreateDependentCredit()
+    {
+        $controller = $this->getController();
+        $payment = $this->getPayment();
+        $payment->setState(PaymentInterface::STATE_APPROVED);
+        $payment->getPaymentInstruction()->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $controller
+            ->expects($this->once())
+            ->method('buildCredit')
+            ->with($this->equalTo($payment->getPaymentInstruction()), $this->equalTo(100))
+            ->will($this->returnValue($credit = new Credit($payment->getPaymentInstruction(), 10)))
+        ;
+        
+        $returnedCredit = $this->createDependentCredit($controller, array($payment, 100));
+        
+        $this->assertSame($credit, $returnedCredit);
+        $this->assertSame($payment, $credit->getPayment());
+    }
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException
+     * @dataProvider getInvalidPaymentStatesForCreateDependentCredit
+     */
+    public function testCreateDependentCreditDoesOnlyAcceptValidPayments($invalidState)
+    {
+        $controller = $this->getController();
+        $payment = $this->getPayment();
+        $payment->setState($invalidState);
+        $payment->getPaymentInstruction()->setState(PaymentInstructionInterface::STATE_VALID);
+        
+        $this->createDependentCredit($controller, array($payment, 100));
+    }
+    
+    public function getInvalidPaymentStatesForCreateDependentCredit()
+    {
+        return array(
+            array(PaymentInterface::STATE_APPROVING),
+            array(PaymentInterface::STATE_CANCELED),
+            array(PaymentInterface::STATE_FAILED),
+            array(PaymentInterface::STATE_NEW),
+        );
+    }
+    
+    /**
+     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @dataProvider getInvalidInstructionStatesForCreateDependentCredit
+     */
+    public function testCreateDependentCreditDoesOnlyAcceptValidPaymentInstruction($invalidState)
+    {
+        $controller = $this->getController();
+        $payment = $this->getPayment();
+        $payment->setState(PaymentInterface::STATE_APPROVED);
+        $payment->getPaymentInstruction()->setState($invalidState);
+        
+        $this->createDependentCredit($controller, array($payment, 100));
+    }
+    
+    public function getInvalidInstructionStatesForCreateDependentCredit()
+    {
+        return array(
+            array(PaymentInstructionInterface::STATE_CLOSED),
+            array(PaymentInstructionInterface::STATE_INVALID),
+            array(PaymentInstructionInterface::STATE_NEW),
+        );
+    }
+    
     public function testApproveAndDepositPluginReturnsSuccessfulResponseInRetryTransaction()
     {
         $controller = $this->getController();
@@ -531,6 +814,31 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         return $plugin;
     }
     
+    protected function getCredit($independent = true, $mockMethods = array(), $arguments = array())
+    {
+        $arguments = $arguments + array(
+            $this->getInstruction(),
+            123.45,
+        );
+        
+        if (count($mockMethods) === 0) {
+            $credit = new Credit($arguments[0], $arguments[1]);
+        }
+        else {
+            $credit = $this->getMock(
+                'Bundle\PaymentBundle\Entity\Credit',
+                $mockMethods,
+                $arguments
+            );
+        }
+        
+        if (false === $independent) {
+            $credit->setPayment(new Payment($arguments[0], 200));
+        }
+        
+        return $credit;
+    }
+    
     protected function getPayment($mockMethods = array(), $arguments = array())
     {
         $arguments = $arguments + array(
@@ -600,9 +908,25 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         return $reflection->invokeArgs($controller, $args);
     }
     
+    protected function callCredit(PluginController $controller, array $args)
+    {
+        $reflection = new \ReflectionMethod($controller, 'doCredit');
+        $reflection->setAccessible(true);
+        
+        return $reflection->invokeArgs($controller, $args);
+    }
+    
     protected function callApproveAndDeposit(PluginController $controller, array $args)
     {
         $reflection = new \ReflectionMethod($controller, 'doApproveAndDeposit');
+        $reflection->setAccessible(true);
+        
+        return $reflection->invokeArgs($controller, $args);
+    }
+    
+    protected function createDependentCredit(PluginController $controller, array $args)
+    {
+        $reflection = new \ReflectionMethod($controller, 'doCreateDependentCredit');
         $reflection->setAccessible(true);
         
         return $reflection->invokeArgs($controller, $args);

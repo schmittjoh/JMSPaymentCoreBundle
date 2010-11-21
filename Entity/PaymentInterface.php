@@ -14,6 +14,8 @@ interface PaymentInterface
     function getApprovedAmount();
     function getApproveTransaction();
     function getApprovingAmount();
+    function getCreditedAmount();
+    function getCreditingAmount();
     function getDepositedAmount();
     function getDepositingAmount();
     function getDepositTransactions();
@@ -24,6 +26,7 @@ interface PaymentInterface
     function getReverseApprovalTransactions();
     function getReverseDepositTransactions();
     function getReversingApprovedAmount();
+    function getReversingCreditedAmount();
     function getReversingDepositedAmount();
     function getState();
     function getTargetAmount();
@@ -33,11 +36,14 @@ interface PaymentInterface
     function setApprovedAmount($amount);
     function setApprovingAmount($amount);
     function setAttentionRequired($boolean);
+    function setCreditedAmount($amount);
+    function setCreditingAmount($amount);
     function setDepositedAmount($amount);
     function setDepositingAmount($amount);
     function setExpirationDate(\DateTime $date);
     function setExpired($boolean);
     function setReversingApprovedAmount($amount);
+    function setReversingCreditedAmount($amount);
     function setReversingDepositedAmount($amount);
     function setState($state);
 }

@@ -7,6 +7,14 @@ use Bundle\PaymentBundle\Entity\CreditInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
 use Bundle\PaymentBundle\Entity\PaymentInterface;
 
+/**
+ * This interface is implement by all payment plugin controllers.
+ * 
+ * When you have a need to implement your own plugin controller, it is typically
+ * better to extend the PluginController base class.
+ * 
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 interface PluginControllerInterface
 {
     /**
@@ -145,7 +153,34 @@ interface PluginControllerInterface
      * @return void
      */
     function closePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    
+    /**
+     * This method will create a dependent credit object linked to the PaymentInstruction
+     * associated with the given payment.
+     * 
+     * The credit object can be used to execute credit transactions against an 
+     * appropriate payment plugin.
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction's state is VALID
+     * - Payment's state is APPROVED, or EXPIRED
+     * 
+     * @param integer $paymentId
+     * @param float $amount
+     * @return CreditInterface
+     */
     function createDependentCredit($paymentId, $amount);
+    
+    /**
+     * This method will create an independent credit object.
+     * 
+     * The implementation will ensure that the PaymentInstruction's state
+     * is VALID.
+     * 
+     * @param integer $paymentInstructionId
+     * @param float $amount
+     * @return CreditInterface
+     */
     function createIndependentCredit($paymentInstructionId, $amount);
     
     /**
@@ -154,10 +189,73 @@ interface PluginControllerInterface
      * 
      * @param integer $paymentInstructionId
      * @param float $amount
-     * @return PaymentInstruction
+     * @return PaymentInterface
      */
     function createPayment($paymentInstructionId, $amount);
+    
+    /**
+     * This method creates a PaymentInstruction.
+     * 
+     * If the instruction is not yet VALID, the implementation will call
+     * validatePaymentInstruction first.
+     * 
+     * @param PaymentInstructionInterface $paymentInstruction
+     * @return void
+     */
     function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    
+    /**
+     * This method executes a credit transaction against a Credit.
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction's state is VALID
+     * - Credit's state is NEW (retry: false), or CREDITING (retry: true)
+     * - Assuming retry = false: requested amount <= PaymentInstrunction.depositedAmount 
+     * 	                                        - PaymentInstruction.reversingDepositedAmount
+     * 	                                        - PaymentInstruction.creditingAmount 
+     * 	                                        - PaymentInstruction.creditedAmount
+     * - Assuming retry = true: requested amount <= PaymentInstruction.creditingAmount
+     * - Assuming retry = false: requested amount <= Credit.targetAmount
+     * - Assuming retry = true: requested amount == Credit.creditingAmount
+     * 
+     * For a dependent credit, the implementation will further ensure that:
+     * - Payment's state is either APPROVED, or EXPIRED
+     * - Assuming retry = false: requested amount <= Payment.depositedAmount - Payment.reversingDepositedAmount - Payment.creditingAmount - Payment.creditedAmount
+     * - Assuming retry = true: requested amount <= Payment.creditingAmount
+     * 
+     * The implementation will:
+     * - increase PaymentInstruction's crediting amount by requested amount
+     * - increase Payment's crediting amount by requested amount
+     * - set Credit's crediting amount to requested amount
+     * - set Credit's state to CREDITING
+     * 
+     * On successful response, the implementation will:
+     * - set transaction's state to SUCCESS
+     * - set Credit's state to CREDITED
+     * - increase PaymentInstruction's credited amount by processed amount
+     * - increase Payment's credited amount by processed amount
+     * - set Credit's credited amount to processed amount
+     * - decrease PaymentInstruction's crediting amount by requested amount
+     * - decrease Payment's crediting amount by requested amount
+     * - set Credit's crediting amount to zero
+     * 
+     * On unsuccessful response, the implementation will:
+     * - set transaction's state to FAILED
+     * - set Credit's state to FAILED
+     * - set Credit's crediting amount to zero
+     * - decrease Payment's crediting amount by requested amount
+     * - decrease PaymentInstruction's crediting amount by requested amount
+     * 
+     * On PluginTimeoutException, the implementation will:
+     * - set transaction's state to PENDING
+     * - keep amounts in Payment, Credit, and PaymentInstruction unchanged
+     * 
+     * All changes to Payment objects are only applicable to dependent Credit objects. 
+     * 
+     * @param integer $creditId
+     * @param float $amount
+     * @return Result
+     */
     function credit($creditId, $amount);
     
     // FIXME: I guess it's not strictly necessary to provide a common interface for deletion, postponing this
@@ -216,11 +314,46 @@ interface PluginControllerInterface
      * @return Result
      */
     function deposit($paymentId, $amount);
-    function editCredit(CreditInterface $credit, $processAmount, $reasonCode, $responseCode, $referenceNumber, ExtendedDataInterface $data);
-    function editPayment(PaymentInterface $payment, $processAmount, $reasonCode, $responseCode, $referenceNumber, ExtendedDataInterface $data);
-    function editPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    
+    /**
+     * This method retrieves a Credit object.
+     * 
+     * This method should also retrieve the associated PaymentInstruction;
+     * other associated objects should not be retrieved.
+     * 
+     * If the responsible plugin implements the QueryablePluginInterface,
+     * the credit will be synchronized with the external data, and the updated
+     * Credit will be returned.
+     * 
+     * @param integer $creditId
+     * @return CreditInterface
+     */
     function getCredit($creditId);
+    
+    /**
+     * This method retrieves a Payment object.
+     * 
+     * This method should also retrieve the associated PaymentInstruction; 
+     * other associated objects should not be retrieved.
+     * 
+     * If the responsible plugin implements the QueryablePluginInterface, the
+     * payment will be synchronized with the external data, and the updated
+     * Payment will be returned.
+     *
+     * @param integer $paymentId
+     * @return PaymentInterface
+     */
     function getPayment($paymentId);
+    
+    /**
+     * This method retrieves the PaymentInstruction with given identifier.
+     * 
+     * Associated Payment, Credit, and ExtendedData should also be retrieved.
+     * 
+     * @param integer $paymentInstructionId
+     * @param boolean $maskSensitiveData
+     * @return PaymentInstructionInterface
+     */
     function getPaymentInstruction($paymentInstructionId, $maskSensitiveData = true);
     
     /**
@@ -234,8 +367,140 @@ interface PluginControllerInterface
      * @return float|null Returns the amount that may be consumed, or null if the amount could not be retrieved
      */
     function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    
+    /**
+     * This method will execute a reverseApproval transaction against Payment.
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction's state is VALID
+     * - Payment's state is APPROVED
+     * 
+     * For non-retry transactions, the implementation will ensure that:
+     * - requested amount <= PaymentInstruction.approvedAmount - PaymentInstruction.reversingApprovedAmount
+     * - requested amount <= Payment.approvedAmount
+     * - Payment.depositedAmount == 0 
+     * - Payment.depositingAmount == 0
+     * 
+     * For retry transactions, the implementation will ensure that:
+     * - requested amount <= PaymentInstruction.reversingApprovedAmount
+     * - requested amount == Payment.reversingApprovedAmount
+     * 
+     * The implementation will:
+     * - set Payment's reversing approved amount to requested amount
+     * - increase PaymentInstruction's reversing approved amount by requested amount
+     * 
+     * On successful response, the implementation will:
+     * - set Transaction's state to SUCCESS
+     * - set reason code to PluginInterface::REASON_CODE_SUCCESS
+     * - set Payment's reversing approved amount to zero
+     * - decrease PaymentInstruction's reversing approved amount by requested amount
+     * - decrease Payment's approved amount by processed amount
+     * - decrease PaymentInstruction's approved amount by processed amount
+     * 
+     * On unsuccessful response, the implementation will:
+     * - set Transaction's state to FAILED
+     * - set Payment's reversing approved amount to zero
+     * - decrease PaymentInstruction's reversing approved amount by requested amount
+     * 
+     * On PluginTimeoutException, the implementation will:
+     * - set Transaction's state to PENDING
+     * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
+     * - keep all amounts in Payment, and PaymentInstruction unchanged
+     * 
+     * @param integer $paymentId
+     * @param float $amount
+     * @return Result
+     */
     function reverseApproval($paymentId, $amount);
+    
+    /**
+     * This method executes a reverseCredit transaction against a Credit.
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction is in STATE_VALID
+     * - Credit is in STATE_CREDITED
+     * - Ensure that if there is an open transaction, it is a reverseCredit transaction
+     *   belonging to the same Credit container
+     * - In non-retry transactions: requested amount <= PaymentInstruction.creditedAmount - PaymentInstruction.reversingCreditedAmount
+     * - In non-retry transactions: requested amount <= Credit.creditedAmount
+     * - In retry transactions: requested amount <= PaymentInstruction.reversingCreditedAmount
+     * - In retry transactions: requested amount == Credit.reversingCreditedAmount
+     * 
+     * For dependent credits, the implementation will further ensure that:
+     * - Payment is in STATE_APPROVED, or STATE_EXPIRED
+     * - In non-retry transactions: requested amount <= Payment.creditedAmount - Payment.reversingCreditedAmount
+     * - In retry transactions: requested amount <= Payment.reversingCreditedAmount
+     * 
+     * The implementation will:
+     * - set Credit.reversingCreditedAmount to requested amount
+     * - increase Payment.reversingCreditedAmount by requested amount
+     * - increase PaymentInstruction.reversingCreditedAmount by requested amount
+     * 
+     * On a successful response, the implementation will:
+     * - set transaction's state to SUCCESS
+     * - set reason code to PluginInterface::REASON_CODE_SUCCESS
+     * - set Credit.reversingCreditedAmount to zero
+     * - decrease Payment.reversingCreditedAmount by requested amount
+     * - decrease PaymentInstruction.reversingCreditedAmount by requested amount
+     * - decrease Payment.creditedAmount by processed amount
+     * - decrease PaymentInstruction.creditedAmount by processed amount
+     * 
+     * On a unsuccessful response, the implementation will:
+     * - set transaction's state to FAILED
+     * - set Credit.reversingCreditedAmount to zero
+     * - decrease Payment.reversingCreditedAmount by requested amount
+     * - decrease PaymentInstruction.reversingCreditedAmount by requested amount
+     * 
+     * On a PluginTimeoutException, the implementation will:
+     * - set transaction's state to PENDING
+     * - keep all amounts in Payment, Credit, and PaymentInstruction unchanged
+     * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
+     * 
+     * @param integer $creditId
+     * @param float $amount
+     * @return Result
+     */
     function reverseCredit($creditId, $amount);
+    
+    /**
+     * This method executes a reverseDeposit transaction against a Payment.
+     * 
+     * The implementation will ensure that:
+     * - PaymentInstruction is in STATE_VALID
+     * - Payment is in STATE_APPROVED
+     * - any pending transaction is belonging to this payment, and is a reverseDeposit transaction
+     * - for non-retry transactions: requested amount <= PaymentInstruction.depositedAmount - PaymentInstruction.reversingDepositedAmount
+     * - for non-retry transactions: requested amount <= Payment.depositedAmount
+     * - for retry transactions: requested amount <= PaymentInstruction.reversingDepositedAmount
+     * - for retry transactions: requested amount == Payment.reversingDepositedAmount
+     * 
+     * The implementation will:
+     * - set Payment.reversingDepositedAmount to requested amount
+     * - increase PaymentInstruction.reversingDepositedAmount by requested amount
+     * - delegate the transaction to an appropriate plugin
+     * 
+     * On a successful response, the implementation will:
+     * - set Payment.reversingDepositedAmount to zero
+     * - decrease PaymentInstruction.reversingDepositedAmount by requested amount
+     * - decrease Payment.depositedAmount by processed amount
+     * - decrease PaymentInstruction.depositedAmount by processed amount
+     * - set transaction's state to SUCCESS
+     * - set reason code to PluginInterface::REASON_CODE_SUCCESS
+     * 
+     * On an unsuccessful response, the implementation will:
+     * - set Payment.reversingDepositedAmount to zero
+     * - decrease PaymentInstruction.reversingDepositedAmount by requested amount
+     * - set transaction's state to FAILED
+     * 
+     * On PluginTimeoutException, the implementation will:
+     * - set transaction's state to PENDING
+     * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
+     * - keep all amounts in Payment, and PaymentInstruction unchanged
+     * 
+     * @param integer $paymentId
+     * @param float $amount
+     * @return Result
+     */
     function reverseDeposit($paymentId, $amount);
     
     /**

@@ -6,17 +6,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Credit implements CreditInterface
 {
+    protected $attentionRequired;
+    protected $createdAt;
     protected $creditedAmount;
     protected $creditingAmount;
     protected $id;
+    protected $payment;
     protected $paymentInstruction;
     protected $transactions;
     protected $reversingAmount;
     protected $state;
     protected $targetAmount;
+    protected $updatedAt;
     
     public function __construct(PaymentInstructionInterface $paymentInstruction, $amount)
     {
+        $this->attentionRequired = false;
         $this->creditedAmount = 0.0;
         $this->creditingAmount = 0.0;
         $this->paymentInstruction = $paymentInstruction;
@@ -60,6 +65,11 @@ class Credit implements CreditInterface
         return $this->id;
     }
     
+    public function getPayment()
+    {
+        return $this->payment;
+    }
+    
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;
@@ -98,6 +108,31 @@ class Credit implements CreditInterface
         return $this->targetAmount;
     }
     
+    public function getTransactions()
+    {
+        return $this->transactions;
+    }
+    
+    public function isAttentionRequired()
+    {
+        return $this->attentionRequired;
+    }
+    
+    public function isIndependent()
+    {
+        return null === $this->payment;
+    }
+    
+    public function setAttentionRequired($boolean)
+    {
+        $this->attentionRequired = !!$boolean;
+    }
+    
+    public function setPayment(PaymentInterface $payment)
+    {
+        $this->payment = $payment;
+    }
+    
     public function hasPendingTransaction()
     {
         return null !== $this->getPendingTransaction();
@@ -117,4 +152,9 @@ class Credit implements CreditInterface
     {
         $this->reversingAmount = $amount;
     }    
+    
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
 }

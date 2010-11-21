@@ -18,9 +18,12 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals(0.0, $payment->getApprovedAmount());
         $this->assertEquals(0.0, $payment->getApprovingAmount());
+        $this->assertEquals(0.0, $payment->getCreditedAmount());
+        $this->assertEquals(0.0, $payment->getCreditingAmount());
         $this->assertEquals(0.0, $payment->getDepositedAmount());
         $this->assertEquals(0.0, $payment->getDepositingAmount());
         $this->assertEquals(0.0, $payment->getReversingApprovedAmount());
+        $this->assertEquals(0.0, $payment->getReversingCreditedAmount());
         $this->assertEquals(0.0, $payment->getReversingDepositedAmount());
         $this->assertEquals(Payment::STATE_NEW, $payment->getState());
         $this->assertEquals(123.45, $payment->getTargetAmount());
@@ -239,12 +242,18 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
             array('ApprovingAmount', 583, 0.0),
             array('ApprovedAmount', 123.45, 0.0),
             array('ApprovedAmount', 583, 0.0),
+            array('CreditedAmount', 123.45, 0.0),
+            array('CreditedAmount', 533, 0.0),
+            array('CreditingAmount', 452.64, 0.0),
+            array('CreditingAmount', 567, 0.0),
             array('DepositedAmount', 123.45, 0.0),
             array('DepositedAmount', 583, 0.0),
             array('DepositingAmount', 123.45, 0.0),
             array('DepositingAmount', 583, 0.0),
             array('ReversingApprovedAmount', 123.45, 0.0),
             array('ReversingApprovedAmount', 583, 0.0),
+            array('ReversingCreditedAmount', 252.63, 0.0),
+            array('ReversingCreditedAmount', 5234, 0.0),
             array('ReversingDepositedAmount', 123.45, 0.0),
             array('ReversingDepositedAmount', 583, 0.0),
         );

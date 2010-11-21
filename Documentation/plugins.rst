@@ -17,6 +17,7 @@ A plugin may implement a list of financial transactions:
 - credit (aka refund) transactions
 - reversals of above transactions 
 
+
 Some of these transactions might not make sense for some plugins because the respective
 payment backend system simply may not provide similar capabilities. In these cases,
 you still have to implement the method, but you are free to throw a ``FunctionNotSupportedException``.
@@ -44,6 +45,46 @@ The following is a list of sample plugin types, and recommended methods to imple
 +----------------------------+-------------+------------------+------------------+
 | reverseCredit              |      x      |        \-        |        \-        |
 +----------------------------+-------------+------------------+------------------+
+
+
+Available Exceptions
+--------------------
+The following lists available exceptions which can be thrown from plugins, and the
+associated changes the plugin controller will perform. Of course, you can also add
+your own exceptions, but it is recommend that you sub-class an existing exception when
+doing so. All exceptions are in the namespace ``Bundle\PaymentBundle\Plugin\Exception``.
+
++------------------------------------+-----------------------------+---------------------------+
+| Class                              | Description                 | Payment Plugin Controller |
+|                                    |                             | Interpretation            |
++====================================+=============================+===========================+
+| Exception                          | Base exception used by all  | Causes any transaction to |
+|                                    | exceptions thrown from      | be rolled back. Exception |
+|                                    | plugins.                    | will be re-thrown.        |
++------------------------------------+-----------------------------+---------------------------+
+| FunctionNotSupportedException      | This exception is thrown    | In most cases, this causes|
+|                                    | whenever a method on the    | any transactions to be    |
+|                                    | interface is not supported  | rolled back. Notable      |
+|                                    | by the plugin.              | exceptions to this rule:  |
+|                                    |                             | checkPaymentInstruction,  |
+|                                    |                             | validatePaymentInstruction|
++------------------------------------+-----------------------------+---------------------------+
+| InvalidDataException               | This exception is thrown    | Causes any transaction to |
+|                                    | whenever the plugin realizes| be rolled back. Exception |
+|                                    | that the data associated    | will be re-thrown.        |
+|                                    | with the transaction is     |                           |
+|                                    | invalid.                    |                           |
++------------------------------------+-----------------------------+---------------------------+
+| InvalidPaymentInstructionException | This exception is typically | Causes PaymentInstruction |
+|                                    | thrown from within either   | to be set to              |
+|                                    | checkPaymentInstruction, or | STATE_INVALID.            |
+|                                    | validatePaymentInstruction. |                           |
++------------------------------------+-----------------------------+---------------------------+
+| TimeoutException                   | This exception is thrown    | Sets the transaction to   |
+|                                    | when there is an enduring   | STATE_PENDING, and        |
+|                                    | communicaton problem with   | converts the exception to |
+|                                    | the payment backend system. | a Result object.          |
++------------------------------------+-----------------------------+---------------------------+
 
 
 Implementing a Custom Plugin

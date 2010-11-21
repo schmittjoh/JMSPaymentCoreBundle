@@ -2,20 +2,22 @@
 
 namespace Bundle\PaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\Util\Number;
+use Bundle\PaymentBundle\Entity\CreditInterface;
+use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
 use Bundle\PaymentBundle\Entity\PaymentInterface;
 use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
-use Bundle\PaymentBundle\PluginController\Exception\Exception;
-use Bundle\PaymentBundle\PluginController\Exception\PluginNotFoundException;
-use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException;
-use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException;
 use Bundle\PaymentBundle\Plugin\PluginInterface;
 use Bundle\PaymentBundle\Plugin\QueryablePluginInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
-use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
 use Bundle\PaymentBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
+use Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
+use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use Bundle\PaymentBundle\PluginController\Exception\Exception;
+use Bundle\PaymentBundle\PluginController\Exception\InvalidCreditException;
+use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException;
+use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException;
+use Bundle\PaymentBundle\PluginController\Exception\PluginNotFoundException;
+use Bundle\PaymentBundle\Util\Number;
 
 abstract class PluginController implements PluginControllerInterface
 {
@@ -81,6 +83,9 @@ abstract class PluginController implements PluginControllerInterface
         return $this->doCreatePayment($instruction, $amount);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction)
     {
         if (PaymentInstructionInterface::STATE_NEW === $paymentInstruction->getState()) {
@@ -94,7 +99,7 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be VALID, or NEW.');
         }
         
-        return $this->doCreatePaymentInstruction($paymentInstruction);
+        $this->doCreatePaymentInstruction($paymentInstruction);
     }
     
     public function getPaymentInstruction($instructionId, $maskSensitiveData = true)
@@ -155,6 +160,8 @@ abstract class PluginController implements PluginControllerInterface
         
         return new $class($instruction, $status, $reasonCode);
     }
+    
+    abstract protected function buildCredit(PaymentInstructionInterface $paymentInstruction, $amount);
     
     abstract protected function buildFinancialTransaction();
     
@@ -232,14 +239,6 @@ abstract class PluginController implements PluginControllerInterface
             
             return $result;
         }
-        // FIXME: These should be catched, and rethrown by the controller which actually implements Transaction Management
-        //        such as EntityPluginController
-//        catch (PluginException $failed) {
-//            // FIXME: rollback the entire changes
-//            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_UNKNOWN, $transaction->getReasonCode());
-//            $result->setPluginException($failed);
-//            $result->setPaymentRequiresAttention();
-//        }
     }
     
     /**
@@ -341,9 +340,156 @@ abstract class PluginController implements PluginControllerInterface
         }
     }
     
+    protected function doCreateDependentCredit(PaymentInterface $payment, $amount)
+    {
+        $instruction = $payment->getPaymentInstruction();
+        
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('PaymentInstruction\'s state must be VALID.');
+        }
+        
+        $paymentState = $payment->getState();
+        if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+            throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
+        }
+        
+        $credit = $this->buildCredit($instruction, $amount);
+        $credit->setPayment($payment);
+        
+        return $credit;
+    }
+    
+    protected function doCreateIndependentCredit(PaymentInstructionInterface $instruction, $amount)
+    {
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('PaymentInstruction\'s state must be VALID.');
+        }
+        
+        return $this->buildCredit($instruction, $amount);
+    }
+    
     abstract protected function doCreatePayment($instruction, $amount);
 
     abstract protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction);
+    
+    protected function doCredit(CreditInterface $credit, $amount)
+    {
+        $instruction = $credit->getPaymentInstruction();
+        
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
+        }
+        
+        $creditState = $credit->getState();
+        if (CreditInterface::STATE_NEW === $creditState) {
+            if (1 === Number::compare($amount, $max = $instruction->getDepositedAmount() - $instruction->getReversingDepositedAmount() - $instruction->getCreditingAmount() - $instruction->getCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $max));
+            }
+            
+            if (1 === Number::compare($amount, $credit->getTargetAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Credit restriction).', $credit->getTargetAmount()));
+            }
+            
+            if (false === $credit->isIndependent()) {
+                $payment = $credit->getPayment();
+                $paymentState = $payment->getState();
+                if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+                    throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
+                }
+                
+                if (1 === Number::compare($amount, $max = $payment->getDepositedAmount() - $payment->getReversingDepositedAmount() - $payment->getCreditingAmount() - $payment->getCreditedAmount())) {
+                    throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $max));
+                }
+            }
+            
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_CREDIT);
+            $transaction->setRequestedAmount($amount);
+            $credit->addTransaction($transaction);
+            
+            $credit->setCreditingAmount($amount);
+            $instruction->setCreditingAmount($instruction->getCreditingAmount() + $amount);
+            
+            if (false === $credit->isIndependent()) {
+                $payment->setCreditingAmount($payment->getCreditingAmount() + $amount);
+            }
+            
+            $retry = false;
+        }
+        else if (CreditInterface::STATE_CREDITING === $creditState) {
+            if (1 === Number::compare($amount, $instruction->getCreditingAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getCreditingAmount()));
+            }
+            if (0 !== Number::compare($amount, $credit->getCreditingAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount must be equal to %.2f (Credit restriction).', $credit->getCreditingAmount()));
+            }
+            
+            if (false === $credit->isIndependent()) {
+                $payment = $credit->getPayment();
+                $paymentState = $payment->getState();
+                if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+                    throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
+                }
+                
+                if (1 === Number::compare($amount, $payment->getCreditingAmount())) {
+                    throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $payment->getCreditingAmount()));
+                }
+            }
+            
+            $transaction = $credit->getCreditTransaction();
+            
+            $retry = true;
+        }
+        else {
+            throw new InvalidCreditException('Credit\'s state must be NEW, or CREDITING.');
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->credit($transaction, $retry);
+            $processedAmount = $transaction->getProcessedAmount();
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+                $credit->setState(CreditInterface::STATE_CREDITED);
+                
+                $credit->setCreditingAmount(0.0);
+                $credit->setCreditedAmount($processedAmount);
+                $instruction->setCreditingAmount($instruction->getCreditingAmount() - $amount);
+                $instruction->setCreditedAmount($instruction->getCreditedAmount() + $processedAmount);
+                
+                if (false === $credit->isIndependent()) {
+                    $payment->setCreditingAmount($payment->getCreditingAmount() - $amount);
+                    $payment->setCreditedAmount($payment->getCreditedAmount() + $processedAmount);
+                }
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+                $credit->setState(CreditInterface::STATE_FAILED);
+                
+                $credit->setCreditingAmount(0.0);
+                $instruction->setCreditingAmount($instruction->getCreditingAmount() - $amount);
+                
+                if (false === $credit->isIndependent()) {
+                    $payment->setCreditingAmount($payment->getCreditingAmount() - $amount);
+                }
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+            
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+    }
     
     protected function doDeposit(PaymentInterface $payment, $amount)
     {
@@ -441,6 +587,293 @@ abstract class PluginController implements PluginControllerInterface
     }    
     
     abstract protected function doGetPaymentInstruction($instructionId);
+    
+    protected function doReverseApproval(PaymentInterface $payment, $amount)
+    {
+        $instruction = $payment->getPaymentInstruction();
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvaliPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
+        }
+        
+        if (PaymentInterface::STATE_APPROVED !== $payment->getState()) {
+            throw new InvalidPaymentException('Payment must be in STATE_APPROVED.');
+        }
+        
+        $transaction = $instruction->getPendingTransaction();
+        if (null === $transaction) {
+            if (1 === Number::compare($amount, $max = $instruction->getApprovedAmount() - $instruction->getReversingApprovedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $max));
+            }
+            
+            if (1 === Number::compare($amount, $payment->getApprovedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $payment->getApprovedAmount()));
+            }
+            
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL);
+            $transaction->setRequestedAmount($amount);
+            $payment->addTransaction($transaction);
+            
+            $payment->setReversingApprovedAmount($amount);
+            $instruction->setReversingApprovedAmount($instruction->getReversingApprovedAmount() + $amount);
+            
+            $retry = false;
+        }
+        else {
+            if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL !== $transaction->getState()) {
+                throw new InvalidPaymentInstructionException('PaymentInstruction has another pending transaction.');
+            }
+            
+            if ($payment->getId() !== $transaction->getPayment()->getId()) {
+                throw new \RuntimeException('Pending transaction belongs to another Payment.');
+            }
+            
+            if (1 === Number::compare($amount, $instruction->getReversingApprovedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getReversingApprovedAmount()));
+            }
+            
+            if (0 !== Number::compare($amount, $payment->getReversingApprovedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount must be equal to %.2f (Payment restriction).', $payment->getReversingApprovedAmount()));
+            }
+            
+            $retry = true;
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->reverseApproval($transaction, $retry);
+            $processedAmount = $transaction->getProcessedAmount();
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+                
+                $payment->setReversingApprovedAmount(0.0);
+                $instruction->setReversingApprovedAmount($instruction->getReversingApprovedAmount() - $amount);
+                
+                $payment->setApprovedAmount($payment->getApprovedAmount() - $processedAmount);
+                $instruction->setApprovedAmount($instruction->getApprovedAmount() - $processedAmount);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+                
+                $payment->setReversingApprovedAmount(0.0);
+                $instruction->setReversingApprovedAmount($instruction->getReversingApprovedAmount() - $amount);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+            
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+    }
+    
+    protected function doReverseCredit(CreditInterface $credit, $amount)
+    {
+        $instruction = $credit->getPaymentInstruction();
+        
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
+        }
+        
+        if (CreditInterface::STATE_CREDITED !== $credit->getState()) {
+            throw new InvalidCreditException('Credit must be in STATE_CREDITED.');
+        }
+        
+        if (false === $credit->isIndependent()) {
+            $payment = $credit->getPayment();
+            if (PaymentInterface::STATE_APPROVED !== $payment->getState() && PaymentInterface::STATE_EXPIRED !== $payment->getState()) {
+                throw new InvalidPaymentException('Payment must be in STATE_APPROVED, or STATE_EXPIRED.');
+            }
+        }
+        
+        $transaction = $instruction->getPendingTransaction();
+        if (null === $transaction) {
+            if (1 === Number::compare($amount, $max = $instruction->getCreditedAmount() - $instruction->getReversingCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $max));
+            }
+            
+            if (1 === Number::compare($amount, $credit->getCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Credit restriction).', $credit->getCreditedAmount()));
+            } 
+            
+            if (false === $credit->isIndependent() && 1 === Number::compare($amount, $max = $payment->getCreditedAmount() - $payment->getReversingCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $max));
+            }
+            
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_CREDIT);
+            $transaction->setRequestedAmount($amount);
+            $credit->addTransaction($transaction);
+            
+            $credit->setReversingCreditedAmount($amount);
+            $instruction->setReversingCreditedAmount($instruction->getReversingCreditedAmount() + $amount);
+            
+            if (false === $credit->isIndependent()) {
+                $payment->setReversingCreditedAmount($payment->getReversingCreditedAmount() + $amount);
+            }
+            
+            $retry = false;
+        }
+        else {
+            if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_CREDIT !== $transaction->getTransactionType()) {
+                throw new InvalidPaymentInstructionException('Pending transaction is not of TYPE_REVERSE_CREDIT.');
+            }
+            
+            if ($credit->getId() !== $transaction->getCredit()->getId()) {
+                throw new InvalidCreditException('Pending transaction belongs to another Credit.');
+            }
+            
+            if (1 === Number::compare($amount, $instruction->getReversingCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getReversingCreditedAmount()));
+            }
+            
+            if (0 !== Number::compare($amount, $credit->getReversingCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount must be equal to %.2f (Credit restriction).', $credit->getReversingCreditedAmount()));
+            }
+            
+            if (false === $credit->isIndependent() && 1 === Number::compare($amount, $payment->getReversingCreditedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $payment->getReversingCreditedAmount()));
+            }
+            
+            $retry = true;
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->reverseCredit($transaction, $amount);
+            $processedAmount = $transaction->getProcessedAmount();
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+                
+                $credit->setReversingCreditedAmount(0.0);
+                $instruction->setReversingCreditedAmount($instruction->getReversingCreditedAmount() - $amount);
+                $credit->setCreditedAmount($credit->getCreditedAmount() - $processedAmount);
+                $instruction->setCreditedAmount($instruction->getCreditedAmount() - $processedAmount);
+                
+                if (false === $credit->isIndependent()) {
+                    $payment->setReversingCreditedAmount($payment->getReversingCreditedAmount() - $amount);
+                    $payment->setCreditedAmount($payment->getCreditedAmount() - $processedAmount);
+                }
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+                
+                $credit->setReversingCreditedAmount(0.0);
+                $instruction->setReversingCreditedAmount($instruction->getReversingCreditedAmount() - $amount);
+                
+                if (false === $credit->isIndependent()) {
+                    $payment->setReversingCreditedAmount($payment->getReversingCreditedAmount() - $amount);
+                }
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+            
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+    }
+    
+    protected function doReverseDeposit(PaymentInterface $payment, $amount) 
+    {
+        $instruction = $payment->getPaymentInstruction();
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
+        }
+        
+        if (PaymentInterface::STATE_APPROVED !== $payment->getState()) {
+            throw new InvalidPaymentException('Payment must be in STATE_APPROVED.');
+        }
+        
+        $transaction = $instruction->getPendingTransaction();
+        if ($transaction === null) {
+            if (1 === Number::compare($amount, $max = $instruction->getDepositedAmount() - $instruction->getReversingDepositedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $max));
+            }
+            
+            if (1 === Number::compare($amount, $payment->getDepositedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Payment restriction).', $payment->getDepositedAmount()));
+            }
+            
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT);
+            $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+            $transaction->setRequestedAmount($amount);
+            
+            $payment->setReversingDepositedAmount($amount);
+            $instruction->setReversingDepositedAmount($instruction->getReversingDepositedAmount() + $amount);
+            
+            $retry = false;
+        }
+        else {
+            if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT !== $transaction->getTransactionType()) {
+                throw new InvalidPaymentInstructionException('There is another pending transaction on this payment.');
+            }
+            
+            if ($payment->getId() !== $transaction->getPayment()->getId()) {
+                throw new InvalidPaymentException('The pending transaction belongs to another Payment.');
+            }
+            
+            if (1 === Number::compare($amount, $instruction->getReversingDepositedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getReversingDepositedAmount()));
+            }
+            
+            if (0 !== Number::compare($amount, $payment->getReversingDepositedAmount())) {
+                throw new \InvalidArgumentException(sprintf('$amount must be equal to %.2f (Payment restriction).', $payment->getReversingDepositedAmount()));
+            }
+            
+            $retry = true;
+        }
+        
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
+        
+        try {
+            $plugin->reverseDeposit($transaction, $retry);
+            $processedAmount = $transaction->getProcessedAmount();
+            
+            $payment->setReversingDepositedAmount(0.0);
+            $instruction->setReversingDepositedAmount($instruction->getReversingDepositedAmount() - $amount);
+            
+            if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+                
+                $payment->setDepositedAmount($payment->getDepositedAmount() - $processedAmount);
+                $instruction->setDepositedAmount($instruction->getDepositedAmount() - $processedAmount);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+            }
+            else {
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+                
+                return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            }
+        }
+        catch (PluginTimeoutException $timeout) {
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, PluginInterface::REASON_CODE_TIMEOUT);
+            $result->setPluginException($timeout);
+            $result->setRecoverable();
+            
+            return $result;
+        }
+    }
     
     protected function findPlugin($paymentSystemName)
     {

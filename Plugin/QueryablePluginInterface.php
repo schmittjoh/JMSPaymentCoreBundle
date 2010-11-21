@@ -2,7 +2,13 @@
 
 namespace Bundle\PaymentBundle\Plugin;
 
-interface QueryablePluginInterface extends PluginInterface
+/**
+ * This interface can be implemented in addition to PluginInterface
+ * if the plugin supports real-time queries.
+ * 
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
+interface QueryablePluginInterface
 {
     /**
      * This method gets the available balance for the specified 
@@ -12,6 +18,22 @@ interface QueryablePluginInterface extends PluginInterface
      * @return float|null Returns the amount that may be consumed by the payment, or null of it cannot be determined
      */
     function getAvailableBalance(PaymentInstructionInterface $paymentInstruction);
-    function getCredit(CreditInterface $credit);
-    function getPayment(PaymentInterface $payment);
+    
+    /**
+     * This method updates the given Credit object with data from the
+     * payment backend system.
+     * 
+     * @param CreditInterface $credit
+     * @return void
+     */
+    function updateCredit(CreditInterface $credit);
+    
+    /**
+     * This method updates the given Payment object with data from the 
+     * payment backend system.
+     * 
+     * @param PaymentInterface $payment
+     * @return void
+     */
+    function updatePayment(PaymentInterface $payment);
 }

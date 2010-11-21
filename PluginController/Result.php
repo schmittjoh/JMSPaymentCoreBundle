@@ -74,13 +74,13 @@ class Result
         return $this->paymentInstruction;
     }
     
-    public function isPaymentRequiresAttention()
+    public function isAttentionRequired()
     {
-        if (null === $this->payment) {
-            throw new \LogicException('The result contains no payment.');
+        if (null === $this->payment && null === $this->credit) {
+            throw new \LogicException('The result contains neither a payment, nor a credit.');
         }
         
-        return $this->payment->isAttentionRequired();
+        return null !== $this->payment? $this->payment->isAttentionRequired() : $this->credit->isAttentionRequired();
     }
     
     public function isRecoverable()
@@ -106,7 +106,6 @@ class Result
         $this->paymentInstruction = null !== $this->credit ? $this->credit->getPaymentInstruction() : $this->payment->getPaymentInstruction();
         $this->status = $status;
         $this->reasonCode = $reasonCode;
-        $this->paymentRequiresAttention = false;
         $this->recoverable = false;
     }
     
@@ -115,7 +114,6 @@ class Result
         $this->paymentInstruction = $instruction;
         $this->status = $status;
         $this->reasonCode = $reasonCode;
-        $this->paymentRequiresAttention = false;
         $this->recoverable = false;
     }
 }

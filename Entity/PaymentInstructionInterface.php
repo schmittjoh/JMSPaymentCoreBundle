@@ -24,9 +24,10 @@ interface PaymentInstructionInterface
     function getPayments();
     function getPaymentSystemName();
     function getPendingTransaction();
+    function getReversingApprovedAmount();
+    function getReversingCreditedAmount();
+    function getReversingDepositedAmount();
     function getState();
-    function getCreatedAt();
-    function getUpdatedAt();
     function hasPendingTransaction();
     
     /**
@@ -48,5 +49,8 @@ interface PaymentInstructionInterface
     function setCreditingAmount($amount);
     function setDepositedAmount($amount);
     function setDepositingAmount($amount);
+    function setReversingApprovedAmount($amount);
+    function setReversingCreditedAmount($amount);
+    function setReversingDepositedAmount($amount);
     function setState($state);
 }

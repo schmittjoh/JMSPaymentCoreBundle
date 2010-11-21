@@ -8,27 +8,36 @@ class Payment implements PaymentInterface
 {
     protected $approvedAmount;
     protected $approvingAmount;
+    protected $createdAt;
+    protected $creditedAmount;
+    protected $creditingAmount;
     protected $depositedAmount;
     protected $depositingAmount;
     protected $expirationDate;
     protected $id;
     protected $paymentInstruction;
     protected $reversingApprovedAmount;
+    protected $reversingCreditedAmount;
     protected $reversingDepositedAmount;
     protected $state;
     protected $targetAmount;
     protected $transactions;
     protected $attentionRequired;
     protected $expired;
+    protected $updatedAt;
     
     public function __construct(PaymentInstruction $paymentInstruction, $amount)
     {
         $this->approvedAmount = 0.0;
         $this->approvingAmount = 0.0;
+        $this->createdAt = new \DateTime;
+        $this->creditedAmount = 0.0;
+        $this->creditingAmount = 0.0;
         $this->depositedAmount = 0.0;
         $this->depositingAmount = 0.0;
         $this->paymentInstruction = $paymentInstruction;
         $this->reversingApprovedAmount = 0.0;
+        $this->reversingCreditedAmount = 0.0;
         $this->reversingDepositedAmount = 0.0;
         $this->state = self::STATE_NEW;
         $this->targetAmount = $amount;
@@ -68,6 +77,16 @@ class Payment implements PaymentInterface
     public function getApprovingAmount()
     {
         return $this->approvingAmount;
+    }
+    
+    public function getCreditedAmount()
+    {
+        return $this->creditedAmount;
+    }
+    
+    public function getCreditingAmount()
+    {
+        return $this->creditingAmount;
     }
     
     public function getDepositedAmount()
@@ -132,6 +151,11 @@ class Payment implements PaymentInterface
         return $this->reversingApprovedAmount;
     }
     
+    public function getReversingCreditedAmount()
+    {
+        return $this->reversingCreditedAmount;
+    }
+    
     public function getReversingDepositedAmount()
     {
         return $this->reversingDepositedAmount;
@@ -175,6 +199,13 @@ class Payment implements PaymentInterface
         return false;
     }
     
+    public function onPrePersist()
+    {
+        if (null !== $this->id) {
+            $this->updatedAt = new \DateTime;
+        }
+    }
+    
     public function setApprovedAmount($amount)
     {
         $this->approvedAmount = $amount;
@@ -188,6 +219,16 @@ class Payment implements PaymentInterface
     public function setAttentionRequired($boolean)
     {
         $this->attentionRequired = !!$boolean;
+    }
+    
+    public function setCreditedAmount($amount)
+    {
+        $this->creditedAmount = $amount;
+    }
+    
+    public function setCreditingAmount($amount)
+    {
+        $this->creditingAmount = $amount;
     }
     
     public function setDepositedAmount($amount)
@@ -213,6 +254,11 @@ class Payment implements PaymentInterface
     public function setReversingApprovedAmount($amount)
     {
         $this->reversingApprovedAmount = $amount;
+    }
+    
+    public function setReversingCreditedAmount($amount)
+    {
+        $this->reversingCreditedAmount = $amount;
     }
     
     public function setReversingDepositedAmount($amount)

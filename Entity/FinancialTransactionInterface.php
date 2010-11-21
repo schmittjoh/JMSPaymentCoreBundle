@@ -28,8 +28,6 @@ interface FinancialTransactionInterface
     function getRequestedAmount();
     function getResponseCode();
     function getState();
-    function getCreatedAt();
-    function getUpdatedAt();
     function getTrackingId();
     function getTransactionType();
     function setCredit(CreditInterface $credit);

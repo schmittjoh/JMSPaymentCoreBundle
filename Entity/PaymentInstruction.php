@@ -21,6 +21,9 @@ class PaymentInstruction implements PaymentInstructionInterface
     protected $id;
     protected $payments;
     protected $paymentSystemName;
+    protected $reversingApprovedAmount;
+    protected $reversingCreditedAmount;
+    protected $reversingDepositedAmount;
     protected $state;
     protected $updatedAt;
     
@@ -39,6 +42,9 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->extendedData = $data;
         $this->payments = new ArrayCollection();
         $this->paymentSystemName = $paymentSystemName;
+        $this->reversingApprovedAmount = 0.0;
+        $this->reversingCreditedAmount = 0.0;
+        $this->reversingDepositedAmount = 0.0;
         $this->state = self::STATE_NEW;
     }
     
@@ -168,6 +174,21 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->createdAt;
     }
     
+    public function getReversingApprovedAmount()
+    {
+        return $this->reversingApprovedAmount;
+    }
+    
+    public function getReversingCreditedAmount()
+    {
+        return $this->reversingCreditedAmount;
+    }
+    
+    public function getReversingDepositedAmount()
+    {
+        return $this->reversingDepositedAmount;
+    }
+    
     public function getUpdatedAt()
     {
         return $this->updatedAt;
@@ -213,6 +234,21 @@ class PaymentInstruction implements PaymentInstructionInterface
     public function setDepositingAmount($amount)
     {
         $this->depositingAmount = $amount;
+    }
+    
+    public function setReversingApprovedAmount($amount)
+    {
+        $this->reversingApprovedAmount = $amount;
+    }
+    
+    public function setReversingCreditedAmount($amount)
+    {
+        $this->reversingCreditedAmount = $amount;
+    }
+    
+    public function setReversingDepositedAmount($amount)
+    {
+        $this->reversingDepositedAmount = $amount;
     }
     
     public function setState($state)

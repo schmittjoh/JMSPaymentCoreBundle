@@ -31,6 +31,9 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0.0, $instruction->getDepositedAmount());
         $this->assertEquals(0.0, $instruction->getCreditingAmount());
         $this->assertEquals(0.0, $instruction->getCreditedAmount());
+        $this->assertEquals(0.0, $instruction->getReversingApprovedAmount());
+        $this->assertEquals(0.0, $instruction->getReversingCreditedAmount());
+        $this->assertEquals(0.0, $instruction->getReversingDepositedAmount());
         $this->assertNull($instruction->getId());
         $this->assertTrue(time() - $instruction->getCreatedAt()->getTimestamp() < 10);
         $this->assertNull($instruction->getUpdatedAt());
@@ -193,6 +196,12 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
             array('CreditedAmount', 583, 0.0),
             array('CreditingAmount', 123.45, 0.0),
             array('CreditingAmount', 583, 0.0),
+            array('ReversingApprovedAmount', 254.32, 0.0),
+            array('ReversingApprovedAmount', 423, 0.0),
+            array('ReversingCreditedAmount', 5632.14, 0.0),
+            array('ReversingCreditedAmount', 2576, 0.0),
+            array('ReversingDepositedAmount', 256.24, 0.0),
+            array('ReversingDepositedAmount', 5365, 0.0),
             array('State', PaymentInstruction::STATE_INVALID, PaymentInstruction::STATE_NEW),
         );
     }
