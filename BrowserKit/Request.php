@@ -14,9 +14,9 @@ class Request
     
     public function __construct($uri, $method, array $request = array(), array $headers = array())
     {
-        $this->method = $method;
         $this->uri = $uri;
-        $this->request = new ParameterBag($parameters);
+        $this->method = $method;
+        $this->request = new ParameterBag($request);
         $this->headers = new HeaderBag($headers);
     }
     

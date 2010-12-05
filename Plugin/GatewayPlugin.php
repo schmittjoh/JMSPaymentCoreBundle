@@ -63,6 +63,10 @@ abstract class GatewayPlugin extends Plugin
      */
     public function request(Request $request)
     {
+        if (!extension_loaded('curl')) {
+            throw new \RuntimeException('The cURL extension must be loaded.');
+        }
+        
         $curl = curl_init();
         curl_setopt_array($curl, $this->curlOptions);
         curl_setopt($curl, CURLOPT_URL, $request->getUri());
@@ -114,10 +118,17 @@ abstract class GatewayPlugin extends Plugin
         }
         
         $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $headers = array();
+        if (preg_match_all('#^([^:\r\n]+):\s+([^\n\r]+)#m', substr($returnTransfer, 0, $headerSize), $matches)) {
+            foreach ($matches[1] as $key => $name) {
+                $headers[$name] = $matches[2][$key];
+            }
+        }
+        
         $response = new Response(
             substr($returnTransfer, $headerSize),
             curl_getinfo($curl, CURLINFO_HTTP_CODE),
-            substr($returnTransfer, 0, $headerSize)
+            $headers
         );
         curl_close($curl);
         
