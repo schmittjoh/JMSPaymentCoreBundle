@@ -2,6 +2,11 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
+use Bundle\PaymentBundle\Model\CreditInterface;
+use Bundle\PaymentBundle\Model\ExtendedDataInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
+
 class FinancialTransaction implements FinancialTransactionInterface
 {
     protected $credit;
@@ -34,7 +39,16 @@ class FinancialTransaction implements FinancialTransactionInterface
     
     public function getExtendedData()
     {
-        return $this->extendedData;
+        if (null !== $this->extendedData) {
+            return $this->extendedData;
+        }
+        
+        if (null !== $this->payment) {
+            return $this->payment->getPaymentInstruction()->getExtendedData();
+        }
+        else {
+            return $this->credit->getPaymentInstruction()->getExtendedData();
+        }
     }
     
     public function getId()

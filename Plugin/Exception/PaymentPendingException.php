@@ -3,10 +3,10 @@
 namespace Bundle\PaymentBundle\Plugin\Exception;
 
 /**
- * This exception is thrown when the plugin experiences a connection timeout.
+ * This exception when the payment is in a pending state.
  * 
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TimeoutException extends BlockedException
+class PaymentPendingException extends BlockedException
 {
 }

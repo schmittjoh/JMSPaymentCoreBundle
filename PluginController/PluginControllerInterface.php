@@ -2,10 +2,10 @@
 
 namespace Bundle\PaymentBundle\PluginController;
         
-use Bundle\PaymentBundle\Entity\ExtendedDataInterface;
-use Bundle\PaymentBundle\Entity\CreditInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInterface;
+use Bundle\PaymentBundle\Model\ExtendedDataInterface;
+use Bundle\PaymentBundle\Model\CreditInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
 
 /**
  * This interface is implement by all payment plugin controllers.

@@ -2,6 +2,8 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
+use Bundle\PaymentBundle\Model\ExtendedDataInterface;
+
 class ExtendedData implements ExtendedDataInterface
 {
     protected $data;
@@ -18,7 +20,7 @@ class ExtendedData implements ExtendedDataInterface
     
     public function isEncryptionRequired($name)
     {
-        if (!array_key_exists($name, $this->data)) {
+        if (!isset($this->data[$name])) {
             throw new \InvalidArgumentException(sprintf('There is no data with key "%s".', $name));
         }
         
@@ -32,7 +34,7 @@ class ExtendedData implements ExtendedDataInterface
     
     public function get($name)
     {
-        if (!array_key_exists($name, $this->data)) {
+        if (!isset($this->data[$name])) {
             throw new \InvalidArgumentException(sprintf('There is no data with key "%s".', $name));
         }
         
@@ -41,6 +43,6 @@ class ExtendedData implements ExtendedDataInterface
     
     public function has($name)
     {
-        return array_key_exists($name, $this->data);
+        return isset($this->data[$name]);
     }
 }

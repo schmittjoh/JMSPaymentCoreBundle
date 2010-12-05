@@ -2,8 +2,8 @@
 
 namespace Bundle\PaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
 
 class Result

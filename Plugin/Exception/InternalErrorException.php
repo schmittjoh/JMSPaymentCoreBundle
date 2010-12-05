@@ -3,10 +3,10 @@
 namespace Bundle\PaymentBundle\Plugin\Exception;
 
 /**
- * This exception is thrown when the plugin experiences a connection timeout.
+ * This class is thrown whenever the plugin encounters an unexpected error.
  * 
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class TimeoutException extends BlockedException
+class InternalErrorException extends Exception
 {
 }

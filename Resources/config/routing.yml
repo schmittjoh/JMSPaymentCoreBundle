@@ -1,0 +1,3 @@
+payment:
+    pattern:  /payment
+    defaults: { _controller: PaymentBundle:Demo:index }

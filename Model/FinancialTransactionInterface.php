@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity;
+namespace Bundle\PaymentBundle\Model;
 
 interface FinancialTransactionInterface
 {

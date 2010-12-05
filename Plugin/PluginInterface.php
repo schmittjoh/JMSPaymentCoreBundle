@@ -2,8 +2,8 @@
 
 namespace Bundle\PaymentBundle\Plugin;
 
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 
 /**
  * This plugin must be implemented by all payment service plugins.

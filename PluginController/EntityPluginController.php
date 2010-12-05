@@ -6,8 +6,8 @@ use Bundle\PaymentBundle\Plugin\QueryablePluginInterface;
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
 use Bundle\PaymentBundle\Entity\Payment;
 use Bundle\PaymentBundle\Entity\PaymentInstruction;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
 use Bundle\PaymentBundle\PluginController\Exception\Exception;
 use Bundle\PaymentBundle\PluginController\Exception\PaymentNotFoundException;
 use Bundle\PaymentBundle\PluginController\Exception\PaymentInstructionNotFoundException;
@@ -38,6 +38,34 @@ class EntityPluginController extends PluginController
             $payment = $this->getPayment($paymentId);
             
             $result = $this->doApprove($payment, $amount);
+            
+            $this->entityManager->persist($payment);
+            $this->entityManager->persist($result->getFinancialTransaction());
+            $this->entityManager->persist($result->getPaymentInstruction());
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+            
+            return $result;
+        }
+        catch (\Exception $failure) {
+            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->close();
+            
+            throw $failure;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function approveAndDeposit($paymentId, $amount) 
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        
+        try {
+            $payment = $this->getPayment($paymentId);
+            
+            $result = $this->doApproveAndDeposit($payment, $amount);
             
             $this->entityManager->persist($payment);
             $this->entityManager->persist($result->getFinancialTransaction());
@@ -313,6 +341,13 @@ class EntityPluginController extends PluginController
         return $credit;
     }
     
+    protected function buildFinancialTransaction()
+    {
+        $class =& $this->options['financial_transaction_class'];
+        
+        return new $class;
+    }
+    
     protected function createFinancialTransaction(PaymentInterface $payment)
     {
         if (!$payment instanceof Payment) {
@@ -337,6 +372,12 @@ class EntityPluginController extends PluginController
         $payment->setTargetAmount($amount);
         
         return $payment;
+    }
+    
+    protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction)
+    {
+        $this->entityManager->persist($instruction);
+        $this->entityManager->flush();
     }
     
     protected function doGetPaymentInstruction($id)

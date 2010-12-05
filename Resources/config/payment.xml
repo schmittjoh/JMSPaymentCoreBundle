@@ -5,12 +5,12 @@
     xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="payment.plugin_controller.class">Bundle\PaymentBundle\PluginController\EntityPluginController</parameter>
-        <parameter key="payment.plugin_controller.options.result_class">Bundle\PaymentBundle\PluginController\Result</parameter>
-        <parameter key="payment.plugin_controller.options.payment_class">Bundle\PaymentBundle\Entity\Payment</parameter>
-        <parameter key="payment.plugin_controller.options.payment_instruction_class">Bundle\PaymentBundle\Entity\PaymentInstruction</parameter>
-        <parameter key="payment.plugin_controller.options.financial_transaction_class">Bundle\PaymentBundle\Entity\FinancialTransaction</parameter>
-        <parameter key="payment.plugin_controller.options.credit_class">Bundle\PaymentBundle\Entity\Credit</parameter>
+        <parameter key="payment.plugin_controller.entity.class">Bundle\PaymentBundle\PluginController\EntityPluginController</parameter>
+        <parameter key="payment.plugin_controller.entity.options.result_class">Bundle\PaymentBundle\PluginController\Result</parameter>
+        <parameter key="payment.plugin_controller.entity.options.payment_class">Bundle\PaymentBundle\Entity\Payment</parameter>
+        <parameter key="payment.plugin_controller.entity.options.payment_instruction_class">Bundle\PaymentBundle\Entity\PaymentInstruction</parameter>
+        <parameter key="payment.plugin_controller.entity.options.financial_transaction_class">Bundle\PaymentBundle\Entity\FinancialTransaction</parameter>
+        <parameter key="payment.plugin_controller.entity.options.credit_class">Bundle\PaymentBundle\Entity\Credit</parameter>
         
         <parameter key="payment.encryption_service.class">Bundle\PaymentBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
@@ -19,16 +19,20 @@
     </parameters>
 
     <services>
-        <service id="payment.plugin_controller" class="%payment.plugin_controller.class%" alias="ppc">
-            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+    	<service id="payment.orm.entity_manager" alias="doctrine.orm.default_entity_manager" />
+    
+        <service id="payment.plugin_controller.entity" class="%payment.plugin_controller.entity.class%">
+            <argument type="service" id="payment.orm.entity_manager"/>
             <argument type="collection">
-                <argument key="result_class">%payment.plugin_controller.options.result_class%</argument>
-                <argument key="payment_instruction_class">%payment.plugin_controller.options.payment_instruction_class%</argument>
-                <argument key="payment_class">%payment.plugin_controller.options.payment_class%</argument>
-                <argument key="financial_transaction_class">%payment.plugin_controller.options.financial_transaction_class%</argument>
-                <argument key="credit_class">%payment.plugin_controller.options.credit_class%</argument>
+                <argument key="result_class">%payment.plugin_controller.entity.options.result_class%</argument>
+                <argument key="payment_instruction_class">%payment.plugin_controller.entity.options.payment_instruction_class%</argument>
+                <argument key="payment_class">%payment.plugin_controller.entity.options.payment_class%</argument>
+                <argument key="financial_transaction_class">%payment.plugin_controller.entity.options.financial_transaction_class%</argument>
+                <argument key="credit_class">%payment.plugin_controller.entity.options.credit_class%</argument>
             </argument>
         </service>
+        
+        <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
         
         <service id="payment.encryption_service" class="%payment.encryption_service.class%">
             <argument>%payment.encryption_service.secret%</argument>

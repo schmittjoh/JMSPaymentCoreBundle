@@ -2,18 +2,18 @@
 
 namespace Bundle\PaymentBundle\Tests\PluginController;
 
-use Bundle\PaymentBundle\Entity\CreditInterface;
+use Bundle\PaymentBundle\Model\CreditInterface;
 use Bundle\PaymentBundle\Entity\Credit;
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
 use Bundle\PaymentBundle\Entity\ExtendedData;
 use Bundle\PaymentBundle\Entity\Payment;
 use Bundle\PaymentBundle\Entity\PaymentInstruction;
 use Bundle\PaymentBundle\Plugin\PluginInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
 use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use Bundle\PaymentBundle\Entity\PaymentInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 use Bundle\PaymentBundle\PluginController\Result;
 use Bundle\PaymentBundle\PluginController\PluginController;
 

@@ -2,6 +2,7 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class PaymentInstruction implements PaymentInstructionInterface

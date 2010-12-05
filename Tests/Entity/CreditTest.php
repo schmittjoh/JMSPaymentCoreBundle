@@ -2,13 +2,13 @@
 
 namespace Bundle\PaymentBundle\Tests\Entity;
 
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
 
 use Bundle\PaymentBundle\Entity\FinancialTransaction;
 
 use Bundle\PaymentBundle\Entity\Payment;
 
-use Bundle\PaymentBundle\Entity\CreditInterface;
+use Bundle\PaymentBundle\Model\CreditInterface;
 
 use Bundle\PaymentBundle\Entity\Credit;
 

@@ -20,7 +20,7 @@ class FinancialTransactionTest extends \PHPUnit_Framework_TestCase
     public function testSetGetCredit()
     {
         $transaction = new FinancialTransaction;
-        $credit = $this->getMock('Bundle\PaymentBundle\Entity\CreditInterface');
+        $credit = $this->getMock('Bundle\PaymentBundle\Model\CreditInterface');
         
         $this->assertNull($transaction->getCredit());
         $transaction->setCredit($credit);
@@ -30,7 +30,7 @@ class FinancialTransactionTest extends \PHPUnit_Framework_TestCase
     public function testSetGetExtendedData()
     {
         $transaction = new FinancialTransaction;
-        $extendedData = $this->getMock('Bundle\PaymentBundle\Entity\ExtendedDataInterface');
+        $extendedData = $this->getMock('Bundle\PaymentBundle\Model\ExtendedDataInterface');
         
         $this->assertNull($transaction->getExtendedData());
         $transaction->setExtendedData($extendedData);
@@ -40,7 +40,7 @@ class FinancialTransactionTest extends \PHPUnit_Framework_TestCase
     public function testSetGetPayment()
     {
         $transaction = new FinancialTransaction;
-        $payment = $this->getMock('Bundle\PaymentBundle\Entity\PaymentInterface');
+        $payment = $this->getMock('Bundle\PaymentBundle\Model\PaymentInterface');
         
         $this->assertNull($transaction->getPayment());
         $transaction->setPayment($payment);

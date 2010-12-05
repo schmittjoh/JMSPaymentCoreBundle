@@ -2,6 +2,10 @@
 
 namespace Bundle\PaymentBundle\Entity;
 
+use Bundle\PaymentBundle\Model\CreditInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Credit implements CreditInterface

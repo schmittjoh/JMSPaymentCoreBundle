@@ -11,6 +11,6 @@ namespace Bundle\PaymentBundle\Plugin\Exception;
  * 
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class InvalidPaymentInstructionException extends Exception
+class InvalidPaymentInstructionException extends FinancialException
 {
 }

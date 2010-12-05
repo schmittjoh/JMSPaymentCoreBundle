@@ -2,12 +2,19 @@
 
 namespace Bundle\PaymentBundle\Plugin;
 
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 use Bundle\PaymentBundle\Plugin\Exception\FunctionNotSupportedException;
 
 abstract class Plugin implements PluginInterface
 {
+    protected $debug;
+    
+    public function __construct($isDebug)
+    {
+        $this->debug = !!$isDebug;
+    }
+    
     public function approve(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('approve() is not supported by this plugin.');
@@ -36,6 +43,11 @@ abstract class Plugin implements PluginInterface
         throw new FunctionNotSupportedException('deposit() is not supported by this plugin.');
     }
     
+    public function isDebug()
+    {
+        return $this->debug;
+    }
+    
     public function reverseApproval(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('reverseApproval() is not supported by this plugin.');
@@ -49,6 +61,11 @@ abstract class Plugin implements PluginInterface
     public function reverseDeposit(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('reverseDeposit() is not supported by this plugin.');
+    }
+
+    public function setDebug($boolean)
+    {
+        $this->debug = !!$boolean;
     }
     
     /**

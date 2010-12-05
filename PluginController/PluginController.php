@@ -2,10 +2,10 @@
 
 namespace Bundle\PaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\Entity\CreditInterface;
-use Bundle\PaymentBundle\Entity\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Entity\PaymentInterface;
-use Bundle\PaymentBundle\Entity\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\CreditInterface;
+use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
 use Bundle\PaymentBundle\Plugin\PluginInterface;
 use Bundle\PaymentBundle\Plugin\QueryablePluginInterface;
 use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
@@ -368,7 +368,7 @@ abstract class PluginController implements PluginControllerInterface
         return $this->buildCredit($instruction, $amount);
     }
     
-    abstract protected function doCreatePayment($instruction, $amount);
+    abstract protected function doCreatePayment(PaymentInstructionInterface $instruction, $amount);
 
     abstract protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction);
     
