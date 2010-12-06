@@ -23,7 +23,6 @@ abstract class GatewayPlugin extends Plugin
         // set some more lenient settings in debug mode
         if ($this->isDebug()) {
             $this->curlOptions = array(
-                CURLOPT_SSL_VERIFYHOST => false,
                 CURLOPT_SSL_VERIFYPEER => false,
             );
         }
@@ -94,7 +93,7 @@ abstract class GatewayPlugin extends Plugin
         if ('POST' === $method) {
             curl_setopt($curl, CURLOPT_POST, true);
             
-            if ($request->headers->has('Content-Type') && 'multipart/form-data' !== $request->headers->get('Content-Type')) {
+            if (!$request->headers->has('Content-Type') || 'multipart/form-data' !== $request->headers->get('Content-Type')) {
                 $postFields = $this->urlEncodeArray($request->request->all());
             }
             else {

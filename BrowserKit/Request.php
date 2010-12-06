@@ -3,7 +3,7 @@
 namespace Bundle\PaymentBundle\BrowserKit;
 
 use Symfony\Component\HttpFoundation\HeaderBag;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class Request
 {

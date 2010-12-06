@@ -19,7 +19,7 @@ class PaymentExtension extends Extension
 		}
 		
 		if (isset($config['plugins'])) {
-		    $controller = $container->getDefinition('payment.plugin_controller');
+		    $controller = $container->findDefinition('payment.plugin_controller');
 		    
 		    foreach ((array) $config['plugins'] as $pluginName) {
 		        $controller->addMethodCall('addPlugin', array(new Reference($this->getPluginId($pluginName))));

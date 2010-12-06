@@ -2,6 +2,10 @@
 
 namespace Bundle\PaymentBundle\Plugin;
 
+use Bundle\PaymentBundle\Model\CreditInterface;
+use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\PaymentBundle\Model\PaymentInterface;
+
 /**
  * This interface can be implemented in addition to PluginInterface
  * if the plugin supports real-time queries.
