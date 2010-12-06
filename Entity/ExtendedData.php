@@ -7,6 +7,7 @@ use Bundle\PaymentBundle\Model\ExtendedDataInterface;
 class ExtendedData implements ExtendedDataInterface
 {
     protected $data;
+    protected $listeners;
     
     public function __construct()
     {
@@ -44,5 +45,21 @@ class ExtendedData implements ExtendedDataInterface
     public function has($name)
     {
         return isset($this->data[$name]);
+    }
+    
+    public function all()
+    {
+        return $this->data;
+    }
+    
+    public function equals(ExtendedDataInterface $data)
+    {
+        $data = $data->all();
+        ksort($data);
+        
+        $cData = $this->data;
+        ksort($cData);
+        
+        return $data === $cData;
     }
 }

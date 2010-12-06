@@ -19,6 +19,7 @@ class PaymentInstruction implements PaymentInstructionInterface
     protected $depositedAmount;
     protected $depositingAmount;
     protected $extendedData;
+    protected $extendedDataOriginal;
     protected $id;
     protected $payments;
     protected $paymentSystemName;
@@ -200,10 +201,21 @@ class PaymentInstruction implements PaymentInstructionInterface
         return null !== $this->getPendingTransaction();
     }
     
+    public function onPostLoad()
+    {
+        $this->extendedDataOriginal = clone $this->extendedData;
+    }
+    
     public function onPrePersist()
     {
         if (null !== $this->id) {
             $this->updatedAt = new \Datetime;
+        }
+        
+        // this is necessary until Doctrine adds an interface for comparing 
+        // value objects. Right now this is done by referential equality
+        if (null !== $this->extendedDataOriginal && false === $this->extendedData->equals($this->extendedDataOriginal)) {
+            $this->extendedData = clone $this->extendedData;
         }
     }
     

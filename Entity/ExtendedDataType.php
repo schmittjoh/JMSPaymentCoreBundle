@@ -25,6 +25,10 @@ class ExtendedDataType extends ObjectType
     
     public function convertToDatabaseValue($extendedData, AbstractPlatform $platform)
     {
+        if (null === $extendedData) {
+            return null;
+        }
+        
         $reflection = new \ReflectionProperty($extendedData, 'data');
         $reflection->setAccessible(true);
         $data = $reflection->getValue($extendedData);

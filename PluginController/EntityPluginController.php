@@ -209,7 +209,7 @@ class EntityPluginController extends PluginController
     public function getCredit($id)
     {
         // FIXME: also retrieve the associated PaymentInstruction
-        $credit = $this->creditRepository->findOneBy(array('id' => $id));
+        $credit = $this->entityManager->getRepository($this->options['credit_class'])->findOneBy(array('id' => $id));
         
         if (null === $credit) {
             throw new CreditNotFoundException(sprintf('The credit with ID "%s" was not found.', $id));
@@ -235,7 +235,7 @@ class EntityPluginController extends PluginController
     public function getPayment($id)
     {
         // FIXME: also retrieve the related PaymentInstruction
-        $payment = $this->paymentRepository->findOneBy(array('id' => $id));
+        $payment = $this->entityManager->getRepository($this->options['payment_class'])->findOneBy(array('id' => $id));
         
         if (null === $payment) {
             throw new PaymentNotFoundException(sprintf('The payment with ID "%d" was not found.', $id));
@@ -368,10 +368,8 @@ class EntityPluginController extends PluginController
         }
         
         $class =& $this->options['payment_class'];
-        $payment = new $class($instruction);
-        $payment->setTargetAmount($amount);
         
-        return $payment;
+        return new $class($instruction, $amount);
     }
     
     protected function doCreatePaymentInstruction(PaymentInstructionInterface $instruction)
@@ -382,7 +380,7 @@ class EntityPluginController extends PluginController
     
     protected function doGetPaymentInstruction($id)
     {
-        $paymentInstruction = $this->paymentInstructionRepository->findOneBy(array('id' => $id));
+        $paymentInstruction = $this->entityManager->getRepository($this->options['payment_instruction_class'])->findOneBy(array('id' => $id));
         
         if (null === $paymentInstruction) {
             throw new PaymentInstructionNotFoundException(sprintf('The payment instruction with ID "%d" was not found.', $id));

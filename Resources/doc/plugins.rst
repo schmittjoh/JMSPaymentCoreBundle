@@ -1,3 +1,4 @@
+=======
 Plugins
 =======
 
@@ -80,12 +81,33 @@ doing so. All exceptions are in the namespace ``Bundle\PaymentBundle\Plugin\Exce
 |                                    | checkPaymentInstruction, or | STATE_INVALID.            |
 |                                    | validatePaymentInstruction. |                           |
 +------------------------------------+-----------------------------+---------------------------+
+| BlockedException                   | This exception is thrown    | Sets the transaction to   |
+|                                    | whenever a transaction      | STATE_PENDING, and        |
+|                                    | cannot be processed.        | converts the exception to |
+|                                    |                             | a Result object.          |
+|                                    | The exception must only be  |                           |
+|                                    | when the situation is       |                           |
+|                                    | temporary, and there is a   |                           |
+|                                    | chance that the transaction |                           |
+|                                    | can be performed at a later |                           |
+|                                    | time successfully.          |                           |
++------------------------------------+-----------------------------+---------------------------+
 | TimeoutException                   | This exception is thrown    | Sets the transaction to   |
-|                                    | when there is an enduring   | STATE_PENDING, and        |
+| (sub-class of BlockedException)    | when there is an enduring   | STATE_PENDING, and        |
 |                                    | communicaton problem with   | converts the exception to |
 |                                    | the payment backend system. | a Result object.          |
 +------------------------------------+-----------------------------+---------------------------+
-
+| ActionRequiredException            | This exception is thrown    | Sets the transaction to   |
+| (sub-class of BlockedException)    | whenever an action is       | STATE_PENDING, and        |
+|                                    | required before the         | converts the exception to |
+|                                    | transaction can be completed| a Result object.          |
+|                                    | successfully.               |                           |
+|                                    |                             |                           |
+|                                    | A typical action would be   |                           |
+|                                    | for the user to visit an    |                           |
+|                                    | URL in order to authorize   |                           |
+|                                    | the payment.                |                           |
++------------------------------------+-----------------------------+---------------------------+
 
 Implementing a Custom Plugin
 ----------------------------

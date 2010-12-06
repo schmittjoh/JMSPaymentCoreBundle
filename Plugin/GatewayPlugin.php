@@ -20,15 +20,7 @@ abstract class GatewayPlugin extends Plugin
     {
         parent::__construct($isDebug);
         
-        // set some more lenient settings in debug mode
-        if ($this->isDebug()) {
-            $this->curlOptions = array(
-                CURLOPT_SSL_VERIFYPEER => false,
-            );
-        }
-        else {
-            $this->curlOptions = array();
-        }
+        $this->curlOptions = array();
     }
     
     public function setCurlOption($name, $value)

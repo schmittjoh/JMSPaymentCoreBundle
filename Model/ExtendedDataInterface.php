@@ -8,4 +8,6 @@ interface ExtendedDataInterface
     function remove($name);
     function set($name, $value, $encrypt = true);
     function get($name);
+    function all();
+    function equals(ExtendedDataInterface $data);
 }

@@ -10,12 +10,12 @@
 		
 		<field name="attentionRequired" type="boolean" />
 		<field name="createdAt" type="datetime" />
-		<field name="creditedAmount" type="decimal" scale="5" nullable="false" />
-		<field name="creditingAmount" type="decimal" scale="5" nullable="false" />
-		<field name="reversingAmount" type="decimal" scale="5" nullable="false" />
+		<field name="creditedAmount" type="decimal" scale="5" />
+		<field name="creditingAmount" type="decimal" scale="5" />
+		<field name="reversingAmount" type="decimal" scale="5" />
 		<field name="state" type="smallint" nullable="false" />
-		<field name="targetAmount" type="decimal" scale="5" nullable="false" />
-		<field name="updatedAt" type="datetime" />
+		<field name="targetAmount" type="decimal" scale="5" />
+		<field name="updatedAt" type="datetime" nullable="true" />
 		
 		<one-to-many field="transactions" mapped-by="credit" target-entity="FinancialTransaction">
 			<cascade>
@@ -35,7 +35,7 @@
 			<join-column name="payment_id"
 						 referenced-column-name="id"
 						 nullable="true"
-						 on-delete="SET_NULL"/>
+						 on-delete="CASCADE"/>
 		</many-to-one>
 		
 		<lifecycle-callbacks>

@@ -11,6 +11,7 @@ class FinancialTransaction implements FinancialTransactionInterface
 {
     protected $credit;
     protected $extendedData;
+    protected $extendedDataOriginal;
     protected $id;
     protected $payment;
     protected $processedAmount;
@@ -46,9 +47,11 @@ class FinancialTransaction implements FinancialTransactionInterface
         if (null !== $this->payment) {
             return $this->payment->getPaymentInstruction()->getExtendedData();
         }
-        else {
+        else if (null !== $this->credit) {
             return $this->credit->getPaymentInstruction()->getExtendedData();
         }
+        
+        return null;
     }
     
     public function getId()
@@ -111,10 +114,21 @@ class FinancialTransaction implements FinancialTransactionInterface
         return $this->transactionType;
     }
     
+    public function onPostLoad()
+    {
+        if (null !== $this->extendedData) {
+            $this->extendedDataOriginal = clone $this->extendedData;
+        }
+    }
+    
     public function onPrePersist()
     {
         if (null !== $this->id) {
             $this->updatedAt = new \DateTime;
+        }
+        
+        if (null !== $this->extendedData && false === $this->extendedData->equals($this->extendedDataOriginal)) {
+            $this->extendedData = clone $this->extendedData;
         }
     }
     

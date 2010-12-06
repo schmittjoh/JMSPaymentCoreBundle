@@ -15,10 +15,13 @@ use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
  */
 interface PluginInterface
 {
+    const RESPONSE_CODE_PENDING = 'pending';
     const RESPONSE_CODE_SUCCESS = 'success';
+    const REASON_CODE_ACTION_REQUIRED = 'action_required';
+    const REASON_CODE_BLOCKED = 'blocked';
+    const REASON_CODE_INVALID = 'invalid';
     const REASON_CODE_SUCCESS = 'none';
     const REASON_CODE_TIMEOUT = 'timeout';
-    const REASON_CODE_INVALID = 'invalid';
     
     /**
      * This method executes an approve transaction.
