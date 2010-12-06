@@ -209,7 +209,7 @@ class EntityPluginController extends PluginController
     public function getCredit($id)
     {
         // FIXME: also retrieve the associated PaymentInstruction
-        $credit = $this->entityManager->getRepository($this->options['credit_class'])->findOneBy(array('id' => $id));
+        $credit = $this->entityManager->getRepository($this->options['credit_class'])->find($id, LockMode::PESSIMISTIC_WRITE);
         
         if (null === $credit) {
             throw new CreditNotFoundException(sprintf('The credit with ID "%s" was not found.', $id));
@@ -234,8 +234,7 @@ class EntityPluginController extends PluginController
      */
     public function getPayment($id)
     {
-        // FIXME: also retrieve the related PaymentInstruction
-        $payment = $this->entityManager->getRepository($this->options['payment_class'])->findOneBy(array('id' => $id));
+        $payment = $this->entityManager->getRepository($this->options['payment_class'])->find($id, LockMode::PESSIMISTIC_WRITE);
         
         if (null === $payment) {
             throw new PaymentNotFoundException(sprintf('The payment with ID "%d" was not found.', $id));
