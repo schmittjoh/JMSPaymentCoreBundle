@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
 
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class PaymentInstruction implements PaymentInstructionInterface

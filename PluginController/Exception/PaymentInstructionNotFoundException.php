@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\PluginController\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception;
 
 class PaymentInstructionNotFoundException extends Exception
 {

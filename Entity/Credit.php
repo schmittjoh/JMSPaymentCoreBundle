@@ -1,11 +1,11 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
 
-use Bundle\PaymentBundle\Model\CreditInterface;
-use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Model\PaymentInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class Credit implements CreditInterface

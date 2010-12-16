@@ -1,13 +1,13 @@
 <?php
 
-namespace Bundle\PaymentBundle\Tests\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Entity;
 
-use Bundle\PaymentBundle\Entity\Credit;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\Credit;
 
-use Bundle\PaymentBundle\Entity\Payment;
-use Bundle\PaymentBundle\Entity\FinancialTransaction;
-use Bundle\PaymentBundle\Entity\PaymentInstruction;
-use Bundle\PaymentBundle\Entity\ExtendedData;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\Payment;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\FinancialTransaction;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
 
 class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,26 +1,26 @@
 <?php
 
-namespace Bundle\PaymentBundle\PluginController;
+namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController;
 
-use Bundle\PaymentBundle\Model\CreditInterface;
-use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Model\PaymentInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Plugin\PluginInterface;
-use Bundle\PaymentBundle\Plugin\QueryablePluginInterface;
-use Bundle\PaymentBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
-use Bundle\PaymentBundle\Plugin\Exception\BlockedException as PluginBlockedException;
-use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
-use Bundle\PaymentBundle\Plugin\Exception\FinancialException as PluginFinancialException;
-use Bundle\PaymentBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
-use Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
-use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use Bundle\PaymentBundle\PluginController\Exception\Exception;
-use Bundle\PaymentBundle\PluginController\Exception\InvalidCreditException;
-use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException;
-use Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException;
-use Bundle\PaymentBundle\PluginController\Exception\PluginNotFoundException;
-use Bundle\PaymentBundle\Util\Number;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\PluginInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\QueryablePluginInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\BlockedException as PluginBlockedException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Exception as PluginException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FinancialException as PluginFinancialException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidCreditException;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentException;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\PluginNotFoundException;
+use Bundle\JMS\Payment\CorePaymentBundle\Util\Number;
 
 abstract class PluginController implements PluginControllerInterface
 {

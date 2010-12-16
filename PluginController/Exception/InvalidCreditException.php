@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\PluginController\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception;
 
 /**
  * This exception is thrown when the Credit object is not in the desired state.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\DependencyInjection;
+namespace Bundle\JMS\Payment\CorePaymentBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;

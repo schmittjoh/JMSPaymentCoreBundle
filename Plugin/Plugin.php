@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
 
-use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Plugin\Exception\FunctionNotSupportedException;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FunctionNotSupportedException;
 
 abstract class Plugin implements PluginInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
 
-use Bundle\PaymentBundle\Cryptography\EncryptionServiceInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Cryptography\EncryptionServiceInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\ObjectType;

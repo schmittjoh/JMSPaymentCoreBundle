@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Util;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Util;
 
 class Number
 {

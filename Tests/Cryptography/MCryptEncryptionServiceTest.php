@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\PaymentBundle\Tests\Cryptography;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Cryptography;
 
-use Bundle\PaymentBundle\Cryptography\MCryptEncryptionService;
+use Bundle\JMS\Payment\CorePaymentBundle\Cryptography\MCryptEncryptionService;
 
 class MCryptEncryptionServiceTest extends \PHPUnit_Framework_TestCase
 {

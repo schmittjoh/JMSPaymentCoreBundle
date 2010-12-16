@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Exception;
 
 /**
  * Base Exception for the PaymentBundle

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
 
 /**
  * This exception is thrown when a plugin experiences a connectivity problem

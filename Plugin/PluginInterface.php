@@ -1,9 +1,9 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
 
-use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
 
 /**
  * This plugin must be implemented by all payment service plugins.
@@ -65,7 +65,7 @@ interface PluginInterface
      * be considered to be valid.
      *     
      * @param PaymentInstructionInterface $paymentInstruction
-     * @throws Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException if the the PaymentInstruction is not valid
+     * @throws Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\InvalidPaymentInstructionException if the the PaymentInstruction is not valid
      * @return void
      */
     function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
@@ -138,7 +138,7 @@ interface PluginInterface
      * in that it may actually connect to the payment backend system; no funds should
      * be transferred, though. 
      * 
-     * @throws Bundle\PaymentBundle\Plugin\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not valid
+     * @throws Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not valid
      * @param PaymentInstructionInterface $paymentInstruction
      * @return void
      */

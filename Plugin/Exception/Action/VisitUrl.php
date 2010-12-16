@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin\Exception\Action;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Action;
 
 class VisitUrl
 {

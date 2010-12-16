@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
 
 /**
  * This exception is thrown whenever a transaction against the backend system 

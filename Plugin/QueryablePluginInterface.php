@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
 
-use Bundle\PaymentBundle\Model\CreditInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\PaymentBundle\Model\PaymentInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
 
 /**
  * This interface can be implemented in addition to PluginInterface

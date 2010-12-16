@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\PaymentBundle\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
 
-use Bundle\PaymentBundle\Model\ExtendedDataInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\ExtendedDataInterface;
 
 class ExtendedData implements ExtendedDataInterface
 {

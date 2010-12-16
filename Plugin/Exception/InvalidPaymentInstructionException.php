@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Plugin\Exception;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
 
 /**
  * This exception will be thrown when the plugin determines the 

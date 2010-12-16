@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\PaymentBundle\Tests\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Entity;
 
-use Bundle\PaymentBundle\Entity\ExtendedData;
-use Bundle\PaymentBundle\Entity\ExtendedDataType;
-use Bundle\PaymentBundle\Cryptography\MCryptEncryptionService;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedDataType;
+use Bundle\JMS\Payment\CorePaymentBundle\Cryptography\MCryptEncryptionService;
 use Doctrine\DBAL\Types\Type;
 
 class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
@@ -20,7 +20,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetName()
     {
-        Type::addType(ExtendedDataType::NAME, 'Bundle\PaymentBundle\Entity\ExtendedDataType');
+        Type::addType(ExtendedDataType::NAME, 'Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedDataType');
         $type = Type::getType(ExtendedDataType::NAME);
         
         $this->assertEquals(ExtendedDataType::NAME, $type->getName());
@@ -30,7 +30,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
     public function testConversion()
     {
         ExtendedDataType::setEncryptionService(new MCryptEncryptionService('foo'));
-        Type::addType(ExtendedDataType::NAME, 'Bundle\PaymentBundle\Entity\ExtendedDataType');
+        Type::addType(ExtendedDataType::NAME, 'Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedDataType');
         
         $extendedData = new ExtendedData;
         $extendedData->set('foo', 'foo', false);

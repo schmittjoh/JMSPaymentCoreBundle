@@ -1,28 +1,28 @@
 <?php
 
-namespace Bundle\PaymentBundle\Tests\PluginController;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\PluginController;
 
-use Bundle\PaymentBundle\Model\CreditInterface;
-use Bundle\PaymentBundle\Entity\Credit;
-use Bundle\PaymentBundle\Entity\FinancialTransaction;
-use Bundle\PaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\PaymentBundle\Entity\ExtendedData;
-use Bundle\PaymentBundle\Entity\Payment;
-use Bundle\PaymentBundle\Entity\PaymentInstruction;
-use Bundle\PaymentBundle\Plugin\PluginInterface;
-use Bundle\PaymentBundle\Plugin\Exception\Exception as PluginException;
-use Bundle\PaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use Bundle\PaymentBundle\Model\PaymentInterface;
-use Bundle\PaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\PaymentBundle\PluginController\Result;
-use Bundle\PaymentBundle\PluginController\PluginController;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\Credit;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\FinancialTransaction;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\Payment;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\PluginInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Exception as PluginException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\PluginController;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {
     
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentException
      * @dataProvider getInvalidPaymentStatesForDependentCredit
      */
     public function testCreditOnlyAcceptsValidPaymentStatesOnDependentCredit($invalidState)
@@ -190,7 +190,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidCreditException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidCreditException
      * @dataProvider getInvalidCreditStatesForCredit
      */
     public function testCreditDoesNotAcceptInvalidCreditState($invalidState)
@@ -213,7 +213,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
      * @dataProvider getInvalidPaymentInstructionStatesForCredit
      */
     public function testCreditDoesNotAcceptInvalidPaymentInstructionState($invalidState)
@@ -255,7 +255,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentException
      * @dataProvider getInvalidPaymentStatesForCreateDependentCredit
      */
     public function testCreateDependentCreditDoesOnlyAcceptValidPayments($invalidState)
@@ -279,7 +279,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
      * @dataProvider getInvalidInstructionStatesForCreateDependentCredit
      */
     public function testCreateDependentCreditDoesOnlyAcceptValidPaymentInstruction($invalidState)
@@ -333,7 +333,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
 
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertSame($transaction, $result->getFinancialTransaction());
         $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
         $this->assertSame(PluginInterface::REASON_CODE_SUCCESS, $result->getReasonCode());
@@ -378,7 +378,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
         
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertSame($transaction, $result->getFinancialTransaction());
         $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
         $this->assertSame(PluginInterface::REASON_CODE_SUCCESS, $result->getReasonCode());
@@ -413,7 +413,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
         $transaction = $result->getFinancialTransaction();
         
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertSame(Result::STATUS_FAILED, $result->getStatus());
         $this->assertSame($transaction->getReasonCode(), $result->getReasonCode());
         $this->assertSame(FinancialTransactionInterface::STATE_FAILED, $transaction->getState());
@@ -468,7 +468,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
         $transaction = $result->getFinancialTransaction();
         
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertSame(Result::STATUS_PENDING, $result->getStatus());
         $this->assertSame(PluginInterface::REASON_CODE_TIMEOUT, $result->getReasonCode());
         $this->assertSame(PaymentInterface::STATE_APPROVING, $payment->getState());
@@ -520,7 +520,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
      */
     public function testApproveAndDepositThrowsExceptionWhenPaymentInstructionHasPendingTransaction()
     {
@@ -536,7 +536,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentException
      * @dataProvider getInvalidPaymentStatesForApproval
      */
     public function testApproveAndDepositDoesNotAcceptInvalidPaymentState($invalidState)
@@ -551,7 +551,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException
      * @dataProvider getInvalidInstructionStatesForApproval
      */
     public function testApproveAndDepositDoesNotAcceptInvalidPaymentInstructionState($invalidState)
@@ -591,7 +591,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $result = $this->callApprove($controller, array($payment, 100));
         
         $this->assertSame($transaction, $result->getFinancialTransaction());
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertTrue(PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode());
         $this->assertSame(PluginInterface::RESPONSE_CODE_SUCCESS, $transaction->getResponseCode());
         $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
@@ -620,7 +620,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         
         $result = $this->callApprove($controller, array($payment, 100));
         
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertSame(Result::STATUS_FAILED, $result->getStatus());
         $this->assertSame(PaymentInterface::STATE_FAILED, $payment->getState());
         $this->assertSame(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE, $result->getFinancialTransaction()->getTransactionType());
@@ -653,7 +653,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         
         $result = $this->callApprove($controller, array($payment, 123.45));
 
-        $this->assertInstanceOf('Bundle\PaymentBundle\PluginController\Result', $result);
+        $this->assertInstanceOf('Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result', $result);
         $this->assertEquals(123.45, $instruction->getApprovingAmount());
         $this->assertEquals(123.45, $payment->getApprovingAmount());
         $this->assertSame(PaymentInterface::STATE_APPROVING, $payment->getState());
@@ -687,7 +687,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The PaymentInstruction can only ever have one pending transaction.
      */
     public function testApproveDoesNotAcceptNewTransactionIfInstructionHasPendingTransaction()
@@ -706,7 +706,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The Payment's target amount must equal the requested amount in a retry transaction.
      * @dataProvider getApprovalTestAmounts
      */
@@ -732,7 +732,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The Payment's target amount is less than the requested amount.
      */
     public function testApproveAmountCannotBeHigherThanPaymentsIfFirstTry()
@@ -748,7 +748,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The Payment's state must be STATE_NEW, or STATE_PENDING.
      * @dataProvider getInvalidPaymentStatesForApproval
      */
@@ -775,7 +775,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException Bundle\PaymentBundle\PluginController\Exception\Exception
+     * @expectedException Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception
      * @expectedMessage The PaymentInstruction's state must be STATE_VALID.
      * @dataProvider getInvalidInstructionStatesForApproval
      */
@@ -803,7 +803,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     
     protected function getPlugin()
     {
-        $plugin = $this->getMock('Bundle\PaymentBundle\Plugin\PluginInterface');
+        $plugin = $this->getMock('Bundle\JMS\Payment\CorePaymentBundle\Plugin\PluginInterface');
         $plugin
             ->expects($this->once())
             ->method('processes')
@@ -825,7 +825,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             $credit = new Credit($arguments[0], $arguments[1]);
         } else {
             $credit = $this->getMock(
-                'Bundle\PaymentBundle\Entity\Credit',
+                'Bundle\JMS\Payment\CorePaymentBundle\Entity\Credit',
                 $mockMethods,
                 $arguments
             );
@@ -850,7 +850,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         }
         
         return $this->getMock(
-        	'Bundle\PaymentBundle\Entity\Payment',
+        	'Bundle\JMS\Payment\CorePaymentBundle\Entity\Payment',
             $mockMethods,
             $arguments
         );
@@ -870,7 +870,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         }
         
         return $this->getMock(
-        	'Bundle\PaymentBundle\Entity\PaymentInstruction',
+        	'Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction',
             $mockMethods, 
             $arguments
         );
@@ -879,12 +879,12 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     protected function getController(array $options = array(), $addTransaction = true)
     {
         $options = array_merge(array(
-            'financial_transaction_class' => 'Bundle\PaymentBundle\Entity\FinancialTransaction',
-            'result_class' => 'Bundle\PaymentBundle\PluginController\Result',
+            'financial_transaction_class' => 'Bundle\JMS\Payment\CorePaymentBundle\Entity\FinancialTransaction',
+            'result_class' => 'Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result',
         ), $options);
         
         $mock = $this->getMockForAbstractClass(
-        	'Bundle\PaymentBundle\PluginController\PluginController',
+        	'Bundle\JMS\Payment\CorePaymentBundle\PluginController\PluginController',
             array($options)
         );
         

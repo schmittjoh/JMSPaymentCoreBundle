@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Model;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Model;
 
 interface PaymentInstructionInterface
 {

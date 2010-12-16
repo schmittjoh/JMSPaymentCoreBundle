@@ -1,13 +1,13 @@
 <?php
 
-namespace Bundle\PaymentBundle\Controller;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Controller;
 
-use Bundle\PaymentBundle\PluginController\Result;
+use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Result;
 
-use Bundle\PaymentBundle\Plugin\Exception\ActionRequiredException;
-use Bundle\PaymentBundle\Plugin\Exception\Action\VisitUrl;
-use Bundle\PaymentBundle\Entity\ExtendedData;
-use Bundle\PaymentBundle\Entity\PaymentInstruction;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\ActionRequiredException;
+use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Action\VisitUrl;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DemoController extends Controller

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\PaymentBundle\Tests\Entity;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Entity;
 
-use Bundle\PaymentBundle\Entity\ExtendedData;
+use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
 
 class ExtendedDataTest extends \PHPUnit_Framework_TestCase
 {

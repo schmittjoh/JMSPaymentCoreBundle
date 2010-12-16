@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Cryptography;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Cryptography;
 
 /**
  * This implementation transmits the initialization vector (IV) alongside

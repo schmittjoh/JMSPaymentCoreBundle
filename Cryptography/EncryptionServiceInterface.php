@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\PaymentBundle\Cryptography;
+namespace Bundle\JMS\Payment\CorePaymentBundle\Cryptography;
 
 /**
  * Interface for encryption services
