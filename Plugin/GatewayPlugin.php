@@ -71,8 +71,7 @@ abstract class GatewayPlugin extends Plugin
                 foreach ($value as $subValue) {
                     $headers[] = sprintf('%s: %s', $name, $subValue);
                 }
-            }
-            else {
+            } else {
                 $headers[] = sprintf('%s: %s', $name, $value);
             }
         }
@@ -87,17 +86,14 @@ abstract class GatewayPlugin extends Plugin
             
             if (!$request->headers->has('Content-Type') || 'multipart/form-data' !== $request->headers->get('Content-Type')) {
                 $postFields = $this->urlEncodeArray($request->request->all());
-            }
-            else {
+            } else {
                 $postFields = $request->request->all();
             }
             
             curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
-        }
-        else if ('PUT' === $method) {
+        } else if ('PUT' === $method) {
             curl_setopt($curl, CURLOPT_PUT, true);
-        }
-        else if ('HEAD' === $method) {
+        } else if ('HEAD' === $method) {
             curl_setopt($curl, CURLOPT_NOBODY, true);
         }
         

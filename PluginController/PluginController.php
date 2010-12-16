@@ -49,11 +49,9 @@ abstract class PluginController implements PluginControllerInterface
             $plugin->checkPaymentInstruction($instruction);
             
             return $this->onSuccessfulPaymentInstructionValidation($instruction);
-        }
-        catch (PluginFunctionNotSupportedException $notSupported) {
+        } catch (PluginFunctionNotSupportedException $notSupported) {
             return $this->onSuccessfulPaymentInstructionValidation($instruction);
-        }
-        catch (PluginInvalidPaymentInstructionException $invalidInstruction) {
+        } catch (PluginInvalidPaymentInstructionException $invalidInstruction) {
             return $this->onUnsuccessfulPaymentInstructionValidation($instruction, $invalidInstruction);
         }
     }
@@ -97,8 +95,7 @@ abstract class PluginController implements PluginControllerInterface
             if (Result::STATUS_SUCCESS !== $result->getStatus()) {
                 throw new InvalidPaymentInstructionException('The PaymentInstruction could not be validated.');
             }
-        }
-        else if (PaymentInstructionInterface::STATE_VALID !== $paymentInstruction->getState()) {
+        } else if (PaymentInstructionInterface::STATE_VALID !== $paymentInstruction->getState()) {
             throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be VALID, or NEW.');
         }
         
@@ -141,11 +138,9 @@ abstract class PluginController implements PluginControllerInterface
             $plugin->validatePaymentInstruction($paymentInstruction);
             
             return $this->onSuccessfulPaymentInstructionValidation($paymentInstruction);
-        }
-        catch (PluginFunctionNotSupportedException $notSupported) {
+        } catch (PluginFunctionNotSupportedException $notSupported) {
             return $this->checkPaymentInstruction($paymentInstruction);
-        }
-        catch (PluginInvalidPaymentInstructionException $invalid) {
+        } catch (PluginInvalidPaymentInstructionException $invalid) {
             return $this->onUnsuccessfulPaymentInstructionValidation($paymentInstruction, $invalid);
         }
     }
@@ -196,16 +191,14 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setState(PaymentInterface::STATE_APPROVING);
             $payment->setApprovingAmount($amount);
             $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
-        }
-        else if (PaymentInterface::STATE_APPROVING === $paymentState) {
+        } else if (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
                 throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
             }
             
             $transaction = $payment->getApproveTransaction();
             $retry = true;
-        }
-        else {
+        } else {
             throw new InvalidPaymentException('The Payment\'s state must be STATE_NEW, or STATE_APPROVING.');
         }
         
@@ -223,8 +216,7 @@ abstract class PluginController implements PluginControllerInterface
                 $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $payment->setState(PaymentInterface::STATE_FAILED);
                 $payment->setApprovingAmount(0.0);
                 $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
@@ -232,25 +224,21 @@ abstract class PluginController implements PluginControllerInterface
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $payment->setState(PaymentInterface::STATE_FAILED);
             $payment->setApprovingAmount(0.0);
             $instruction->setApprovingAmount($instruction->getApprovingAmount() - $amount);
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -299,8 +287,7 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
             
             $retry = false;
-        }
-        else if (PaymentInterface::STATE_APPROVING === $paymentState) {
+        } else if (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (0 !== Number::compare($amount, $payment->getApprovingAmount())) {
                 throw new \InvalidArgumentException('$amount must be equal to Payment\'s approving amount.');
             }
@@ -312,8 +299,7 @@ abstract class PluginController implements PluginControllerInterface
             $transaction = $payment->getApproveTransaction();
             
             $retry = true;
-        }
-        else {
+        } else {
             throw new InvalidPaymentException('Payment\'s state must e NEW, or APPROVING.');
         }
         
@@ -338,8 +324,7 @@ abstract class PluginController implements PluginControllerInterface
                 $instruction->setDepositedAmount($instruction->getDepositedAmount() + $processedAmount);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 
                 $payment->setState(PaymentInterface::STATE_FAILED);
@@ -351,8 +336,7 @@ abstract class PluginController implements PluginControllerInterface
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             
             $payment->setState(PaymentInterface::STATE_FAILED);
@@ -363,17 +347,14 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -462,8 +443,7 @@ abstract class PluginController implements PluginControllerInterface
             }
             
             $retry = false;
-        }
-        else if (CreditInterface::STATE_CREDITING === $creditState) {
+        } else if (CreditInterface::STATE_CREDITING === $creditState) {
             if (1 === Number::compare($amount, $instruction->getCreditingAmount())) {
                 throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getCreditingAmount()));
             }
@@ -486,8 +466,7 @@ abstract class PluginController implements PluginControllerInterface
             $transaction = $credit->getCreditTransaction();
             
             $retry = true;
-        }
-        else {
+        } else {
             throw new InvalidCreditException('Credit\'s state must be NEW, or CREDITING.');
         }
         
@@ -512,8 +491,7 @@ abstract class PluginController implements PluginControllerInterface
                 }
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 $credit->setState(CreditInterface::STATE_FAILED);
                 
@@ -526,8 +504,7 @@ abstract class PluginController implements PluginControllerInterface
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             $credit->setState(CreditInterface::STATE_FAILED);
             
@@ -539,17 +516,14 @@ abstract class PluginController implements PluginControllerInterface
             }
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -590,8 +564,7 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setState(PaymentInterface::STATE_DEPOSITING);
             $payment->setDepositingAmount($amount);
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
-        }
-        else if (PaymentInstructionInterface::STATE_DEPOSITING === $paymentState) {
+        } else if (PaymentInstructionInterface::STATE_DEPOSITING === $paymentState) {
             $transaction = $instructin->getPendingTransaction();
             if (null === $transaction) {
                 if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
@@ -606,8 +579,7 @@ abstract class PluginController implements PluginControllerInterface
                 
                 $payment->setDepositingAmount($amount);
                 $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
-            }
-            else {
+            } else {
                 if ($transaction->getPayment()->getId() !== $payment->getId()) {
                     throw new InvalidPaymentInstructionException('The PaymentInstruction has a pending transaction on another Payment.');
                 }
@@ -618,8 +590,7 @@ abstract class PluginController implements PluginControllerInterface
                 
                 $retry = true;
             }
-        }
-        else {
+        } else {
             throw new InvalidPaymentException('The Payment must be in STATE_APPROVED, or STATE_DEPOSITING.');
         }
         
@@ -640,32 +611,27 @@ abstract class PluginController implements PluginControllerInterface
                 $instruction->setDepositedAmount($instruction->getDepositedAmount() + $transaction->getProcessedAmount());
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $payment->setState(PaymentInterface::STATE_FAILED);
                 $payment->setDepositingAmount(0.0);
                 $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $payment->setState(PaymentInterface::STATE_FAILED);
             $payment->setDepositingAmount(0.0);
             $instruction->setDepositingAmount($instruction->getDepositingAmount() - $amount);
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -711,8 +677,7 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setReversingApprovedAmount($instruction->getReversingApprovedAmount() + $amount);
             
             $retry = false;
-        }
-        else {
+        } else {
             if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL !== $transaction->getState()) {
                 throw new InvalidPaymentInstructionException('PaymentInstruction has another pending transaction.');
             }
@@ -748,8 +713,7 @@ abstract class PluginController implements PluginControllerInterface
                 $instruction->setApprovedAmount($instruction->getApprovedAmount() - $processedAmount);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 
                 $payment->setReversingApprovedAmount(0.0);
@@ -757,25 +721,21 @@ abstract class PluginController implements PluginControllerInterface
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginfinancialException $ex) {
+        } catch (PluginfinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             
             $payment->setReversingApprovedAmount(0.0);
             $instruction->setReversingApprovedAmount($instruction->getReversingApprovedAmount() - $amount);
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -835,8 +795,7 @@ abstract class PluginController implements PluginControllerInterface
             }
             
             $retry = false;
-        }
-        else {
+        } else {
             if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_CREDIT !== $transaction->getTransactionType()) {
                 throw new InvalidPaymentInstructionException('Pending transaction is not of TYPE_REVERSE_CREDIT.');
             }
@@ -880,8 +839,7 @@ abstract class PluginController implements PluginControllerInterface
                 }
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 
                 $credit->setReversingCreditedAmount(0.0);
@@ -893,8 +851,7 @@ abstract class PluginController implements PluginControllerInterface
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             
             $credit->setReversingCreditedAmount(0.0);
@@ -905,17 +862,14 @@ abstract class PluginController implements PluginControllerInterface
             }
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -959,8 +913,7 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setReversingDepositedAmount($instruction->getReversingDepositedAmount() + $amount);
             
             $retry = false;
-        }
-        else {
+        } else {
             if (FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT !== $transaction->getTransactionType()) {
                 throw new InvalidPaymentInstructionException('There is another pending transaction on this payment.');
             }
@@ -996,28 +949,23 @@ abstract class PluginController implements PluginControllerInterface
                 $instruction->setDepositedAmount($instruction->getDepositedAmount() - $processedAmount);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
-            }
-            else {
+            } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        }
-        catch (PluginFinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             
             return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
-        }
-        catch (PluginBlockedException $blocked) {
+        } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            }
-            else if ($blocked instanceof PluginActionRequiredException) {
+            } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            }
-            else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);

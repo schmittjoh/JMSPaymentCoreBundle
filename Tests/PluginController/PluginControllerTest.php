@@ -823,8 +823,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         
         if (count($mockMethods) === 0) {
             $credit = new Credit($arguments[0], $arguments[1]);
-        }
-        else {
+        } else {
             $credit = $this->getMock(
                 'Bundle\PaymentBundle\Entity\Credit',
                 $mockMethods,

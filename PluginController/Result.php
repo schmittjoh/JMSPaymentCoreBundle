@@ -30,11 +30,9 @@ class Result
         
         if (3 === $nbArgs && $args[0] instanceof FinancialTransactionInterface) {
             $this->constructFinancialTransactionResult($args[0], $args[1], $args[2]);
-        }
-        else if (3 === $nbArgs && $args[0] instanceof PaymentInstructionInterface) {
+        } else if (3 === $nbArgs && $args[0] instanceof PaymentInstructionInterface) {
             $this->constructPaymentInstructionResult($args[0], $args[1], $args[2]);
-        }
-        else {
+        } else {
             throw new \InvalidArgumentException('The given arguments are not supported.');
         }
     }

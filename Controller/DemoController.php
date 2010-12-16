@@ -33,8 +33,7 @@ class DemoController extends Controller
                 
                 throw $ex;
             }
-        }
-        else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
+        } else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
             // you can do your error processing here
             throw new \RuntimeException('Transaction was not successful.');
         }

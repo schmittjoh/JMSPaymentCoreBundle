@@ -46,8 +46,7 @@ class FinancialTransaction implements FinancialTransactionInterface
         
         if (null !== $this->payment) {
             return $this->payment->getPaymentInstruction()->getExtendedData();
-        }
-        else if (null !== $this->credit) {
+        } else if (null !== $this->credit) {
             return $this->credit->getPaymentInstruction()->getExtendedData();
         }
         

@@ -46,8 +46,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -74,8 +73,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -107,8 +105,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $credit;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -131,8 +128,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $credit;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -166,8 +162,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -194,8 +189,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -222,8 +216,7 @@ class EntityPluginController extends PluginController
                 
                 $this->entityManager->persist($credit);
                 $this->entityManager->flush();
-            }
-            catch (PluginFunctionNotSupportedException $notSupported) {}
+            } catch (PluginFunctionNotSupportedException $notSupported) {}
         }
         
         return $credit;
@@ -247,8 +240,7 @@ class EntityPluginController extends PluginController
                 
                 $this->entityManager->persist($payment);
                 $this->entityManager->flush();
-            }
-            catch (PluginFunctionNotSupportedException $notSupported) {}
+            } catch (PluginFunctionNotSupportedException $notSupported) {}
         }
         
         return $payment;
@@ -273,8 +265,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -298,8 +289,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             
@@ -323,8 +313,7 @@ class EntityPluginController extends PluginController
             $this->entityManager->getConnection()->commit();
             
             return $result;
-        }
-        catch (\Exception $failure) {
+        } catch (\Exception $failure) {
             $this->entityManager->getConnection()->rollback();
             $this->entityManager->close();
             

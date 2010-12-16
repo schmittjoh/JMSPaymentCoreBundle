@@ -126,8 +126,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         if (!$withCredit) {
             $payment = new Payment($instruction, 100);
             $payment->addTransaction($transaction);
-        }
-        else {
+        } else {
             $credit = new Credit($instruction, 123.45);
             $credit->addTransaction($transaction);
         }

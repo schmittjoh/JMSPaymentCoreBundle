@@ -56,8 +56,7 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
         
         if ($encrypt) {
             $this->assertTrue($extendedData->isEncryptionRequired($name));
-        }
-        else {
+        } else {
             $this->assertFalse($extendedData->isEncryptionRequired($name));
         }
     }
