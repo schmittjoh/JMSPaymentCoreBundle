@@ -6,6 +6,22 @@ use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
 use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
+/*
+ * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 class Payment implements PaymentInterface
 {
     protected $approvedAmount;
@@ -27,7 +43,7 @@ class Payment implements PaymentInterface
     protected $attentionRequired;
     protected $expired;
     protected $updatedAt;
-    
+
     public function __construct(PaymentInstruction $paymentInstruction, $amount)
     {
         $this->approvedAmount = 0.0;
@@ -46,83 +62,83 @@ class Payment implements PaymentInterface
         $this->transactions = new ArrayCollection;
         $this->attentionRequired = false;
         $this->expired = false;
-        
+
         $this->paymentInstruction->addPayment($this);
     }
-    
+
     public function addTransaction(FinancialTransaction $transaction)
     {
         $this->transactions->add($transaction);
         $transaction->setPayment($this);
     }
-    
+
     public function getApprovedAmount()
     {
         return $this->approvedAmount;
     }
-    
+
     public function getApproveTransaction()
     {
         foreach ($this->transactions as $transaction) {
             $type = $transaction->getTransactionType();
-            
+
             if (FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE === $type
                 || FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE_AND_DEPOSIT === $type) {
-                    
+
                 return $transaction;
             }
         }
-        
+
         return null;
     }
-    
+
     public function getApprovingAmount()
     {
         return $this->approvingAmount;
     }
-    
+
     public function getCreditedAmount()
     {
         return $this->creditedAmount;
     }
-    
+
     public function getCreditingAmount()
     {
         return $this->creditingAmount;
     }
-    
+
     public function getDepositedAmount()
     {
-        return $this->depositedAmount;   
+        return $this->depositedAmount;
     }
-    
+
     public function getDepositingAmount()
     {
         return $this->depositingAmount;
     }
-    
+
     public function getDepositTransactions()
     {
         return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT === $transaction->getTransactionType(); 
+           return FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT === $transaction->getTransactionType();
         });
     }
-    
+
     public function getExpirationDate()
     {
         return $this->expirationDate;
     }
-    
+
     public function getId()
     {
         return $this->id;
     }
-    
+
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;
     }
-    
+
     public function getPendingTransaction()
     {
         foreach ($this->transactions as $transaction) {
@@ -130,144 +146,144 @@ class Payment implements PaymentInterface
                 return $transaction;
             }
         }
-        
+
         return null;
     }
-    
+
     public function getReverseApprovalTransactions()
     {
         return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL === $transaction->getTransactionType(); 
+           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL === $transaction->getTransactionType();
         });
     }
-    
+
     public function getReverseDepositTransactions()
     {
         return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT === $transaction->getTransactionType(); 
+           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT === $transaction->getTransactionType();
         });
     }
-    
+
     public function getReversingApprovedAmount()
     {
         return $this->reversingApprovedAmount;
     }
-    
+
     public function getReversingCreditedAmount()
     {
         return $this->reversingCreditedAmount;
     }
-    
+
     public function getReversingDepositedAmount()
     {
         return $this->reversingDepositedAmount;
     }
-    
+
     public function getState()
     {
         return $this->state;
     }
-    
+
     public function getTargetAmount()
     {
         return $this->targetAmount;
     }
-    
+
     public function getTransactions()
     {
         return $this->transactions;
     }
-    
+
     public function hasPendingTransaction()
     {
         return null !== $this->getPendingTransaction();
     }
-    
+
     public function isAttentionRequired()
     {
         return $this->attentionRequired;
     }
-    
+
     public function isExpired()
     {
         if (true === $this->expired) {
             return true;
         }
-        
+
         if (null !== $this->expirationDate) {
             return $this->expirationDate->getTimestamp() < time();
         }
-        
+
         return false;
     }
-    
+
     public function onPrePersist()
     {
         if (null !== $this->id) {
             $this->updatedAt = new \DateTime;
         }
     }
-    
+
     public function setApprovedAmount($amount)
     {
         $this->approvedAmount = $amount;
     }
-    
+
     public function setApprovingAmount($amount)
     {
         $this->approvingAmount = $amount;
     }
-    
+
     public function setAttentionRequired($boolean)
     {
         $this->attentionRequired = !!$boolean;
     }
-    
+
     public function setCreditedAmount($amount)
     {
         $this->creditedAmount = $amount;
     }
-    
+
     public function setCreditingAmount($amount)
     {
         $this->creditingAmount = $amount;
     }
-    
+
     public function setDepositedAmount($amount)
     {
         $this->depositedAmount = $amount;
     }
-    
+
     public function setDepositingAmount($amount)
     {
         $this->depositingAmount = $amount;
     }
-    
+
     public function setExpirationDate(\DateTime $date)
     {
         $this->expirationDate = $date;
     }
-    
+
     public function setExpired($boolean)
     {
         $this->expired = !!$boolean;
     }
-    
+
     public function setReversingApprovedAmount($amount)
     {
         $this->reversingApprovedAmount = $amount;
     }
-    
+
     public function setReversingCreditedAmount($amount)
     {
         $this->reversingCreditedAmount = $amount;
     }
-    
+
     public function setReversingDepositedAmount($amount)
     {
         $this->reversingDepositedAmount = $amount;
     }
-    
+
     public function setState($state)
     {
         $this->state = $state;
