@@ -328,7 +328,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('approveAndDeposit')
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
 
@@ -373,7 +373,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('approveAndDeposit')
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
 
@@ -407,7 +407,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('approveAndDeposit')
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
         $transaction = $result->getFinancialTransaction();
@@ -440,7 +440,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->method('approveAndDeposit')
             ->will($this->throwException($exception))
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $this->callApproveAndDeposit($controller, array($payment, 100));
     }
@@ -462,7 +462,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->method('approveAndDeposit')
             ->will($this->throwException($exception))
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $result = $this->callApproveAndDeposit($controller, array($payment, 100));
         $transaction = $result->getFinancialTransaction();
@@ -576,7 +576,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('approve')
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $transaction = new FinancialTransaction;
         $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
@@ -615,7 +615,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('approve')
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $result = $this->callApprove($controller, array($payment, 100));
 
@@ -644,7 +644,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->method('approve')
             ->will($this->throwException(new PluginTimeoutException('some error occurred')))
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $this->assertEquals(0.0, $instruction->getApprovingAmount());
         $this->assertEquals(0.0, $payment->getApprovingAmount());
@@ -680,7 +680,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->method('approve')
             ->will($this->throwException(new \Exception('some error occurred')))
         ;
-        $controller->add($plugin);
+        $controller->addPlugin($plugin);
 
         $this->callApprove($controller, array($payment, 100));
     }

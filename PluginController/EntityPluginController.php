@@ -229,7 +229,7 @@ class EntityPluginController extends PluginController
             throw new CreditNotFoundException(sprintf('The credit with ID "%s" was not found.', $id));
         }
 
-        $plugin = $this->get($credit->getPaymentInstruction()->getPaymentSystemName());
+        $plugin = $this->findPlugin($credit->getPaymentInstruction()->getPaymentSystemName());
         if ($plugin instanceof QueryablePluginInterface) {
             try {
                 $plugin->updateCredit($credit);
@@ -253,7 +253,7 @@ class EntityPluginController extends PluginController
             throw new PaymentNotFoundException(sprintf('The payment with ID "%d" was not found.', $id));
         }
 
-        $plugin = $this->get($payment->getPaymentInstruction()->getPaymentSystemName());
+        $plugin = $this->findPlugin($payment->getPaymentInstruction()->getPaymentSystemName());
         if ($plugin instanceof QueryablePluginInterface) {
             try {
                 $plugin->updatePayment($payment);

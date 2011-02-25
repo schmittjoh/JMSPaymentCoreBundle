@@ -49,7 +49,7 @@ abstract class PluginController implements PluginControllerInterface
         $this->plugins = array();
     }
 
-    public function add(PluginInterface $plugin)
+    public function addPlugin(PluginInterface $plugin)
     {
         $this->plugins[] = $plugin;
     }
@@ -59,7 +59,7 @@ abstract class PluginController implements PluginControllerInterface
      */
     public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
     {
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->checkPaymentInstruction($instruction);
@@ -134,7 +134,7 @@ abstract class PluginController implements PluginControllerInterface
      */
     public function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $instruction)
     {
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         if (!$plugin instanceof QueryablePlugin) {
             return null;
@@ -148,7 +148,7 @@ abstract class PluginController implements PluginControllerInterface
      */
     public function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction)
     {
-        $plugin = $this->get($paymentInstruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($paymentInstruction->getPaymentSystemName());
 
         try {
             $plugin->validatePaymentInstruction($paymentInstruction);
@@ -218,7 +218,7 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentException('The Payment\'s state must be STATE_NEW, or STATE_APPROVING.');
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->approve($transaction, $retry);
@@ -319,7 +319,7 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentException('Payment\'s state must e NEW, or APPROVING.');
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->approveAndDeposit($transaction, $retry);
@@ -486,7 +486,7 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidCreditException('Credit\'s state must be NEW, or CREDITING.');
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->credit($transaction, $retry);
@@ -610,7 +610,7 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentException('The Payment must be in STATE_APPROVED, or STATE_DEPOSITING.');
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->deposit($transaction, $retry);
@@ -713,7 +713,7 @@ abstract class PluginController implements PluginControllerInterface
             $retry = true;
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->reverseApproval($transaction, $retry);
@@ -835,7 +835,7 @@ abstract class PluginController implements PluginControllerInterface
             $retry = true;
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->reverseCredit($transaction, $amount);
@@ -949,7 +949,7 @@ abstract class PluginController implements PluginControllerInterface
             $retry = true;
         }
 
-        $plugin = $this->get($instruction->getPaymentSystemName());
+        $plugin = $this->findPlugin($instruction->getPaymentSystemName());
 
         try {
             $plugin->reverseDeposit($transaction, $retry);
@@ -995,7 +995,7 @@ abstract class PluginController implements PluginControllerInterface
         }
     }
 
-    protected function get($paymentSystemName)
+    protected function findPlugin($paymentSystemName)
     {
         foreach ($this->plugins as $plugin) {
             if ($plugin->processes($paymentSystemName)) {
