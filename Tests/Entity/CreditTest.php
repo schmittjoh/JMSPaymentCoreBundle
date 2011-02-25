@@ -1,20 +1,20 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Entity;
+namespace JMS\Payment\CoreBundle\Tests\Entity;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\FinancialTransaction;
+use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\Payment;
+use JMS\Payment\CoreBundle\Entity\Payment;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\Credit;
+use JMS\Payment\CoreBundle\Entity\Credit;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedData;
+use JMS\Payment\CoreBundle\Entity\ExtendedData;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 class CreditTest extends \PHPUnit_Framework_TestCase
 {

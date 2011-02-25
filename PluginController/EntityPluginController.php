@@ -1,17 +1,17 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController;
+namespace JMS\Payment\CoreBundle\PluginController;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\QueryablePluginInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\FinancialTransaction;
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\Payment;
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\PaymentInstruction;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\PaymentNotFoundException;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\PaymentInstructionNotFoundException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
+use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
+use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
+use JMS\Payment\CoreBundle\Entity\Payment;
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\PluginController\Exception\Exception;
+use JMS\Payment\CoreBundle\PluginController\Exception\PaymentNotFoundException;
+use JMS\Payment\CoreBundle\PluginController\Exception\PaymentInstructionNotFoundException;
+use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 

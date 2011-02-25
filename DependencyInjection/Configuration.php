@@ -1,6 +1,8 @@
 <?php
 
-namespace JMS\Payment\CoreBundle\PluginController\Exception;
+namespace JMS\Payment\CoreBundle\DependencyInjection;
+
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -18,6 +20,16 @@ namespace JMS\Payment\CoreBundle\PluginController\Exception;
  * limitations under the License.
  */
 
-class PaymentInstructionNotFoundException extends Exception
+class Configuration
 {
+    public function getConfigTree()
+    {
+        $tb = new TreeBuilder();
+
+        return $tb
+            ->root('jms_payment_core', 'array')
+                ->scalarNode('secret')->isRequired()->cannotBeEmpty()->end()
+            ->end()
+            ->buildTree();
+    }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Plugin;
+namespace JMS\Payment\CoreBundle\Tests\Plugin;
 
-use Bundle\JMS\Payment\CorePaymentBundle\BrowserKit\Request;
+use JMS\Payment\CoreBundle\BrowserKit\Request;
 
 class GatewayPluginTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +25,6 @@ class GatewayPluginTest extends \PHPUnit_Framework_TestCase
 
     protected function getPlugin()
     {
-        return $this->getMockForAbstractClass('Bundle\JMS\Payment\CorePaymentBundle\Plugin\GatewayPlugin', array(true));
+        return $this->getMockForAbstractClass('JMS\Payment\CoreBundle\Plugin\GatewayPlugin', array(true));
     }
 }

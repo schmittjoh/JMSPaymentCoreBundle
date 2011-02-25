@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://github.com/doctrine/doctrine2/raw/master/doctrine-mapping.xsd">
+
+    <entity name="JMS\Payment\CoreBundle\Entity\FinancialTransaction" table="financial_transactions" change-tracking-policy="DEFERRED_EXPLICIT">
+        <id name="id" type="integer"><generator strategy="AUTO"/></id>
+        
+        <field name="extendedData" type="extended_payment_data" nullable="true" />
+        <field name="processedAmount" type="decimal" scale="5" />
+        <field name="reasonCode" type="string" length="100" nullable="true" />
+        <field name="referenceNumber" type="string" length="100" nullable="true" />
+        <field name="requestedAmount" type="decimal" scale="5" />
+        <field name="responseCode" type="string" length="100" nullable="true" />
+        <field name="state" type="smallint" />
+        <field name="createdAt" type="datetime" />
+        <field name="updatedAt" type="datetime" nullable="true" />
+        <field name="trackingId" type="string" length="100" nullable="true" />
+        <field name="transactionType" type="smallint" />
+        
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="onPrePersist"/>
+            <lifecycle-callback type="postLoad" method="onPostLoad" />
+        </lifecycle-callbacks>
+        
+        <many-to-one field="credit" target-entity="Credit" inversed-by="transactions">
+            <join-column name="credit_id" nullable="true" referenced-column-name="id" on-delete="CASCADE"/>
+        </many-to-one>
+        
+        <many-to-one field="payment" target-entity="Payment" inversed-by="transactions">
+            <join-column name="payment_id" nullable="true" referenced-column-name="id" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

@@ -1,12 +1,12 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
+namespace JMS\Payment\CoreBundle\Plugin\Exception;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Exception\Exception as PaymentBundleException;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Exception\Exception as PaymentBundleException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

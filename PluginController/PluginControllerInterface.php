@@ -1,11 +1,11 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController;
+namespace JMS\Payment\CoreBundle\PluginController;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\ExtendedDataInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Model\ExtendedDataInterface;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -74,7 +74,7 @@ interface PluginControllerInterface
      * - rollback the transaction
      * - not persist any changes in the database
      *
-     * @throws Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not in the desired state
+     * @throws JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not in the desired state
      * @param integer $paymentId
      * @param float $amount
      * @return Result
@@ -227,9 +227,9 @@ interface PluginControllerInterface
      * - PaymentInstruction's state is VALID
      * - Credit's state is NEW (retry: false), or CREDITING (retry: true)
      * - Assuming retry = false: requested amount <= PaymentInstrunction.depositedAmount
-     * 	                                        - PaymentInstruction.reversingDepositedAmount
-     * 	                                        - PaymentInstruction.creditingAmount
-     * 	                                        - PaymentInstruction.creditedAmount
+     *                                             - PaymentInstruction.reversingDepositedAmount
+     *                                             - PaymentInstruction.creditingAmount
+     *                                             - PaymentInstruction.creditedAmount
      * - Assuming retry = true: requested amount <= PaymentInstruction.creditingAmount
      * - Assuming retry = false: requested amount <= Credit.targetAmount
      * - Assuming retry = true: requested amount == Credit.creditingAmount

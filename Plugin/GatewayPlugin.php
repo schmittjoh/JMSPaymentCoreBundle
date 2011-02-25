@@ -1,9 +1,9 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
+namespace JMS\Payment\CoreBundle\Plugin;
 
-use Bundle\JMS\Payment\CorePaymentBundle\BrowserKit\Request;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\CommunicationException;
+use JMS\Payment\CoreBundle\BrowserKit\Request;
+use JMS\Payment\CoreBundle\Plugin\Exception\CommunicationException;
 use Symfony\Component\BrowserKit\Response;
 
 /*

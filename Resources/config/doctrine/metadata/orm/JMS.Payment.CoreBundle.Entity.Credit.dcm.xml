@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://github.com/doctrine/doctrine2/raw/master/doctrine-mapping.xsd">
+
+    <entity name="JMS\Payment\CoreBundle\Entity\Credit" table="credits" change-tracking-policy="DEFERRED_EXPLICIT">
+        <id name="id" type="integer"><generator strategy="AUTO" /></id>
+        
+        <field name="attentionRequired" type="boolean" />
+        <field name="createdAt" type="datetime" />
+        <field name="creditedAmount" type="decimal" scale="5" />
+        <field name="creditingAmount" type="decimal" scale="5" />
+        <field name="reversingAmount" type="decimal" scale="5" />
+        <field name="state" type="smallint" nullable="false" />
+        <field name="targetAmount" type="decimal" scale="5" />
+        <field name="updatedAt" type="datetime" nullable="true" />
+        
+        <one-to-many field="transactions" mapped-by="credit" target-entity="FinancialTransaction">
+            <cascade>
+                <cascade-remove/>
+                <cascade-refresh/>
+            </cascade>
+        </one-to-many>
+        
+        <many-to-one field="paymentInstruction" target-entity="PaymentInstruction">
+            <join-column name="payment_instruction_id" 
+                         referenced-column-name="id" 
+                         nullable="false" 
+                         on-delete="CASCADE"/>
+        </many-to-one>
+        
+        <many-to-one field="payment" target-entity="Payment">
+            <join-column name="payment_id"
+                         referenced-column-name="id"
+                         nullable="true"
+                         on-delete="CASCADE"/>
+        </many-to-one>
+        
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="onPrePersist"/>
+        </lifecycle-callbacks>
+    </entity>
+
+</doctrine-mapping>

@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController;
+namespace JMS\Payment\CoreBundle\PluginController;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Exception as PluginException;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Plugin\Exception\Exception as PluginException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

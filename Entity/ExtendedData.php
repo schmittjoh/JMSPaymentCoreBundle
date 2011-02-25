@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
+namespace JMS\Payment\CoreBundle\Entity;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\ExtendedDataInterface;
+use JMS\Payment\CoreBundle\Model\ExtendedDataInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
+namespace JMS\Payment\CoreBundle\Plugin\Exception;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -23,7 +23,7 @@ namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception;
  * fails due to a financial error.
  *
  * Example: Invalid credit card information is found while performing an approve
- * 			transaction.
+ *             transaction.
  *
  * The plugin should set all error codes to ease debugging.
  * For further information, please see PluginException.

@@ -19,9 +19,9 @@
     </parameters>
 
     <services>
-    	<service id="payment.orm.entity_manager" alias="doctrine.orm.default_entity_manager" />
+        <service id="payment.orm.entity_manager" alias="doctrine.orm.default_entity_manager" public="false" />
     
-        <service id="payment.plugin_controller.entity" class="%payment.plugin_controller.entity.class%">
+        <service id="payment.plugin_controller.entity" class="%payment.plugin_controller.entity.class%" public="false">
             <argument type="service" id="payment.orm.entity_manager"/>
             <argument type="collection">
                 <argument key="result_class">%payment.plugin_controller.entity.options.result_class%</argument>
@@ -34,7 +34,7 @@
         
         <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
         
-        <service id="payment.encryption_service" class="%payment.encryption_service.class%">
+        <service id="payment.encryption_service" class="%payment.encryption_service.class%" public="false">
             <argument>%payment.encryption_service.secret%</argument>
             <argument>%payment.encryption_service.cipher%</argument>
             <argument>%payment.encryption_service.mode%</argument>

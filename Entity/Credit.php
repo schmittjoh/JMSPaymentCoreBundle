@@ -1,11 +1,11 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Entity;
+namespace JMS\Payment\CoreBundle\Entity;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /*

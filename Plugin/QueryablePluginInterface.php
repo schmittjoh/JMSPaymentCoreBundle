@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
+namespace JMS\Payment\CoreBundle\Plugin;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -28,7 +28,7 @@ use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-interface QueryablePluginInterface
+interface QueryablePluginInterface extends PluginInterface
 {
     /**
      * This method gets the available balance for the specified

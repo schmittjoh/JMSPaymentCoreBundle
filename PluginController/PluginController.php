@@ -1,26 +1,26 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\PluginController;
+namespace JMS\Payment\CoreBundle\PluginController;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\CreditInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\PluginInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\QueryablePluginInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\BlockedException as PluginBlockedException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\Exception as PluginException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FinancialException as PluginFinancialException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\Exception;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidCreditException;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentException;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\InvalidPaymentInstructionException;
-use Bundle\JMS\Payment\CorePaymentBundle\PluginController\Exception\PluginNotFoundException;
-use Bundle\JMS\Payment\CorePaymentBundle\Util\Number;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Plugin\PluginInterface;
+use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
+use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
+use JMS\Payment\CoreBundle\Plugin\Exception\BlockedException as PluginBlockedException;
+use JMS\Payment\CoreBundle\Plugin\Exception\Exception as PluginException;
+use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException as PluginFinancialException;
+use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
+use JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
+use JMS\Payment\CoreBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use JMS\Payment\CoreBundle\PluginController\Exception\Exception;
+use JMS\Payment\CoreBundle\PluginController\Exception\InvalidCreditException;
+use JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentException;
+use JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException;
+use JMS\Payment\CoreBundle\PluginController\Exception\PluginNotFoundException;
+use JMS\Payment\CoreBundle\Util\Number;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

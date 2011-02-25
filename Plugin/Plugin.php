@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Plugin;
+namespace JMS\Payment\CoreBundle\Plugin;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Model\FinancialTransactionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Model\PaymentInstructionInterface;
-use Bundle\JMS\Payment\CorePaymentBundle\Plugin\Exception\FunctionNotSupportedException;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

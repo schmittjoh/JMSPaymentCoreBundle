@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Cryptography;
+namespace JMS\Payment\CoreBundle\Cryptography;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Exception;
+namespace JMS\Payment\CoreBundle\Exception;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

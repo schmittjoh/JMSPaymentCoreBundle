@@ -1,8 +1,12 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle;
+namespace JMS\Payment\CoreBundle;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedDataType;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentPluginsPass;
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Doctrine\DBAL\Types\Type;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -22,14 +26,20 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  * limitations under the License.
  */
 
-class CorePaymentBundle extends Bundle
+class JMSPaymentCoreBundle extends Bundle
 {
     public function boot()
     {
-        // FIXME: only add type when using Doctrine2 entities
         if (false === Type::hasType(ExtendedDataType::NAME)) {
             ExtendedDataType::setEncryptionService($this->container->get('payment.encryption_service'));
-            Type::addType(ExtendedDataType::NAME, 'Bundle\JMS\Payment\CorePaymentBundle\Entity\ExtendedDataType');
+            Type::addType(ExtendedDataType::NAME, 'JMS\Payment\CoreBundle\Entity\ExtendedDataType');
         }
+    }
+
+    public function build(ContainerBuilder $builder)
+    {
+        parent::build($builder);
+
+        $builder->addCompilerPass(new AddPaymentPluginsPass());
     }
 }

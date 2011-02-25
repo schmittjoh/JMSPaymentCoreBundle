@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\Payment\CorePaymentBundle\Tests\Util;
+namespace JMS\Payment\CoreBundle\Tests\Util;
 
-use Bundle\JMS\Payment\CorePaymentBundle\Util\Number;
+use JMS\Payment\CoreBundle\Util\Number;
 
 class NumberTest extends \PHPUnit_Framework_TestCase
 {

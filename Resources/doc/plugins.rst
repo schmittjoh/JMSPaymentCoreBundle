@@ -1,4 +1,3 @@
-=======
 Plugins
 =======
 
@@ -130,6 +129,13 @@ the remaining abstract methods::
             return false;
         }
     }
+    
+Now, you only need to set-up your plugin as a service, and it will be added to the
+plugin controller automatically::
+
+    <service id="payment.plugin.paypal" class="PaypalPlugin">
+        <tag name="payment.plugin" />
+    </service>
     
 That's it! You created your first plugin :) 
 
