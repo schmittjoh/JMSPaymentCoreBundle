@@ -5,14 +5,14 @@
     xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="payment.plugin_controller.entity.class">Bundle\PaymentBundle\PluginController\EntityPluginController</parameter>
-        <parameter key="payment.plugin_controller.entity.options.result_class">Bundle\PaymentBundle\PluginController\Result</parameter>
-        <parameter key="payment.plugin_controller.entity.options.payment_class">Bundle\PaymentBundle\Entity\Payment</parameter>
-        <parameter key="payment.plugin_controller.entity.options.payment_instruction_class">Bundle\PaymentBundle\Entity\PaymentInstruction</parameter>
-        <parameter key="payment.plugin_controller.entity.options.financial_transaction_class">Bundle\PaymentBundle\Entity\FinancialTransaction</parameter>
-        <parameter key="payment.plugin_controller.entity.options.credit_class">Bundle\PaymentBundle\Entity\Credit</parameter>
+        <parameter key="payment.plugin_controller.entity.class">JMS\Payment\CoreBundle\PluginController\EntityPluginController</parameter>
+        <parameter key="payment.plugin_controller.entity.options.result_class">JMS\Payment\CoreBundle\PluginController\Result</parameter>
+        <parameter key="payment.plugin_controller.entity.options.payment_class">JMS\Payment\CoreBundle\Entity\Payment</parameter>
+        <parameter key="payment.plugin_controller.entity.options.payment_instruction_class">JMS\Payment\CoreBundle\Entity\PaymentInstruction</parameter>
+        <parameter key="payment.plugin_controller.entity.options.financial_transaction_class">JMS\Payment\CoreBundle\Entity\FinancialTransaction</parameter>
+        <parameter key="payment.plugin_controller.entity.options.credit_class">JMS\Payment\CoreBundle\Entity\Credit</parameter>
         
-        <parameter key="payment.encryption_service.class">Bundle\PaymentBundle\Cryptography\MCryptEncryptionService</parameter>
+        <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
         <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
         <parameter key="payment.encryption_service.mode">ctr</parameter>
@@ -34,7 +34,7 @@
         
         <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
         
-        <service id="payment.encryption_service" class="%payment.encryption_service.class%" public="false">
+        <service id="payment.encryption_service" class="%payment.encryption_service.class%">
             <argument>%payment.encryption_service.secret%</argument>
             <argument>%payment.encryption_service.cipher%</argument>
             <argument>%payment.encryption_service.mode%</argument>
