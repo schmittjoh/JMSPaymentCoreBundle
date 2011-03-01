@@ -8,17 +8,17 @@
     <entity name="JMS\Payment\CoreBundle\Entity\FinancialTransaction" table="financial_transactions" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
         
-        <field name="extendedData" type="extended_payment_data" nullable="true" />
-        <field name="processedAmount" type="decimal" scale="5" />
-        <field name="reasonCode" type="string" length="100" nullable="true" />
-        <field name="referenceNumber" type="string" length="100" nullable="true" />
-        <field name="requestedAmount" type="decimal" scale="5" />
-        <field name="responseCode" type="string" length="100" nullable="true" />
+        <field name="extendedData" column="extended_data" type="extended_payment_data" nullable="true" />
+        <field name="processedAmount" column="processed_amount" type="decimal" scale="5" />
+        <field name="reasonCode" column="reason_code" type="string" length="100" nullable="true" />
+        <field name="referenceNumber" column="reference_number" type="string" length="100" nullable="true" />
+        <field name="requestedAmount" column="requested_amount" type="decimal" scale="5" />
+        <field name="responseCode" column="response_code" type="string" length="100" nullable="true" />
         <field name="state" type="smallint" />
-        <field name="createdAt" type="datetime" />
-        <field name="updatedAt" type="datetime" nullable="true" />
-        <field name="trackingId" type="string" length="100" nullable="true" />
-        <field name="transactionType" type="smallint" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
+        <field name="trackingId" column="tracking_id" type="string" length="100" nullable="true" />
+        <field name="transactionType" column="transaction_type" type="smallint" />
         
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPrePersist"/>

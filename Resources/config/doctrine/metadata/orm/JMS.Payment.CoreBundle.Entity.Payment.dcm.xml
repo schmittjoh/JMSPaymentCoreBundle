@@ -8,22 +8,22 @@
     <entity name="JMS\Payment\CoreBundle\Entity\Payment" table="payments" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
         
-        <field name="approvedAmount" type="decimal" scale="5" />
-        <field name="approvingAmount" type="decimal" scale="5" />
-        <field name="creditedAmount" type="decimal" scale="5" />
-        <field name="creditingAmount" type="decimal" scale="5" />
-        <field name="depositedAmount" type="decimal" scale="5" />
-        <field name="depositingAmount" type="decimal" scale="5" />
-        <field name="expirationDate" type="datetime" nullable="true" />
-        <field name="reversingApprovedAmount" type="decimal" scale="5" />
-        <field name="reversingCreditedAmount" type="decimal" scale="5" />
-        <field name="reversingDepositedAmount" type="decimal" scale="5" />
+        <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
+        <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
+        <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
+        <field name="creditingAmount" column="crediting_amount" type="decimal" scale="5" />
+        <field name="depositedAmount" column="deposited_amount" type="decimal" scale="5" />
+        <field name="depositingAmount" column="depositing_amount" type="decimal" scale="5" />
+        <field name="expirationDate" column="expiration_date" type="datetime" nullable="true" />
+        <field name="reversingApprovedAmount" column="reversing_approved_amount" type="decimal" scale="5" />
+        <field name="reversingCreditedAmount" column="reversing_credited_amount" type="decimal" scale="5" />
+        <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" scale="5" />
         <field name="state" type="smallint" />
-        <field name="targetAmount" type="decimal" scale="5" />
-        <field name="attentionRequired" type="boolean" />
+        <field name="targetAmount" column="target_amount" type="decimal" scale="5" />
+        <field name="attentionRequired" column="attention_required" type="boolean" />
         <field name="expired" type="boolean" />
-        <field name="createdAt" type="datetime" />
-        <field name="updatedAt" type="datetime" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         
         <many-to-one field="paymentInstruction" target-entity="PaymentInstruction" inversed-by="payments">
             <join-column name="payment_instruction_id" 

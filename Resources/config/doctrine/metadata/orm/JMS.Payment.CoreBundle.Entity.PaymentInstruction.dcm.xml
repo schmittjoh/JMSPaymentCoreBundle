@@ -9,21 +9,21 @@
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
         
         <field name="amount" type="decimal" scale="5" />
-        <field name="approvedAmount" type="decimal" scale="5" />
-        <field name="approvingAmount" type="decimal" scale="5" />
-        <field name="createdAt" type="datetime" />
-        <field name="creditedAmount" type="decimal" scale="5" />
-        <field name="creditingAmount" type="decimal" scale="5" />
+        <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
+        <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
+        <field name="creditingAmount" column="crediting_amount" type="decimal" scale="5" />
         <field name="currency" type="string" length="3" />
-        <field name="depositedAmount" type="decimal" scale="5" />
-        <field name="depositingAmount" type="decimal" scale="5" />
-        <field name="extendedData" type="extended_payment_data" />
-        <field name="paymentSystemName" type="string" length="100" />
-        <field name="reversingApprovedAmount" type="decimal" scale="5" />
-        <field name="reversingCreditedAmount" type="decimal" scale="5" />
-        <field name="reversingDepositedAmount" type="decimal" scale="5" />
+        <field name="depositedAmount" column="deposited_amount" type="decimal" scale="5" />
+        <field name="depositingAmount" column="depositing_amount" type="decimal" scale="5" />
+        <field name="extendedData" column="extended_data" type="extended_payment_data" />
+        <field name="paymentSystemName" column="payment_system_name" type="string" length="100" />
+        <field name="reversingApprovedAmount" column="reversing_approved_amount" type="decimal" scale="5" />
+        <field name="reversingCreditedAmount" column="reversing_credited_amount" type="decimal" scale="5" />
+        <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" scale="5" />
         <field name="state" type="smallint" />
-        <field name="updatedAt" type="datetime" nullable="true" />
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         
         <one-to-many field="credits" mapped-by="paymentInstruction" target-entity="Credit">
             <cascade>

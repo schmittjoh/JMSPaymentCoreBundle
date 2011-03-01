@@ -8,14 +8,14 @@
     <entity name="JMS\Payment\CoreBundle\Entity\Credit" table="credits" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO" /></id>
         
-        <field name="attentionRequired" type="boolean" />
-        <field name="createdAt" type="datetime" />
-        <field name="creditedAmount" type="decimal" scale="5" />
-        <field name="creditingAmount" type="decimal" scale="5" />
-        <field name="reversingAmount" type="decimal" scale="5" />
+        <field name="attentionRequired" column="attention_required" type="boolean" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
+        <field name="creditingAmount" column="crediting_amount" type="decimal" scale="5" />
+        <field name="reversingAmount" column="reversing_amount" type="decimal" scale="5" />
         <field name="state" type="smallint" nullable="false" />
-        <field name="targetAmount" type="decimal" scale="5" />
-        <field name="updatedAt" type="datetime" nullable="true" />
+        <field name="targetAmount" column="target_amount" type="decimal" scale="5" />
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         
         <one-to-many field="transactions" mapped-by="credit" target-entity="FinancialTransaction">
             <cascade>
