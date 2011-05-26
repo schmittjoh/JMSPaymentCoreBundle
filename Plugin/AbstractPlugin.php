@@ -22,7 +22,7 @@ use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException;
  * limitations under the License.
  */
 
-abstract class Plugin implements PluginInterface
+abstract class AbstractPlugin implements PluginInterface
 {
     protected $debug;
 

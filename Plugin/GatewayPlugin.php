@@ -28,7 +28,7 @@ use Symfony\Component\BrowserKit\Response;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class GatewayPlugin extends Plugin
+abstract class GatewayPlugin extends AbstractPlugin
 {
     protected $curlOptions;
 
@@ -75,6 +75,8 @@ abstract class GatewayPlugin extends Plugin
         }
 
         $curl = curl_init();
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt_array($curl, $this->curlOptions);
         curl_setopt($curl, CURLOPT_URL, $request->getUri());
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

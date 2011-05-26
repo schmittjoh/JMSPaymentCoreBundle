@@ -85,7 +85,7 @@ doing so. All exceptions are in the namespace ``Bundle\PaymentBundle\Plugin\Exce
 |                                    | cannot be processed.        | converts the exception to |
 |                                    |                             | a Result object.          |
 |                                    | The exception must only be  |                           |
-|                                    | when the situation is       |                           |
+|                                    | used when the situation is  |                           |
 |                                    | temporary, and there is a   |                           |
 |                                    | chance that the transaction |                           |
 |                                    | can be performed at a later |                           |
@@ -113,7 +113,7 @@ Implementing a Custom Plugin
 The easiest way is to simply extend the provided ``Plugin`` class, and override
 the remaining abstract methods::
 
-    class PaypalPlugin extends \Bundle\PaymentBundle\Plugin\Plugin
+    class PaypalPlugin extends \JMS\Payment\CoreBundle\Plugin\AbstractPlugin
     {
         // this method is called by the plugin controller to check whether this
         // plugin can process the given payment system
@@ -139,3 +139,5 @@ plugin controller automatically::
     
 That's it! You created your first plugin :) 
 
+You can also have a look at the PaymentPaypalBundle for a full implementation: 
+https://github.com/schmittjoh/PaymentPaypalBundle

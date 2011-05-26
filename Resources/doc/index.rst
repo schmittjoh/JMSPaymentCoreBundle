@@ -2,7 +2,7 @@ Payment\CoreBundle
 ==================
 This bundle provides a unified view of all payment protocols being implemented 
 by plugins by means of a simple facade. The payment plugin controller (PPC) can
-be used to access multiple payment backends through a simple and unique API.
+be used to access multiple payment backends through a simple and unified API.
 
 Additionally, the bundle provides the following facilities to plugin implementations:
 
@@ -12,6 +12,10 @@ Additionally, the bundle provides the following facilities to plugin implementat
   * Encryption of Sensitive Data
   * Retry Logic
 
+Usage
+=====
+See the DemoController for a sample usage:
+https://github.com/schmittjoh/PaymentCoreBundle/blob/master/Controller/DemoController.php
 
 Plugins
 =======
