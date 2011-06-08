@@ -28,7 +28,9 @@ class Configuration
 
         return $tb
             ->root('jms_payment_core', 'array')
-                ->scalarNode('secret')->isRequired()->cannotBeEmpty()->end()
+                ->children()
+                    ->scalarNode('secret')->isRequired()->cannotBeEmpty()->end()
+                ->end()
             ->end()
             ->buildTree();
     }
