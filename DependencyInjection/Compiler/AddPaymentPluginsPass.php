@@ -26,11 +26,11 @@ class AddPaymentPluginsPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('payment.plugin_controller')) {
+        if (!$container->has('payment.plugin_controller')) {
             return;
         }
 
-        $def = $container->getDefinition('payment.plugin_controller');
+        $def = $container->findDefinition('payment.plugin_controller');
         foreach ($container->findTaggedServiceIds('payment.plugin') as $id => $attr) {
             $def->addMethodCall('addPlugin', array(new Reference($id)));
         }
