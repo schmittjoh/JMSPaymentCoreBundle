@@ -1,0 +1,14 @@
+imports:
+    - { resource: framework.yml }
+    - { resource: doctrine.yml }
+    - { resource: twig.yml }
+
+jms_payment_core:
+    secret: test
+
+jms_payment_paypal:
+    username: schmit_1283340315_biz_api1.gmail.com
+    password: 1283340321
+    signature: A93vj6VJ.ZIRNjbI6GFgi4N2Km.5ATLs-EinlyWk2htEGX0xc3L8YIBo
+    return_url: http://paypal.test/payment
+    cancel_url: http://paypal.test/payment

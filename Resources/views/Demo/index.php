@@ -1,1 +1,1 @@
-Hello!
+Your transaction was successful.

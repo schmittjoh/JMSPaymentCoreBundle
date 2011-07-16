@@ -1,0 +1,2 @@
+JMSPaymentCoreBundle:
+    file: @JMSPaymentCoreBundle/Resources/config/routing.yml
