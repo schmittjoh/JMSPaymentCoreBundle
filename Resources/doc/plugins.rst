@@ -52,7 +52,7 @@ Available Exceptions
 The following lists available exceptions which can be thrown from plugins, and the
 associated changes the plugin controller will perform. Of course, you can also add
 your own exceptions, but it is recommend that you sub-class an existing exception when
-doing so. All exceptions are in the namespace ``Bundle\PaymentBundle\Plugin\Exception``.
+doing so. All exceptions are in the namespace ``JMS\Payment\CoreBundle\Plugin\Exception``.
 
 +------------------------------------+-----------------------------+---------------------------+
 | Class                              | Description                 | Payment Plugin Controller |
@@ -140,4 +140,4 @@ plugin controller automatically::
 That's it! You created your first plugin :) 
 
 You can also have a look at the PaymentPaypalBundle for a full implementation: 
-https://github.com/schmittjoh/PaymentPaypalBundle
+https://github.com/schmittjoh/JMSPaymentPaypalBundle
