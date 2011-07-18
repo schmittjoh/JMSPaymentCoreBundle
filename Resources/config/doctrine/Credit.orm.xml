@@ -7,7 +7,7 @@
 
     <entity name="JMS\Payment\CoreBundle\Entity\Credit" table="credits" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO" /></id>
-        
+
         <field name="attentionRequired" column="attention_required" type="boolean" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
@@ -16,31 +16,27 @@
         <field name="state" type="smallint" nullable="false" />
         <field name="targetAmount" column="target_amount" type="decimal" scale="5" />
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
-        
+
         <one-to-many field="transactions" mapped-by="credit" target-entity="FinancialTransaction">
             <cascade>
                 <cascade-remove/>
                 <cascade-refresh/>
             </cascade>
         </one-to-many>
-        
+
         <many-to-one field="paymentInstruction" target-entity="PaymentInstruction">
-            <join-column name="payment_instruction_id" 
-                         referenced-column-name="id" 
-                         nullable="false" 
+            <join-column name="payment_instruction_id"
+                         referenced-column-name="id"
+                         nullable="false"
                          on-delete="CASCADE"/>
         </many-to-one>
-        
+
         <many-to-one field="payment" target-entity="Payment">
             <join-column name="payment_id"
                          referenced-column-name="id"
                          nullable="true"
                          on-delete="CASCADE"/>
         </many-to-one>
-        
-        <lifecycle-callbacks>
-            <lifecycle-callback type="prePersist" method="onPrePersist"/>
-        </lifecycle-callbacks>
     </entity>
 
 </doctrine-mapping>
