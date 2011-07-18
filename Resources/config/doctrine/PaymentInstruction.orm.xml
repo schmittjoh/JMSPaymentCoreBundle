@@ -7,7 +7,7 @@
 
     <entity name="JMS\Payment\CoreBundle\Entity\PaymentInstruction" table="payment_instructions" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
-        
+
         <field name="amount" type="decimal" scale="5" />
         <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
         <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
@@ -24,14 +24,14 @@
         <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" scale="5" />
         <field name="state" type="smallint" />
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
-        
+
         <one-to-many field="credits" mapped-by="paymentInstruction" target-entity="Credit">
             <cascade>
                 <cascade-remove/>
                 <cascade-refresh/>
             </cascade>
         </one-to-many>
-        
+
         <one-to-many field="payments" mapped-by="paymentInstruction" target-entity="Payment">
             <cascade>
                 <cascade-remove/>
@@ -41,8 +41,9 @@
 
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPrePersist"/>
+            <lifecycle-callback type="preUpdate" method="onPrePersist"/>
             <lifecycle-callback type="postLoad" method="onPostLoad" />
         </lifecycle-callbacks>
     </entity>
-    
+
 </doctrine-mapping>
