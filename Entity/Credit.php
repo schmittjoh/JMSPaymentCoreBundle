@@ -26,18 +26,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Credit implements CreditInterface
 {
-    protected $attentionRequired;
-    protected $createdAt;
-    protected $creditedAmount;
-    protected $creditingAmount;
-    protected $id;
-    protected $payment;
-    protected $paymentInstruction;
-    protected $transactions;
-    protected $reversingAmount;
-    protected $state;
-    protected $targetAmount;
-    protected $updatedAt;
+    private $attentionRequired;
+    private $createdAt;
+    private $creditedAmount;
+    private $creditingAmount;
+    private $id;
+    private $payment;
+    private $paymentInstruction;
+    private $transactions;
+    private $reversingAmount;
+    private $state;
+    private $targetAmount;
+    private $updatedAt;
 
     public function __construct(PaymentInstructionInterface $paymentInstruction, $amount)
     {
@@ -176,5 +176,10 @@ class Credit implements CreditInterface
     public function setState($state)
     {
         $this->state = $state;
+    }
+
+    public function onPreSave()
+    {
+        $this->updatedAt = new \DateTime;
     }
 }

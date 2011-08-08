@@ -22,8 +22,8 @@ use JMS\Payment\CoreBundle\Model\ExtendedDataInterface;
 
 class ExtendedData implements ExtendedDataInterface
 {
-    protected $data;
-    protected $listeners;
+    private $data;
+    private $listeners;
 
     public function __construct()
     {

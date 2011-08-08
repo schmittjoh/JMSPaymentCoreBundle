@@ -25,21 +25,21 @@ use JMS\Payment\CoreBundle\Model\PaymentInterface;
 
 class FinancialTransaction implements FinancialTransactionInterface
 {
-    protected $credit;
-    protected $extendedData;
-    protected $extendedDataOriginal;
-    protected $id;
-    protected $payment;
-    protected $processedAmount;
-    protected $reasonCode;
-    protected $referenceNumber;
-    protected $requestedAmount;
-    protected $responseCode;
-    protected $state;
-    protected $createdAt;
-    protected $updatedAt;
-    protected $trackingId;
-    protected $transactionType;
+    private $credit;
+    private $extendedData;
+    private $extendedDataOriginal;
+    private $id;
+    private $payment;
+    private $processedAmount;
+    private $reasonCode;
+    private $referenceNumber;
+    private $requestedAmount;
+    private $responseCode;
+    private $state;
+    private $createdAt;
+    private $updatedAt;
+    private $trackingId;
+    private $transactionType;
 
     public function __construct()
     {

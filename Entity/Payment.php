@@ -24,25 +24,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Payment implements PaymentInterface
 {
-    protected $approvedAmount;
-    protected $approvingAmount;
-    protected $createdAt;
-    protected $creditedAmount;
-    protected $creditingAmount;
-    protected $depositedAmount;
-    protected $depositingAmount;
-    protected $expirationDate;
-    protected $id;
-    protected $paymentInstruction;
-    protected $reversingApprovedAmount;
-    protected $reversingCreditedAmount;
-    protected $reversingDepositedAmount;
-    protected $state;
-    protected $targetAmount;
-    protected $transactions;
-    protected $attentionRequired;
-    protected $expired;
-    protected $updatedAt;
+    private $approvedAmount;
+    private $approvingAmount;
+    private $createdAt;
+    private $creditedAmount;
+    private $creditingAmount;
+    private $depositedAmount;
+    private $depositingAmount;
+    private $expirationDate;
+    private $id;
+    private $paymentInstruction;
+    private $reversingApprovedAmount;
+    private $reversingCreditedAmount;
+    private $reversingDepositedAmount;
+    private $state;
+    private $targetAmount;
+    private $transactions;
+    private $attentionRequired;
+    private $expired;
+    private $updatedAt;
 
     public function __construct(PaymentInstruction $paymentInstruction, $amount)
     {
@@ -217,11 +217,9 @@ class Payment implements PaymentInterface
         return false;
     }
 
-    public function onPrePersist()
+    public function onPreSave()
     {
-        if (null !== $this->id) {
-            $this->updatedAt = new \DateTime;
-        }
+        $this->updatedAt = new \DateTime;
     }
 
     public function setApprovedAmount($amount)

@@ -39,7 +39,8 @@
         </many-to-one>
         
         <lifecycle-callbacks>
-            <lifecycle-callback type="prePersist" method="onPrePersist"/>
+            <lifecycle-callback type="prePersist" method="onPreSave"/>
+            <lifecycle-callback type="preUpdate" method="onPreSave" />
         </lifecycle-callbacks>
     </entity>
 

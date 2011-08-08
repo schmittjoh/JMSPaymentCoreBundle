@@ -27,7 +27,7 @@ class ExtendedDataType extends ObjectType
 {
     const NAME = 'extended_payment_data';
 
-    protected static $encryptionService;
+    private static $encryptionService;
 
     public static function setEncryptionService(EncryptionServiceInterface $service)
     {

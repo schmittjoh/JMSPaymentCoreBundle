@@ -23,27 +23,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class PaymentInstruction implements PaymentInstructionInterface
 {
-    protected $account;
-    protected $amount;
-    protected $approvedAmount;
-    protected $approvingAmount;
-    protected $createdAt;
-    protected $creditedAmount;
-    protected $creditingAmount;
-    protected $credits;
-    protected $currency;
-    protected $depositedAmount;
-    protected $depositingAmount;
-    protected $extendedData;
-    protected $extendedDataOriginal;
-    protected $id;
-    protected $payments;
-    protected $paymentSystemName;
-    protected $reversingApprovedAmount;
-    protected $reversingCreditedAmount;
-    protected $reversingDepositedAmount;
-    protected $state;
-    protected $updatedAt;
+    private $account;
+    private $amount;
+    private $approvedAmount;
+    private $approvingAmount;
+    private $createdAt;
+    private $creditedAmount;
+    private $creditingAmount;
+    private $credits;
+    private $currency;
+    private $depositedAmount;
+    private $depositingAmount;
+    private $extendedData;
+    private $extendedDataOriginal;
+    private $id;
+    private $payments;
+    private $paymentSystemName;
+    private $reversingApprovedAmount;
+    private $reversingCreditedAmount;
+    private $reversingDepositedAmount;
+    private $state;
+    private $updatedAt;
 
     public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data)
     {
@@ -58,6 +58,7 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->depositingAmount = 0.0;
         $this->depositedAmount = 0.0;
         $this->extendedData = $data;
+        $this->extendedDataOriginal = clone $data;
         $this->payments = new ArrayCollection();
         $this->paymentSystemName = $paymentSystemName;
         $this->reversingApprovedAmount = 0.0;
@@ -222,11 +223,9 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->extendedDataOriginal = clone $this->extendedData;
     }
 
-    public function onPrePersist()
+    public function onPreSave()
     {
-        if (null !== $this->id) {
-            $this->updatedAt = new \Datetime;
-        }
+        $this->updatedAt = new \Datetime;
 
         // this is necessary until Doctrine adds an interface for comparing
         // value objects. Right now this is done by referential equality
