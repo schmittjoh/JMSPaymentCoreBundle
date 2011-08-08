@@ -22,6 +22,7 @@
         
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPrePersist"/>
+            <lifecycle-callback type="preUpdate" method="onPrePersist" />
             <lifecycle-callback type="postLoad" method="onPostLoad" />
         </lifecycle-callbacks>
         

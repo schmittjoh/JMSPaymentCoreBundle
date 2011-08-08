@@ -89,15 +89,6 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $instruction2->addPayment($payment);
     }
 
-    public function testOnPrePersistDoesNotSetUpdatedAtWhenNewEntity()
-    {
-        $instruction = $this->getInstruction();
-
-        $this->assertNull($instruction->getUpdatedAt());
-        $instruction->onPrePersist();
-        $this->assertNull($instruction->getUpdatedAt());
-    }
-
     public function testOnPrePersist()
     {
         $instruction = $this->getInstruction();
@@ -106,7 +97,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
         $reflection->setValue($instruction, 1234);
 
         $this->assertNull($instruction->getUpdatedAt());
-        $instruction->onPrePersist();
+        $instruction->onPreSave();
         $this->assertInstanceOf('\DateTime', $instruction->getUpdatedAt());
         $this->assertTrue(time() - $instruction->getUpdatedAt()->getTimestamp() < 10);
     }

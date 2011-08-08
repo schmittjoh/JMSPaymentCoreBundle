@@ -138,9 +138,7 @@ class FinancialTransaction implements FinancialTransactionInterface
 
     public function onPrePersist()
     {
-        if (null !== $this->id) {
-            $this->updatedAt = new \DateTime;
-        }
+        $this->updatedAt = new \DateTime;
 
         if (null !== $this->extendedData && false === $this->extendedData->equals($this->extendedDataOriginal)) {
             $this->extendedData = clone $this->extendedData;
