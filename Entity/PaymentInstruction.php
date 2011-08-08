@@ -120,6 +120,11 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->extendedData;
     }
 
+    public function setExtendedData(ExtendedData $data)
+    {
+        return $this->extendedData = $data;
+    }
+
     public function getState()
     {
         return $this->state;
