@@ -580,7 +580,7 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setState(PaymentInterface::STATE_DEPOSITING);
             $payment->setDepositingAmount($amount);
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
-        } else if (PaymentInstructionInterface::STATE_DEPOSITING === $paymentState) {
+        } else if (PaymentInterface::STATE_DEPOSITING === $paymentState) {
             $transaction = $instructin->getPendingTransaction();
             if (null === $transaction) {
                 if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
