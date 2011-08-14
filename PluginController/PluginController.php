@@ -562,7 +562,7 @@ abstract class PluginController implements PluginControllerInterface
         }
 
         $paymentState = $payment->getState();
-        if (PaymentInstructionInterface::STATE_APPROVED === $paymentState) {
+        if (PaymentInterface::STATE_APPROVED === $paymentState) {
             if ($instruction->hasPendingTransaction()) {
                 throw new InvalidPaymentInstructionException('The PaymentInstruction can only have one pending transaction at a time.');
             }
