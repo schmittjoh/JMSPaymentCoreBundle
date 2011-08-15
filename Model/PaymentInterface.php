@@ -26,6 +26,8 @@ interface PaymentInterface
     const STATE_EXPIRED = 4;
     const STATE_FAILED = 5;
     const STATE_NEW = 6;
+    const STATE_DEPOSITING = 7;
+    const STATE_DEPOSITED = 8;
 
     function getApprovedAmount();
     function getApproveTransaction();

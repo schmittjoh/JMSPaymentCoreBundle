@@ -573,7 +573,8 @@ abstract class PluginController implements PluginControllerInterface
 
             $retry = false;
 
-            $transaction = $this->createFinancialTransaction($payment);
+            $transaction = $this->buildFinancialTransaction();
+            $transaction->setPayment($payment);
             $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
             $transaction->setRequestedAmount($amount);
 
@@ -589,7 +590,8 @@ abstract class PluginController implements PluginControllerInterface
 
                 $retry = false;
 
-                $transaction = $this->createFinancialTransaction($payment);
+                $transaction = $this->buildFinancialTransaction();
+                $transaction->setPayment($payment);
                 $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT);
                 $transaction->setRequestedAmount($amount);
 

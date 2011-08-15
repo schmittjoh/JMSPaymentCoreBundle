@@ -2,6 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Tests\PluginController;
 
+use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
+
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Entity\Credit;
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
@@ -798,7 +800,72 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testDeposit()
+    {
+        $controller = $this->getController(array(), false);
+        $controller->addPlugin($plugin = $this->getPlugin());
+        $plugin
+            ->expects($this->once())
+            ->method('deposit')
+        ;
 
+        $controller
+            ->expects($this->once())
+            ->method('buildFinancialTransaction')
+            ->will($this->returnCallback(function() {
+                $transaction = new FinancialTransaction();
+                $transaction->setProcessedAmount(123.45);
+                $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
+                $transaction->setReasonCode(PluginInterface::REASON_CODE_SUCCESS);
+
+                return $transaction;
+            }))
+        ;
+
+        $payment = $this->getPayment();
+        $payment->setState(PaymentInterface::STATE_APPROVED);
+        $payment->setApprovedAmount(123.45);
+
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+        $instruction->setApprovedAmount(10);
+
+        $result = $this->callDeposit($controller, array($payment, 123.45));
+
+        $this->assertEquals(Result::STATUS_SUCCESS, $result->getStatus(), 'Result status is not success: '.$result->getReasonCode());
+        $this->assertEquals(123.45, $payment->getDepositedAmount());
+        $this->assertEquals(123.45, $instruction->getDepositedAmount());
+        $this->assertEquals(PaymentInterface::STATE_DEPOSITED, $payment->getState());
+        $this->assertEquals(0, $payment->getDepositingAmount());
+        $this->assertEquals(0, $instruction->getDepositingAmount());
+    }
+
+    public function testDepositPluginThrowsFinancialException()
+    {
+        $controller = $this->getController();
+        $controller->addPlugin($plugin = $this->getPlugin());
+        $plugin
+            ->expects($this->once())
+            ->method('deposit')
+            ->will($this->throwException(new FinancialException('some error')))
+        ;
+
+        $payment = $this->getPayment();
+        $payment->setState(PaymentInterface::STATE_APPROVED);
+        $payment->setApprovedAmount(10);
+
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstruction::STATE_VALID);
+        $instruction->setApprovedAmount(10);
+
+        $result = $this->callDeposit($controller, array($payment, 10));
+        $this->assertEquals(Result::STATUS_FAILED, $result->getStatus());
+        $this->assertEquals(0, $payment->getDepositingAmount());
+        $this->assertEquals(0, $payment->getDepositedAmount());
+        $this->assertEquals(PaymentInterface::STATE_FAILED, $payment->getState());
+        $this->assertEquals(0, $instruction->getDepositingAmount());
+        $this->assertEquals(0, $instruction->getDepositedAmount());
+    }
 
     protected function getPlugin()
     {
@@ -901,6 +968,14 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     protected function callApprove(PluginController $controller, array $args)
     {
         $reflection = new \ReflectionMethod($controller, 'doApprove');
+        $reflection->setAccessible(true);
+
+        return $reflection->invokeArgs($controller, $args);
+    }
+
+    protected function callDeposit(PluginController $controller, array $args)
+    {
+        $reflection = new \ReflectionMethod($controller, 'doDeposit');
         $reflection->setAccessible(true);
 
         return $reflection->invokeArgs($controller, $args);
