@@ -45,8 +45,12 @@ class PaymentInstruction implements PaymentInstructionInterface
     private $state;
     private $updatedAt;
 
-    public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data)
+    public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data = null)
     {
+        if (null === $data) {
+            $data = new ExtendedData();
+        }
+
         $this->amount = $amount;
         $this->approvedAmount = 0.0;
         $this->approvingAmount = 0.0;

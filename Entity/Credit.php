@@ -49,6 +49,7 @@ class Credit implements CreditInterface
         $this->reversingAmount = 0.0;
         $this->state = self::STATE_NEW;
         $this->targetAmount = $amount;
+        $this->createdAt = new \DateTime;
 
         $this->paymentInstruction->addCredit($this);
     }
