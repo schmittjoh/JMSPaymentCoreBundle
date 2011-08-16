@@ -24,7 +24,7 @@
             </cascade>
         </one-to-many>
         
-        <many-to-one field="paymentInstruction" target-entity="PaymentInstruction">
+        <many-to-one field="paymentInstruction" target-entity="PaymentInstruction" inversed-by="credits">
             <join-column name="payment_instruction_id" 
                          referenced-column-name="id" 
                          nullable="false" 
