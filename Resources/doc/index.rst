@@ -15,7 +15,7 @@ Additionally, the bundle provides the following facilities to plugin implementat
 Usage
 =====
 See the DemoController for a sample usage:
-https://github.com/schmittjoh/PaymentCoreBundle/blob/master/Controller/DemoController.php
+https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/Controller/DemoController.php
 
 Plugins
 =======
