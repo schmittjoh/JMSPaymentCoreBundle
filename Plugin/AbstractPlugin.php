@@ -26,7 +26,7 @@ abstract class AbstractPlugin implements PluginInterface
 {
     protected $debug;
 
-    public function __construct($isDebug)
+    public function __construct($isDebug = false)
     {
         $this->debug = !!$isDebug;
     }
