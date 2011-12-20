@@ -31,10 +31,8 @@ class AppKernel extends Kernel
 		return array(
 		    new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
 		    new \Symfony\Bundle\DoctrineBundle\DoctrineBundle(),
-		    new \Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
 		    new \Symfony\Bundle\TwigBundle\TwigBundle(),
 		    new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
-		    new \JMS\Payment\PaypalBundle\JMSPaymentPaypalBundle(),
 		);
 	}
 
