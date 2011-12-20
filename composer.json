@@ -1,0 +1,11 @@
+{
+    "name": "makasim/payment-core-bundle",
+    "type": "symfony-bundle",
+    "description": "This bundle is providing the foundation for various payment plugins.",
+    "homepage": "https://github.com/schmittjoh/JMSPaymentCoreBundle",
+    "license": "Apache",
+    "autoload": {
+        "psr-0": { "JMS\\Payment\\CoreBundle": "" }
+    },
+    "target-dir": "JMS/Payment/CoreBundle"
+}
