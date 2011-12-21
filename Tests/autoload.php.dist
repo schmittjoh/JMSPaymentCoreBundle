@@ -1,3 +1,7 @@
 <?php
 
-include_once __DIR__ . '/../vendor/.composer/autoload.php';
+$loader = include_once __DIR__ . '/../vendor/.composer/autoload.php';
+
+$loader->add(
+    'JMS\\Payment\\CoreBundle', __DIR__ . "/../../../.."
+);
