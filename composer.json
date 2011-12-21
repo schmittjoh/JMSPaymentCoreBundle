@@ -10,8 +10,5 @@
         "doctrine/doctrine-bundle": "master-dev",
         "doctrine/orm": "master-dev"
     },
-    "autoload": {
-        "psr-0": { "JMS\\Payment\\CoreBundle": "../../../" }
-    },
     "target-dir": "JMS/Payment/CoreBundle"
 }
