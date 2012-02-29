@@ -582,7 +582,7 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setDepositingAmount($amount);
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
         } else if (PaymentInterface::STATE_DEPOSITING === $paymentState) {
-            $transaction = $instructin->getPendingTransaction();
+            $transaction = $instruction->getPendingTransaction();
             if (null === $transaction) {
                 if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
                     throw new Exception('The amount cannot be greater than the approved amount minus the already deposited amount.');
