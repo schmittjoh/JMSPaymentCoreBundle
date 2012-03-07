@@ -1,21 +1,5 @@
 <?php
 
-/*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 namespace JMS\Payment\CoreBundle\Controller;
 
 use JMS\Payment\CoreBundle\PluginController\Result;
@@ -29,13 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class DemoController extends Controller
 {
     /**
-     * Initiates the payment, and possibly redirects to another payment backend provider. In case
-     * of a redirect, you can re-use this action as callback to retry the approval transaction.
-     *
-     * You can use this action as template for other transactions (such as deposit transactions).
-     *
-     * @param integer $paymentId
-     */
+* Initiates the payment, and possibly redirects to another payment backend provider. In case
+* of a redirect, you can re-use this action as callback to retry the approval transaction.
+*
+* You can use this action as template for other transactions (such as deposit transactions).
+*
+* @param integer $paymentId
+*/
     public function indexAction($paymentId = null)
     {
         $ppc = $this->container->get('payment.plugin_controller');
@@ -51,11 +35,25 @@ class DemoController extends Controller
             // collect money for the same payment instruction in multiple payments).
             // In this case, we collect the entire amount in one payment.
             $paymentId = $ppc->createPayment($instruction->getId(), 123)->getId();
+
+            // Set the return/cancel Url
+            $ext_data = $instruction->getExtendedData();
+            $ext_data->set('return_url', $this->get('router')->generate('approvePayment', array('paymentId' => $paymentId), true));
+            $ext_data->set('cancel_url', $this->get('router')->generate('cancelPayment', array(), true));
+
+            // Set the details of the Payment
+            // How to set this Parameters: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_WPCustomizing
+           $instruction->getExtendedData()->set('checkout_params',  array('L_PAYMENTREQUEST_0_NAME0' => 'Some super cool Toy',
+                                                                    'L_PAYMENTREQUEST_0_NUMBER0' => '123',
+                                                                    'L_PAYMENTREQUEST_0_AMT0' => '123',
+                                                                    'L_PAYMENTREQUEST_0_QTY0' => '1',
+                                                                    'PAYMENTREQUEST_0_CURRENCYCODE' => 'EUR'));
+
         }
 
         // try to approve the payment (retries the transaction if not called for the first time).
         // Tip: All methods that perform a transaction return a Result object.
-        $result = $ppc->approve($paymentId, 123);
+        $result = $ppc->approveAndDeposit($paymentId, 123);
 
         // some payment backend systems require some form of user interaction to authorize
         // a transaction, in most cases this is a redirect to a different URL, but it could
@@ -85,6 +83,9 @@ class DemoController extends Controller
         }
 
         // transaction was successful
-        return $this->render('JMSPaymentCoreBundle:Demo:index.php');
+        // Here I return to my Homepage with a Flash-Message
+        $this->get('session')->setFlash('empfehlung_flash', 'Die Bezahlung war erfolgreich!');
+        return $this->redirect($this->generateUrl('Homepage'));
     }
 }
+
