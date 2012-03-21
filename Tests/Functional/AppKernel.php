@@ -2,7 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
-use Symfony\Component\HttpKernel\Util\Filesystem;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -30,11 +30,14 @@ class AppKernel extends Kernel
 	{
 		return array(
 		    new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-		    new \Symfony\Bundle\DoctrineBundle\DoctrineBundle(),
-		    new \Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
+		    new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
 		    new \Symfony\Bundle\TwigBundle\TwigBundle(),
+		    new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),
 		    new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
 		    new \JMS\Payment\PaypalBundle\JMSPaymentPaypalBundle(),
+		    new \JMS\AopBundle\JMSAopBundle(),
+		    new \JMS\DiExtraBundle\JMSDiExtraBundle($this),
+		    new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 		);
 	}
 

@@ -1,10 +1,12 @@
-doctrine:
-    dbal:
-        driver:   pdo_sqlite
-        memory:   true
+imports:
+    - { resource: database.php }
 
+doctrine:
     orm:
-        auto_generate_proxy_classes: %kernel.debug%
+        auto_generate_proxy_classes: "%kernel.debug%"
         entity_managers:
             default:
                 auto_mapping: true
+
+services:
+    em: "@doctrine.orm.entity_manager"

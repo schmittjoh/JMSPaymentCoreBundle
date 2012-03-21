@@ -1,58 +1,110 @@
 Plugins
 =======
 
+Introduction
+------------
 A plugin is a flexible way of providing access to a specific payment back end, 
-payment processor, or payment service provider. Each plugin is a *stateless* 
-service managed by Symfony's dependency injection container.
+payment processor, or payment service provider.
 
-Payment plugins are extensions to the payment plugin controller (PPC). While the
-PPC concerns itself with persistence, database transaction management, etc., it does 
-not provide any direct connectivity with payment backend systems. This is where
-plugins come in. 
+.. note ::
 
-A plugin may implement a list of financial transactions:
+    If you are coming from symfony1, the term "plugin" as used by this bundle
+    has nothing to do with symfony1's plugin extension system.
+    
+Plugins are used to execute :doc:`financial transactions <model/FinancialTransaction>` 
+against a payment service provider, such as Paypal.
 
-- approve (aka authorization) transactions
-- deposit (aka charge) transactions
-- credit (aka refund) transactions
-- reversals of above transactions 
+Implementing a Custom Plugin
+----------------------------
+The easiest way is to simply extend the provided ``AbstractPlugin`` class, and override
+the remaining abstract methods:
 
+.. code-block :: php
 
-Some of these transactions might not make sense for some plugins because the respective
-payment backend system simply may not provide similar capabilities. In these cases,
-you still have to implement the method, but you are free to throw a ``FunctionNotSupportedException``.
+    <?php
 
-The following is a list of sample plugin types, and recommended methods to implement (non exhaustive):
+    class PaypalPlugin extends \JMS\Payment\CoreBundle\Plugin\AbstractPlugin
+    {
+        public function processes($name)
+        {
+            return 'paypal' === $name;
+        }
+    }
+    
+Now, you only need to set-up your plugin as a service, and it will be added to the
+plugin controller automatically:
 
-+----------------------------+-------------+------------------+------------------+ 
-| Financial Transaction      | Credit Card | Electronic Check | Gift Certificate |
-+============================+=============+==================+==================+
-| checkPaymentInstruction    |      x      |         x        |         x        |
-+----------------------------+-------------+------------------+------------------+
-| validatePaymentInstruction |      x      |         x        |         x        |
-+----------------------------+-------------+------------------+------------------+
-| approveAndDeposit          |      x      |         x        |        \-        |
-+----------------------------+-------------+------------------+------------------+
-| approve                    |      x      |        \-        |         x        |
-+----------------------------+-------------+------------------+------------------+
-| reverseApproval            |      x      |        \-        |        \-        |
-+----------------------------+-------------+------------------+------------------+
-| deposit                    |      x      |         x        |         x        |
-+----------------------------+-------------+------------------+------------------+
-| reverseDeposit             |      x      |        \-        |        \-        |
-+----------------------------+-------------+------------------+------------------+
-| credit                     |      x      |        \-        |        \-        |
-+----------------------------+-------------+------------------+------------------+
-| reverseCredit              |      x      |        \-        |        \-        |
-+----------------------------+-------------+------------------+------------------+
+.. configuration-block ::
 
+    .. code-block :: yaml
+    
+        services:
+            payment.plugin.paypal:
+                class: PaypalPlugin
+                tags: [{name: payment.plugin}]
 
+    .. code-block :: xml
+
+        <service id="payment.plugin.paypal" class="PaypalPlugin">
+            <tag name="payment.plugin" />
+        </service>
+    
+That's it! You just created your first plugin :) Right now, it does not do anything
+useful, but we will get to the specific transactions that you can perform in
+the next section. 
+
+Available Transaction Types
+---------------------------
+Each plugin may implement a variety of available transaction types. Depending on the
+used payment method, and the capabilities of the backend, you rarely need all of them.
+
+Following is a list of all available transactions, and two exemplary payment method
+plugins. A "x" indicates that the method is implement, "-" that it is not:
+
++----------------------------+------------------+-----------------------+ 
+| Financial Transaction      | CreditCardPlugin | ElectronicCheckPlugin |
++============================+==================+=======================+
+| checkPaymentInstruction    |        x         |           x           |
++----------------------------+------------------+-----------------------+
+| validatePaymentInstruction |        x         |           x           |
++----------------------------+------------------+-----------------------+
+| approveAndDeposit          |        x         |           x           |
++----------------------------+------------------+-----------------------+
+| approve                    |        x         |          \-           |
++----------------------------+------------------+-----------------------+
+| reverseApproval            |        x         |          \-           |
++----------------------------+------------------+-----------------------+
+| deposit                    |        x         |           x           | 
++----------------------------+------------------+-----------------------+
+| reverseDeposit             |        x         |          \-           |
++----------------------------+------------------+-----------------------+
+| credit                     |        x         |          \-           |
++----------------------------+------------------+-----------------------+
+| reverseCredit              |        x         |          \-           |
++----------------------------+------------------+-----------------------+
+
+If you are unsure which transactions to implement, have a look at the ``PluginInterface``
+which contains detailed descriptions for each of them.
+
+.. tip ::
+
+    In cases, where a certain method does not make sense for your payment backend,
+    you should throw a ``FunctionNotSupportedException``. If you extend the ``AbstractPlugin``
+    base class, this is already done for you.
+    
 Available Exceptions
 --------------------
-The following lists available exceptions which can be thrown from plugins, and the
-associated changes the plugin controller will perform. Of course, you can also add
-your own exceptions, but it is recommend that you sub-class an existing exception when
-doing so. All exceptions are in the namespace ``JMS\Payment\CoreBundle\Plugin\Exception``.
+Exceptions play an important part in the communication between the different payment plugin,
+and the ``PluginController`` which manages them. 
+
+Following is a list with available exceptions, and how they are treated by the ``PluginController``.
+Of course, you can also add your own exceptions, but it is recommend that you sub-class 
+an existing exception when doing so. 
+
+.. tip ::
+
+    All exceptions which are relevent for plugins are located in the namespace 
+    ``JMS\Payment\CoreBundle\Plugin\Exception``.
 
 +------------------------------------+-----------------------------+---------------------------+
 | Class                              | Description                 | Payment Plugin Controller |
@@ -108,36 +160,119 @@ doing so. All exceptions are in the namespace ``JMS\Payment\CoreBundle\Plugin\Ex
 |                                    | the payment.                |                           |
 +------------------------------------+-----------------------------+---------------------------+
 
-Implementing a Custom Plugin
-----------------------------
-The easiest way is to simply extend the provided ``Plugin`` class, and override
-the remaining abstract methods::
+Payment-related User Data
+-------------------------
+The Form Type
+~~~~~~~~~~~~~
+The form type is necessary for collecting, and validating the user data that is necessary 
+for your payment method. In the following, we assume that we are designing a form type for
+credit card payment which could look like this:
 
-    class PaypalPlugin extends \JMS\Payment\CoreBundle\Plugin\AbstractPlugin
+.. code-block :: php
+
+    <?php
+    
+    use Symfony\Component\Form\AbstractType;
+    use Symfony\Component\Form\FormBuilder;
+    
+    class CreditCardType extends AbstractType
     {
-        // this method is called by the plugin controller to check whether this
-        // plugin can process the given payment system
-        public function processes($name)
+        public function buildForm(FormBuilder $builder, array $options)
         {
-            return 'paypal' === $name;
+            $builder
+                ->add('holder', 'text', array('required' => false))
+                ->add('number', 'text', array('required' => false))
+                ->add('expires', 'date', array('required' => false))
+                ->add('code', 'text', array('required' => false))
+            ;
         }
-        
-        // for most cases, it's save to just return false here, for more info
-        // you can read the credit section
-        public function isIndependentCreditSupported()
+    
+        public function getName()
         {
-            return false;
+            return 'credit_card';
         }
     }
-    
-Now, you only need to set-up your plugin as a service, and it will be added to the
-plugin controller automatically::
 
-    <service id="payment.plugin.paypal" class="PaypalPlugin">
-        <tag name="payment.plugin" />
-    </service>
-    
-That's it! You created your first plugin :) 
+.. note ::
 
-You can also have a look at the PaymentPaypalBundle for a full implementation: 
-https://github.com/schmittjoh/JMSPaymentPaypalBundle
+    Make sure to declare all fields as non-required. This is merely affecting
+    the client-side validation, server-side validation is not affected.
+
+Configuring Your Form Type
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Now, we need to wire the form type with the dependency injection container:
+
+.. configuration-block ::
+
+    .. code-block :: yaml
+    
+        services:
+            credit_card_type:
+                class: CreditCardType
+                tags:
+                    - { name: form.type, alias: credit_card }
+                    - { name: payment.method_type }
+                    
+     .. code-block :: xml
+     
+        <service id="credit_card_type" class="CreditCardType">
+            <tag name="form.type" alias="credit_card" />
+            <tag name="payment.method_type" />
+        </service>    
+
+Validating the Submitted User Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Validation is handled by your ``Plugin`` class. It contains two methods for this:
+
+#. ``checkPaymentInstruction`` (fast): validates the submitted data, but does not make any API calls to an external service
+#. ``validatePaymentInstruction`` (thorough): does everything that ``checkPaymentInstruction`` does, but may also make API calls
+
+We are now going to implement the ``checkPaymentInstruction`` method for our form type above:
+
+.. code-block :: php
+
+    <?php
+    
+    use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
+    use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+    use JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException;
+    
+    class CreditCardPlugin extends AbstractPlugin
+    {
+        public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
+        {
+            $errors = array();
+            $data = $instruction->getExtendedData();
+            
+            if (!$data->get('holder')) {
+                $errors['holder'] = 'form.error.required';
+            }
+            if (!$data->get('number')) {
+                $errors['number'] = 'form.error.required';
+            }
+            
+            // more checks here ...
+            
+            if (count($errors) > 0) {
+                $ex = new InvalidPaymentInstructionException('The payment instruction is invalid.');
+                $ex->setDataErrors($errors);
+                
+                throw $ex;
+            }
+        }
+    
+        public function processes($method)
+        {
+            return 'credit_card' === $method;
+        }
+    }
+
+.. note ::
+
+    The data errors are automatically mapped to the respective fields of the form.
+    
+.. tip ::
+
+    If you have an error that is not related to a specific fields, but rather to several
+    fields, or the payment instruction as a whole, use ``setGlobalErrors`` instead of
+    ``setDataErrors``.

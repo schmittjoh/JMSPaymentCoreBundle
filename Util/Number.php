@@ -22,13 +22,36 @@ class Number
 {
     const EPSILON = 1.0E-8;
 
-    public static function compare($float1, $float2)
+    public static function compare($float1, $float2, $comparision = null)
     {
         if (abs($float1 - $float2) < self::EPSILON) {
-            return 0;
+        	if (null === $comparision) {
+        		return 0;
+        	}
+        	if ('==' === $comparision || '>=' === $comparision || '<=' === $comparision) {
+        		return true;
+        	}
+        	if ('>' === $comparision || '<' === $comparision) {
+        		return false;
+        	}
+        	
+        	throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
         }
 
-        return $float1 > $float2 ? 1 : -1;
+        if (null === $comparision) {
+        	return $float1 > $float2 ? 1 : -1;
+        }
+        if ('==' === $comparision) {
+        	return false;
+        }
+        if ('>=' === $comparision || '>' === $comparision) {
+        	return $float1 > $float2;
+        }
+        if ('<=' === $comparision || '<' === $comparision) {
+        	return $float1 < $float2;
+        }
+        
+        throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
     }
 
     private final function __construct() {}

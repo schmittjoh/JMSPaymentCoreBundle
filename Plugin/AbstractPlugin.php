@@ -91,4 +91,12 @@ abstract class AbstractPlugin implements PluginInterface
     {
         throw new FunctionNotSupportedException('validatePaymentInstruction() is not supported by this plugin.');
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isIndependentCreditSupported()
+    {
+        return false;
+    }
 }

@@ -12,3 +12,7 @@ jms_payment_paypal:
     signature: A93vj6VJ.ZIRNjbI6GFgi4N2Km.5ATLs-EinlyWk2htEGX0xc3L8YIBo
     return_url: http://paypal.test/payment
     cancel_url: http://paypal.test/payment
+
+jms_di_extra:
+    locations:
+        bundles: [TestBundle]

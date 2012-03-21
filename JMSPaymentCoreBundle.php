@@ -2,13 +2,12 @@
 
 namespace JMS\Payment\CoreBundle;
 
-use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentPluginsPass;
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Doctrine\DBAL\Types\Type;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentMethodFormTypesPass;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentPluginsPass;
+use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -41,5 +40,6 @@ class JMSPaymentCoreBundle extends Bundle
         parent::build($builder);
 
         $builder->addCompilerPass(new AddPaymentPluginsPass());
+        $builder->addCompilerPass(new AddPaymentMethodFormTypesPass());
     }
 }

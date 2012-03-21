@@ -12,6 +12,8 @@
         <parameter key="payment.plugin_controller.entity.options.financial_transaction_class">JMS\Payment\CoreBundle\Entity\FinancialTransaction</parameter>
         <parameter key="payment.plugin_controller.entity.options.credit_class">JMS\Payment\CoreBundle\Entity\Credit</parameter>
         
+        <parameter key="payment.form.choose_payment_method_type.class">JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType</parameter>
+        
         <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
         <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
@@ -38,6 +40,11 @@
             <argument>%payment.encryption_service.secret%</argument>
             <argument>%payment.encryption_service.cipher%</argument>
             <argument>%payment.encryption_service.mode%</argument>
+        </service>
+        
+        <service id="payment.form.choose_payment_method_type" class="%payment.form.choose_payment_method_type.class%">
+            <argument type="service" id="payment.plugin_controller" />
+            <tag name="form.type" alias="jms_choose_payment_method" />
         </service>
     </services>
 </container>

@@ -9,4 +9,4 @@ framework:
         enabled: true
         enable_annotations: true
     router:
-        resource: @JMSPaymentCoreBundle/Resources/config/routing.yml
+        resource: "%kernel.root_dir%/config/routing.yml"

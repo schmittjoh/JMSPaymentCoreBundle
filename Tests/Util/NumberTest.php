@@ -7,13 +7,43 @@ use JMS\Payment\CoreBundle\Util\Number;
 class NumberTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @dataProvider getComparisionTests
+     */
+    public function testWithComparision($float1, $float2, $comparision, $expected)
+    {
+        $this->assertSame($expected, Number::compare($float1, $float2, $comparision));
+    }
+
+    public function getComparisionTests()
+    {
+        return array(
+            array(0, 0, '==', true),
+            array(0.0, 0.0, '==', true),
+            array(0.0, 0.0, '>=', true),
+            array(0.0, 0.0, '<=', true),
+            array(0.0, 0.0, '>', false),
+            array(0.0, 0.0, '<', false),
+            array(0.1, 0.0, '==', false),
+            array(0.1, 0.0, '>', true),
+            array(0.1, 0.0, '>=', true),
+            array(0.1, 0.0, '<', false),
+            array(0.1, 0.0, '<=', false),
+            array(0.0, 0.1, '==', false),
+            array(0.0, 0.1, '>=', false),
+            array(0.0, 0.1, '>', false),
+            array(0.0, 0.1, '<=', true),
+            array(0.0, 0.1, '<', true),
+        );
+    }
+
+    /**
      * @dataProvider getEqualFloats
      */
     public function testCompareForEquality($float1, $float2)
     {
         $this->assertSame(0, Number::compare($float1, $float2));
     }
-    
+
     public function getEqualFloats()
     {
         return array(
@@ -22,7 +52,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase
             array(1.123456789, 1.123456788),
         );
     }
-    
+
     /**
      * @dataProvider getSmallerFloats
      */
@@ -30,7 +60,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(-1, Number::compare($float1, $float2));
     }
-    
+
     public function getSmallerFloats()
     {
         return array(
@@ -39,7 +69,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase
             array(0.1234, 0.1235)
         );
     }
-    
+
     /**
      * @dataProvider getGreaterFloats
      */
@@ -47,7 +77,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(1, Number::compare($float1, $float2));
     }
-    
+
     public function getGreaterFloats()
     {
         return array(

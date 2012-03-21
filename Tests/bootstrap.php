@@ -5,8 +5,8 @@ $dir = __DIR__;
 $lastDir = null;
 while (($dir = dirname($dir)) && $dir !== $lastDir) {
 	$lastDir = $dir;
-	
-	if (file_exists($file = $dir.'/app/bootstrap.php.cache')) {
+
+	if (file_exists($file = $dir.'/app/autoload.php')) {
 		require_once $file;
 		return;
 	}
