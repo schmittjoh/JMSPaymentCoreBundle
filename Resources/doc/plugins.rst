@@ -213,7 +213,7 @@ Now, we need to wire the form type with the dependency injection container:
                     - { name: form.type, alias: credit_card }
                     - { name: payment.method_type }
                     
-     .. code-block :: xml
+    .. code-block :: xml
      
         <service id="credit_card_type" class="CreditCardType">
             <tag name="form.type" alias="credit_card" />
