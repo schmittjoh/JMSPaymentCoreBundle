@@ -23,7 +23,7 @@ use Symfony\Component\Form\AbstractType;
  */
 class ChoosePaymentMethodType extends AbstractType
 {
-	private $pluginController;
+    private $pluginController;
     private $paymentMethods;
 
     public function __construct(PluginControllerInterface $pluginController, array $paymentMethods)
@@ -38,12 +38,12 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function buildForm(FormBuilder $builder, array $options)
     {
-    	if (!isset($options['currency'])) {
-    		throw new \InvalidArgumentException(sprintf('The option "currency" must be given for form type "%s".', $this->getName()));
-    	}
-    	if (!isset($options['amount'])) {
-    		throw new \InvalidArgumentException(sprintf('The option "amount" must be given for form type "%s".', $this->getName()));
-    	}
+        if (!isset($options['currency'])) {
+            throw new \InvalidArgumentException(sprintf('The option "currency" must be given for form type "%s".', $this->getName()));
+        }
+        if (!isset($options['amount'])) {
+            throw new \InvalidArgumentException(sprintf('The option "amount" must be given for form type "%s".', $this->getName()));
+        }
 
         $allowAllMethods = !isset($options['allowed_methods']);
 
@@ -93,16 +93,16 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         if ($data instanceof PaymentInstruction) {
-        	$method = $data->getPaymentSystemName();
-        	$methodData = array_map(function($v) { return $v[0]; }, $data->getExtendedData()->all());
-        	if (isset($options['predefined_data'][$method])) {
-        		$methodData = array_diff_key($methodData, $options['predefined_data'][$method]);
-        	}
+            $method = $data->getPaymentSystemName();
+            $methodData = array_map(function($v) { return $v[0]; }, $data->getExtendedData()->all());
+            if (isset($options['predefined_data'][$method])) {
+                $methodData = array_diff_key($methodData, $options['predefined_data'][$method]);
+            }
 
-        	return array(
-        		'method'        => $method,
-        		'data_'.$method => $methodData,
-        	);
+            return array(
+                'method'        => $method,
+                'data_'.$method => $methodData,
+            );
         }
 
         throw new \RuntimeException(sprintf('Unsupported data of type "%s".', ('object' === $type = gettype($data)) ? get_class($data) : $type));
@@ -119,13 +119,13 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         if (isset($options['predefined_data'][$method])) {
-        	if (!is_array($options['predefined_data'][$method])) {
-        		throw new \RuntimeException(sprintf('"predefined_data" is expected to be an array for each method, but got "%s" for method "%s".', json_encode($options['extra_data'][$method]), $method));
-        	}
+            if (!is_array($options['predefined_data'][$method])) {
+                throw new \RuntimeException(sprintf('"predefined_data" is expected to be an array for each method, but got "%s" for method "%s".', json_encode($options['extra_data'][$method]), $method));
+            }
 
-        	foreach ($options['predefined_data'][$method] as $k => $v) {
-        		$extendedData->set($k, $v);
-        	}
+            foreach ($options['predefined_data'][$method] as $k => $v) {
+                $extendedData->set($k, $v);
+            }
         }
 
         return new PaymentInstruction($options['amount'], $options['currency'], $method, $extendedData);
@@ -148,24 +148,24 @@ class ChoosePaymentMethodType extends AbstractType
 
         $result = $this->pluginController->checkPaymentInstruction($instruction);
         if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-        	$this->applyErrorsToForm($form, $result);
+            $this->applyErrorsToForm($form, $result);
 
-        	return;
+            return;
         }
 
         $result = $this->pluginController->validatePaymentInstruction($instruction);
         if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-        	$this->applyErrorsToForm($form, $result);
+            $this->applyErrorsToForm($form, $result);
         }
     }
 
     public function getDefaultOptions(array $options)
     {
-    	return array(
-    		'currency'        => null,
-    		'amount'          => null,
-    		'predefined_data' => array(),
-    	);
+        return array(
+            'currency'        => null,
+            'amount'          => null,
+            'predefined_data' => array(),
+        );
     }
 
     public function getName()
@@ -175,25 +175,25 @@ class ChoosePaymentMethodType extends AbstractType
 
     private function applyErrorsToForm(FormInterface $form, Result $result)
     {
-       	$ex = $result->getPluginException();
+           $ex = $result->getPluginException();
 
-       	$globalErrors = $ex->getGlobalErrors();
-       	$dataErrors = $ex->getDataErrors();
+           $globalErrors = $ex->getGlobalErrors();
+           $dataErrors = $ex->getDataErrors();
 
-       	// add a generic error message
-       	if (!$dataErrors && !$globalErrors) {
-       		$form->addError(new FormError('form.error.invalid_payment_instruction'));
+           // add a generic error message
+           if (!$dataErrors && !$globalErrors) {
+               $form->addError(new FormError('form.error.invalid_payment_instruction'));
 
-       		return;
-      	}
+               return;
+          }
 
-      	foreach ($globalErrors as $error) {
-      		$form->addError(new FormError($error));
-      	}
+          foreach ($globalErrors as $error) {
+              $form->addError(new FormError($error));
+          }
 
-      	foreach ($dataErrors as $field => $error) {
-      		$form->get($field)->addError(new FormError($error));
-      	}
+          foreach ($dataErrors as $field => $error) {
+              $form->get($field)->addError(new FormError($error));
+          }
     }
 
     private function buildChoices(array $methods)

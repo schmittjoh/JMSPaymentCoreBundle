@@ -25,30 +25,30 @@ class Number
     public static function compare($float1, $float2, $comparision = null)
     {
         if (abs($float1 - $float2) < self::EPSILON) {
-        	if (null === $comparision) {
-        		return 0;
-        	}
-        	if ('==' === $comparision || '>=' === $comparision || '<=' === $comparision) {
-        		return true;
-        	}
-        	if ('>' === $comparision || '<' === $comparision) {
-        		return false;
-        	}
-        	
-        	throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
+            if (null === $comparision) {
+                return 0;
+            }
+            if ('==' === $comparision || '>=' === $comparision || '<=' === $comparision) {
+                return true;
+            }
+            if ('>' === $comparision || '<' === $comparision) {
+                return false;
+            }
+            
+            throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
         }
 
         if (null === $comparision) {
-        	return $float1 > $float2 ? 1 : -1;
+            return $float1 > $float2 ? 1 : -1;
         }
         if ('==' === $comparision) {
-        	return false;
+            return false;
         }
         if ('>=' === $comparision || '>' === $comparision) {
-        	return $float1 > $float2;
+            return $float1 > $float2;
         }
         if ('<=' === $comparision || '<' === $comparision) {
-        	return $float1 < $float2;
+            return $float1 < $float2;
         }
         
         throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));

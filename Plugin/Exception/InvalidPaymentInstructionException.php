@@ -29,51 +29,51 @@ namespace JMS\Payment\CoreBundle\Plugin\Exception;
  */
 class InvalidPaymentInstructionException extends FinancialException
 {
-	private $dataErrors = array();
-	private $globalErrors = array();
+    private $dataErrors = array();
+    private $globalErrors = array();
 
-	public function __construct($message = null, $code = 0, \Exception $previous = null)
-	{
-	    parent::__construct($message ?: 'The payment instruction is invalid.', $code, $previous);
-	}
+    public function __construct($message = null, $code = 0, \Exception $previous = null)
+    {
+        parent::__construct($message ?: 'The payment instruction is invalid.', $code, $previous);
+    }
 
-	/**
-	 * Sets an error map for data parameters.
-	 *
-	 * The keys are expected to match the keys of the offending entry in the
-	 * ExtendedData class.
-	 *
-	 * For example, if the "cc_holder" key is missing, this should be set to:
-	 *
-	 *    array("cc_holder" => "The credit card holder is required.")
-	 *
-	 * @param array $errors
-	 */
-	public function setDataErrors(array $errors)
-	{
-		$this->dataErrors = $errors;
-	}
+    /**
+     * Sets an error map for data parameters.
+     *
+     * The keys are expected to match the keys of the offending entry in the
+     * ExtendedData class.
+     *
+     * For example, if the "cc_holder" key is missing, this should be set to:
+     *
+     *    array("cc_holder" => "The credit card holder is required.")
+     *
+     * @param array $errors
+     */
+    public function setDataErrors(array $errors)
+    {
+        $this->dataErrors = $errors;
+    }
 
-	/**
-	 * Sets an error list for the entire PaymentInstruction.
-	 *
-	 * This list is globally for the entire PaymentInstruction, and not
-	 * directly related to any specific data entry.
-	 *
-	 * @param array $errors
-	 */
-	public function setGlobalErrors(array $errors)
-	{
-		$this->globalErrors = $errors;
-	}
+    /**
+     * Sets an error list for the entire PaymentInstruction.
+     *
+     * This list is globally for the entire PaymentInstruction, and not
+     * directly related to any specific data entry.
+     *
+     * @param array $errors
+     */
+    public function setGlobalErrors(array $errors)
+    {
+        $this->globalErrors = $errors;
+    }
 
-	public function getDataErrors()
-	{
-		return $this->dataErrors;
-	}
+    public function getDataErrors()
+    {
+        return $this->dataErrors;
+    }
 
-	public function getGlobalErrors()
-	{
-		return $this->globalErrors;
-	}
+    public function getGlobalErrors()
+    {
+        return $this->globalErrors;
+    }
 }

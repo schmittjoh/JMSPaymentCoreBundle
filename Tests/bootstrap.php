@@ -4,12 +4,12 @@
 $dir = __DIR__;
 $lastDir = null;
 while (($dir = dirname($dir)) && $dir !== $lastDir) {
-	$lastDir = $dir;
+    $lastDir = $dir;
 
-	if (file_exists($file = $dir.'/app/autoload.php')) {
-		require_once $file;
-		return;
-	}
+    if (file_exists($file = $dir.'/app/autoload.php')) {
+        require_once $file;
+        return;
+    }
 }
 
 throw new \RuntimeException('Could not locate the project\'s bootstrap.php.cache. If your bundle is not inside a project, you need to replace this bootstrap file.');
