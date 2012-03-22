@@ -20,5 +20,6 @@
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
-    }
+    },
+    "target-dir": "JMS\\Payment\\CoreBundle"
 }
