@@ -2,14 +2,24 @@
     "name": "jms/payment-core-bundle",
     "type": "symfony-bundle",
     "description": "This bundle is providing the foundation for various payment plugins.",
+    "keywords": ["payment"],
     "homepage": "https://github.com/schmittjoh/JMSPaymentCoreBundle",
     "license": "Apache",
+    "authors": [
+        {
+            "name": "Johannes M. Schmitt",
+            "email": "schmittjoh@gmail.com"
+        }
+    ],
     "require": {
         "php": ">=5.3.2",
         "symfony/framework-bundle": "2.1.0-dev"
     },
     "recommend": {
         "doctrine/doctrine-bundle": "master-dev"
+    },
+    "autoload": {
+        "psr-0": { "JMS\\Payment\\CoreBundle": "" }
     },
     "target-dir": "JMS/Payment/CoreBundle"
 }
