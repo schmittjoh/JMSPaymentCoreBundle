@@ -3,8 +3,8 @@
     "type": "symfony-bundle",
     "description": "This bundle is providing the foundation for various payment plugins.",
     "keywords": ["payment"],
-    "homepage": "https://github.com/schmittjoh/JMSPaymentCoreBundle",
-    "license": "Apache",
+    "homepage": "http://jmsyst.com/bundles/JMSPaymentCoreBundle",
+    "license": "Apache2",
     "authors": [
         {
             "name": "Johannes M. Schmitt",
@@ -20,6 +20,5 @@
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
-    },
-    "target-dir": "JMS/Payment/CoreBundle"
+    }
 }
