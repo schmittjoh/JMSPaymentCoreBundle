@@ -235,29 +235,30 @@ We are now going to implement the ``checkPaymentInstruction`` method for our for
     
     use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
     use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-    use JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException;
+    use JMS\Payment\CoreBundle\Plugin\ErrorBuilder;
     
     class CreditCardPlugin extends AbstractPlugin
     {
         public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
         {
-            $errors = array();
+            $errorBuilder = new ErrorBuilder();
             $data = $instruction->getExtendedData();
             
             if (!$data->get('holder')) {
-                $errors['holder'] = 'form.error.required';
+                $errorBuilder->addDataError('holder', 'form.error.required');
             }
             if (!$data->get('number')) {
-                $errors['number'] = 'form.error.required';
+                $errorBuilder->addDataError('number', 'form.error.required');
+            }
+            
+            if ($instruction->getAmount() > 10000) {
+                $errorBuilder->addGlobalError('form.error.credit_card_max_limit_exceeded');
             }
             
             // more checks here ...
             
-            if (count($errors) > 0) {
-                $ex = new InvalidPaymentInstructionException('The payment instruction is invalid.');
-                $ex->setDataErrors($errors);
-                
-                throw $ex;
+            if ($errorBuilder->hasErrors()) {
+                throw $errorBuilder->getException();
             }
         }
     
@@ -270,9 +271,5 @@ We are now going to implement the ``checkPaymentInstruction`` method for our for
 .. note ::
 
     The data errors are automatically mapped to the respective fields of the form.
-    
-.. tip ::
+    Global errors are applied to the form itself.
 
-    If you have an error that is not related to a specific fields, but rather to several
-    fields, or the payment instruction as a whole, use ``setGlobalErrors`` instead of
-    ``setDataErrors``.
