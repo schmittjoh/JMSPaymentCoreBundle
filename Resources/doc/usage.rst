@@ -205,8 +205,7 @@ route for which we will now create the corresponding action in our controller:
         {
             $instruction = $order->getPaymentInstruction();
             if (null === $pendingTransaction = $instruction->getPendingTransaction()) {
-                $payment = new Payment($instruction, $instruction->getAmount() - $instruction->getDepositedAmount());
-                $this->ppc->createPayment($payment);
+                $payment = $this->ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
             } else {
                 $payment = $pendingTransaction->getPayment();
             }
