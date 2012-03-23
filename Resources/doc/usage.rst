@@ -86,6 +86,10 @@ which we will leverage.
     <?php
 
     use JMS\DiExtraBundle\Annotation as DI;
+    use JMS\Payment\CoreBundle\Entity\Payment;
+    use JMS\Payment\CoreBundle\PluginController\Result;
+    use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
+    use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -97,6 +101,9 @@ which we will leverage.
     {
         /** @DI\Inject */
         private $request;
+
+        /** @DI\Inject */
+        private $router;        
         
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
@@ -169,7 +176,10 @@ route for which we will now create the corresponding action in our controller:
     <?php
 
     use JMS\DiExtraBundle\Annotation as DI;
+    use JMS\Payment\CoreBundle\Entity\Payment;
     use JMS\Payment\CoreBundle\PluginController\Result;
+    use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
+    use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -181,7 +191,10 @@ route for which we will now create the corresponding action in our controller:
     {
         /** @DI\Inject */
         private $request;
-        
+
+        /** @DI\Inject */
+        private $router;
+
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
         
@@ -197,8 +210,7 @@ route for which we will now create the corresponding action in our controller:
         {
             $instruction = $order->getPaymentInstruction();
             if (null === $pendingTransaction = $instruction->getPendingTransaction()) {
-                $payment = new Payment($instruction, $instruction->getAmount() - $instruction->getDepositedAmount());
-                $this->ppc->createPayment($payment);
+                $payment = $this->ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
             } else {
                 $payment = $pendingTransaction->getPayment();
             }
