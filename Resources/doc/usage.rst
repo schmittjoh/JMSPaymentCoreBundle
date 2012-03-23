@@ -101,6 +101,9 @@ which we will leverage.
     {
         /** @DI\Inject */
         private $request;
+
+        /** @DI\Inject */
+        private $router;        
         
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
@@ -188,7 +191,10 @@ route for which we will now create the corresponding action in our controller:
     {
         /** @DI\Inject */
         private $request;
-        
+
+        /** @DI\Inject */
+        private $router;
+
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
         
