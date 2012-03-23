@@ -86,6 +86,10 @@ which we will leverage.
     <?php
 
     use JMS\DiExtraBundle\Annotation as DI;
+    use JMS\Payment\CoreBundle\Entity\Payment;
+    use JMS\Payment\CoreBundle\PluginController\Result;
+    use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
+    use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -169,7 +173,10 @@ route for which we will now create the corresponding action in our controller:
     <?php
 
     use JMS\DiExtraBundle\Annotation as DI;
+    use JMS\Payment\CoreBundle\Entity\Payment;
     use JMS\Payment\CoreBundle\PluginController\Result;
+    use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
+    use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
