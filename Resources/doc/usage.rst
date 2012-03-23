@@ -114,16 +114,15 @@ which we will leverage.
          */
         public function detailsAction(Order $order)
         {
-            $router = $this->get('router');
             $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
                 'currency' => 'EUR',
                 'amount'   => $order->getAmount(),
                 'predefined_data' => array(
                     'jms_paypal_express_checkout' => array(
-                        'return_url' => $router->generate('payment_complete', array(
+                        'return_url' => $this->router->generate('payment_complete', array(
                             'orderNumber' => $order->getOrderNumber(),
                         )),
-                        'cancel_url' => $router->generate('payment_cancel', array(
+                        'cancel_url' => $this->router->generate('payment_cancel', array(
                             'orderNumber' => $order->getOrderNumber(),
                         ))
                     ),
