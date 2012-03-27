@@ -124,10 +124,10 @@ which we will leverage.
                     'paypal_express_checkout' => array(
                         'return_url' => $this->router->generate('payment_complete', array(
                             'orderNumber' => $order->getOrderNumber(),
-                        )),
+                        ), true),
                         'cancel_url' => $this->router->generate('payment_cancel', array(
                             'orderNumber' => $order->getOrderNumber(),
-                        ))
+                        ), true)
                     ),
                 ),
             ));
