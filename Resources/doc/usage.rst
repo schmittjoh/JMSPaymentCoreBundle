@@ -121,7 +121,7 @@ which we will leverage.
                 'currency' => 'EUR',
                 'amount'   => $order->getAmount(),
                 'predefined_data' => array(
-                    'jms_paypal_express_checkout' => array(
+                    'paypal_express_checkout' => array(
                         'return_url' => $this->router->generate('payment_complete', array(
                             'orderNumber' => $order->getOrderNumber(),
                         )),
