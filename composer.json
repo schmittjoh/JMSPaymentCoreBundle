@@ -16,10 +16,10 @@
         "symfony/framework-bundle": ">=2.0,<2.2-dev"
     },
     "recommend": {
-        "doctrine/doctrine-bundle": "master-dev"
+        "doctrine/doctrine-bundle": "dev-master"
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
     },
-    "target-dir": "JMS\\Payment\\CoreBundle"
+    "target-dir": "JMS/Payment/CoreBundle"
 }
