@@ -42,6 +42,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
         $extendedData = new ExtendedData;
         $extendedData->set('foo', 'foo', false);
         $extendedData->set('foo2', 'secret', true);
+        $extendedData->set('dont_persist', 'nono', false, false);
         $extendedData->set('foo3', 'foo', false);
 
         $type = Type::getType(ExtendedDataType::NAME);
@@ -54,6 +55,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $unserialized['foo'][0]);
         $this->assertNotEquals('secret', $unserialized['foo2'][0]);
         $this->assertEquals('foo', $unserialized['foo3'][0]);
+        $this->assertNull($unserialized['dont_persist'][0]);
 
         $extendedData = $type->convertToPHPValue($serialized, $this->getPlatform());
         $this->assertEquals('foo', $extendedData->get('foo'));
