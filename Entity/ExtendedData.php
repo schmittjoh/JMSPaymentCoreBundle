@@ -44,7 +44,7 @@ class ExtendedData implements ExtendedDataInterface
         return $this->data[$name][1];
     }
     
-    public function isPersistRequired($name)
+    public function mayBePersisted($name)
     {
         if (!isset($this->data[$name])) {
             throw new \InvalidArgumentException(sprintf('There is no data with key "%s".', $name));

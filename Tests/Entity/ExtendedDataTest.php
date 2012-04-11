@@ -38,10 +38,10 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testIsPersistRequiredThrowsExceptionOnNonExistentKey()
+    public function testMayBePersistedThrowsExceptionOnNonExistentKey()
     {
         $extendedData = new ExtendedData;
-        $extendedData->isPersistRequired('foo');
+        $extendedData->mayBePersisted('foo');
     }
     
     /**
@@ -79,9 +79,9 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
         }
         
         if ($persist) {
-            $this->assertTrue($extendedData->isPersistRequired($name));
+            $this->assertTrue($extendedData->mayBePersisted($name));
         } else {
-            $this->assertFalse($extendedData->isPersistRequired($name));
+            $this->assertFalse($extendedData->mayBePersisted($name));
         }
     }
     
