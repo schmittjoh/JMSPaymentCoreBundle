@@ -426,7 +426,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException
      * @expectedMessage foo
      */
     public function testAproveAndDepositPluginThrowsException()
@@ -436,7 +436,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $payment->getPaymentInstruction()->setState(PaymentInstructionInterface::STATE_VALID);
 
         $plugin = $this->getPlugin();
-        $exception = new \Exception('foo');
+        $exception = new \JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException('foo');
         $plugin
             ->expects($this->once())
             ->method('approveAndDeposit')
@@ -665,7 +665,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException \JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException
      */
     public function testApprovePluginThrowsException()
     {
@@ -680,7 +680,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $plugin
             ->expects($this->once())
             ->method('approve')
-            ->will($this->throwException(new \Exception('some error occurred')))
+            ->will($this->throwException(new \JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException('some error occurred')))
         ;
         $controller->addPlugin($plugin);
 
