@@ -63,8 +63,8 @@ class ChoosePaymentMethodType extends AbstractType
         $builder->add('method', 'choice', array(
             'choices' => $this->buildChoices($options['available_methods']),
             'expanded' => true,
-            'index_strategy' => ChoiceList::COPY_CHOICE,
-            'value_strategy' => ChoiceList::COPY_CHOICE,
+//            'index_strategy' => ChoiceList::COPY_CHOICE,
+//            'value_strategy' => ChoiceList::COPY_CHOICE,
         ));
 
         foreach ($options['available_methods'] as $method) {
