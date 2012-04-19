@@ -38,6 +38,15 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
+    public function testMayBePersistedThrowsExceptionOnNonExistentKey()
+    {
+        $extendedData = new ExtendedData;
+        $extendedData->mayBePersisted('foo');
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testGetThrowsExceptionOnNonExistentKey()
     {
         $extendedData = new ExtendedData;
@@ -45,12 +54,21 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @dataProvider getTestData
+     * @expectedException \InvalidArgumentException
      */
-    public function testWithSomeData($name, $value, $encrypt)
+    public function testSetThrowsExceptionOnEncriptionOfNonPersistedValue()
     {
         $extendedData = new ExtendedData;
-        $extendedData->set($name, $value, $encrypt);
+        $extendedData->set('foo', 'bar', true, false);
+    }
+    
+    /**
+     * @dataProvider getTestData
+     */
+    public function testWithSomeData($name, $value, $encrypt, $persist)
+    {
+        $extendedData = new ExtendedData;
+        $extendedData->set($name, $value, $encrypt, $persist);
         
         $this->assertEquals($value, $extendedData->get($name));
         
@@ -59,13 +77,20 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
         } else {
             $this->assertFalse($extendedData->isEncryptionRequired($name));
         }
+        
+        if ($persist) {
+            $this->assertTrue($extendedData->mayBePersisted($name));
+        } else {
+            $this->assertFalse($extendedData->mayBePersisted($name));
+        }
     }
     
     public function getTestData()
     {
         return array(
-            array('account_holder', 'fooholder', false),
-            array('account_number', '1234567890', true),
+            array('account_holder', 'fooholder', false, true),
+            array('account_number', '1234567890', true, true),
+            array('account_cvv', '666', false, false),
         );
     }
 }

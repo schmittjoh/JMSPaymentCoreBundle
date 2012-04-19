@@ -43,10 +43,23 @@ class ExtendedData implements ExtendedDataInterface
 
         return $this->data[$name][1];
     }
-
-    public function set($name, $value, $encrypt = true)
+    
+    public function mayBePersisted($name)
     {
-        $this->data[$name] = array($value, $encrypt);
+        if (!isset($this->data[$name])) {
+            throw new \InvalidArgumentException(sprintf('There is no data with key "%s".', $name));
+        }
+
+        return $this->data[$name][2];
+    }
+
+    public function set($name, $value, $encrypt = true, $persist = true)
+    {
+        if ($encrypt && !$persist) {
+            throw new \InvalidArgumentException(sprintf('Non persisted field cannot be encrypted "%s".', $name));
+        }
+        
+        $this->data[$name] = array($value, $encrypt, $persist);
     }
 
     public function get($name)
