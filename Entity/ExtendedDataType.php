@@ -51,6 +51,10 @@ class ExtendedDataType extends ObjectType
         $reflection->setAccessible(false);
 
         foreach ($data as $name => $value) {
+            if (false === $value[2]) {
+                unset($data[$name]);
+                continue;
+            }
             if (true === $value[1]) {
                 $data[$name][0] = self::$encryptionService->encrypt(serialize($value[0]));
             }
