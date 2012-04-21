@@ -15,6 +15,7 @@ is successful.
 Payment State Change Event
 --------------------------
 **Name**: ``payment.state_change``
+
 **Event Class**: ``JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent``
 
 This event is dispatched directly after the state of a payment changed. All 
