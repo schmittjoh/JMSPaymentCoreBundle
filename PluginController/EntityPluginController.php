@@ -14,6 +14,7 @@ use JMS\Payment\CoreBundle\PluginController\Exception\PaymentInstructionNotFound
 use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -40,9 +41,9 @@ class EntityPluginController extends PluginController
 {
     protected $entityManager;
 
-    public function __construct(EntityManager $entityManager, $options = array())
+    public function __construct(EntityManager $entityManager, $options = array(), EventDispatcherInterface $dispatcher = null)
     {
-        parent::__construct($options);
+        parent::__construct($options, $dispatcher);
 
         $this->entityManager = $entityManager;
     }

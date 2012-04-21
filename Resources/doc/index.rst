@@ -24,6 +24,7 @@ Documentation
     configuration
     model
     usage
+    events
     plugins
     payment_backends
 

@@ -2,6 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Tests\PluginController;
 
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
+
 use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
 
 use JMS\Payment\CoreBundle\Model\CreditInterface;
@@ -21,6 +23,8 @@ use JMS\Payment\CoreBundle\PluginController\PluginController;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {
+    private $dispatcher;
+
     /**
      * @expectedException JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentException
      * @dataProvider getInvalidPaymentStatesForDependentCredit
@@ -867,6 +871,44 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $instruction->getDepositedAmount());
     }
 
+    public function testDispatchesEvents()
+    {
+        $controller = $this->getController(array(), false, true);
+
+        $payment = $this->getPayment();
+        $instruction = $payment->getPaymentInstruction();
+        $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+
+        $plugin = $this->getPlugin();
+        $plugin
+            ->expects($this->once())
+            ->method('approve')
+        ;
+        $controller->addPlugin($plugin);
+
+        $transaction = new FinancialTransaction;
+        $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
+        $transaction->setProcessedAmount(50.12);
+        $controller
+            ->expects($this->once())
+            ->method('buildFinancialTransaction')
+            ->will($this->returnValue($transaction))
+        ;
+
+        $this->dispatcher
+            ->expects($this->at(0))
+            ->method('dispatch')
+            ->with('payment.state_change', new PaymentStateChangeEvent($payment, PaymentInterface::STATE_NEW))
+        ;
+        $this->dispatcher
+            ->expects($this->at(1))
+            ->method('dispatch')
+            ->with('payment.state_change', new PaymentStateChangeEvent($payment, PaymentInterface::STATE_APPROVING))
+        ;
+
+        $this->callApprove($controller, array($payment, 100));
+    }
+
     protected function getPlugin()
     {
         $plugin = $this->getMock('JMS\Payment\CoreBundle\Plugin\PluginInterface');
@@ -942,16 +984,22 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function getController(array $options = array(), $addTransaction = true)
+    protected function getController(array $options = array(), $addTransaction = true, $withDispatcher = false)
     {
         $options = array_merge(array(
             'financial_transaction_class' => 'JMS\Payment\CoreBundle\Entity\FinancialTransaction',
             'result_class' => 'JMS\Payment\CoreBundle\PluginController\Result',
         ), $options);
 
+        $args = array($options);
+
+        if ($withDispatcher) {
+            $args[] = $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
         $mock = $this->getMockForAbstractClass(
             'JMS\Payment\CoreBundle\PluginController\PluginController',
-            array($options)
+            $args
         );
 
         if ($addTransaction) {

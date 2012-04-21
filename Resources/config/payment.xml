@@ -32,6 +32,7 @@
                 <argument key="financial_transaction_class">%payment.plugin_controller.entity.options.financial_transaction_class%</argument>
                 <argument key="credit_class">%payment.plugin_controller.entity.options.credit_class%</argument>
             </argument>
+            <argument type="service" id="event_dispatcher" />
         </service>
         
         <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />

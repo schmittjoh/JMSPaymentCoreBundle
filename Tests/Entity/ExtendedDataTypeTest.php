@@ -55,7 +55,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $unserialized['foo'][0]);
         $this->assertNotEquals('secret', $unserialized['foo2'][0]);
         $this->assertEquals('foo', $unserialized['foo3'][0]);
-        $this->assertNull($unserialized['dont_persist'][0]);
+        $this->assertTrue(!isset($unserialized['dont_persist']));
 
         $extendedData = $type->convertToPHPValue($serialized, $this->getPlatform());
         $this->assertEquals('foo', $extendedData->get('foo'));
