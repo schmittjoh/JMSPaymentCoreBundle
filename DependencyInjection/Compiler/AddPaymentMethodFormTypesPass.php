@@ -14,6 +14,10 @@ class AddPaymentMethodFormTypesPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition('payment.form.choose_payment_method_type')) {
+            return;
+        }
+        
         $paymentMethodFormTypes = array();
         foreach ($container->findTaggedServiceIds('payment.method_form_type') as $id => $attributes) {
             $definition = $container->getDefinition($id);
