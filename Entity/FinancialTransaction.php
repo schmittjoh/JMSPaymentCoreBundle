@@ -140,7 +140,10 @@ class FinancialTransaction implements FinancialTransactionInterface
     {
         $this->updatedAt = new \DateTime;
 
-        if (null !== $this->extendedData && false === $this->extendedData->equals($this->extendedDataOriginal)) {
+        if ( null !== $this->extendedDataOriginal &&
+             null !== $this->extendedData && 
+             false === $this->extendedData->equals($this->extendedDataOriginal)
+        ){
             $this->extendedData = clone $this->extendedData;
         }
     }
