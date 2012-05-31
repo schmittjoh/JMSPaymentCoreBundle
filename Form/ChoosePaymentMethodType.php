@@ -13,7 +13,7 @@ use Symfony\Component\Form\CallbackValidator;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 
 /**
@@ -36,7 +36,7 @@ class ChoosePaymentMethodType extends AbstractType
         $this->paymentMethods = $paymentMethods;
     }
 
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!isset($options['currency'])) {
             throw new \InvalidArgumentException(sprintf('The option "currency" must be given for form type "%s".', $this->getName()));
