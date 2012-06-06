@@ -144,7 +144,7 @@ abstract class PluginController implements PluginControllerInterface
     {
         $plugin = $this->getPlugin($instruction->getPaymentSystemName());
 
-        if (!$plugin instanceof QueryablePlugin) {
+        if (!$plugin instanceof QueryablePluginInterface) {
             return null;
         }
 
