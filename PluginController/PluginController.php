@@ -777,7 +777,7 @@ abstract class PluginController implements PluginControllerInterface
 
                 return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             }
-        } catch (PluginfinancialException $ex) {
+        } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
 
             $payment->setReversingApprovedAmount(0.0);
