@@ -40,7 +40,7 @@ class LuhnValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (null === $value) {
+        if (null === $value || '' === $value) {
             return;
         }
 
@@ -48,9 +48,11 @@ class LuhnValidator extends ConstraintValidator
             $this->context->addViolation($constraint->message);
         }
 
-        for ($sum = 0, $i = strlen($value) - 1; $i >= 0; $i--) {
+        $length = strlen($value);
+        $oddLength = $length % 2;
+        for ($sum = 0, $i = $length - 1; $i >= 0; $i--) {
             $digit = (int) $value[$i];
-            $sum += (($i % 2) === 0) ? array_sum(str_split($digit * 2)) : $digit;
+            $sum += (($i % 2) === $oddLength) ? array_sum(str_split($digit * 2)) : $digit;
         }
 
         if (($sum % 10) !== 0) {
@@ -58,3 +60,4 @@ class LuhnValidator extends ConstraintValidator
         }
     }
 }
+
