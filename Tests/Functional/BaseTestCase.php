@@ -27,6 +27,7 @@ class BaseTestCase extends WebTestCase
         $metadata = $em->getMetadataFactory()->getAllMetadata();
         if (!empty($metadata)) {
             $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+            $schemaTool->dropDatabase();
             $schemaTool->createSchema($metadata);
         }
     }

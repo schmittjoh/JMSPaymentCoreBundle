@@ -9,8 +9,6 @@ class PaymentWorkflowTest extends BaseTestCase
 {
     public function testPaymentDetails()
     {
-        $this->markTestSkipped('Needs to be run separately because of some DB locking issues.');
-
         $client = $this->createClient();
         $this->importDatabaseSchema();
 

@@ -16,8 +16,13 @@
         "symfony/framework-bundle": ">=2.0,<2.2-dev",
         "ext-mcrypt": "*"
     },
-    "recommend": {
-        "doctrine/doctrine-bundle": "dev-master"
+    "require-dev": {
+        "sensio/framework-extra-bundle": "*",
+        "doctrine/doctrine-bundle": "*",
+        "doctrine/orm": "*",
+        "jms/payment-paypal-bundle": "*",
+        "jms/aop-bundle": "*",
+        "jms/di-extra-bundle": "*"
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
