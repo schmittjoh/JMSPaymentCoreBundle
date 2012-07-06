@@ -2,19 +2,20 @@
 
 namespace JMS\Payment\CoreBundle\Form;
 
-use JMS\Payment\CoreBundle\PluginController\Result;
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\CallbackValidator;
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\PluginController\Result;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\CallbackValidator;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Util\PropertyPath;
 
 /**
  * Form Type for Choosing a Payment Method.
@@ -173,25 +174,31 @@ class ChoosePaymentMethodType extends AbstractType
 
     private function applyErrorsToForm(FormInterface $form, Result $result)
     {
-           $ex = $result->getPluginException();
+        $ex = $result->getPluginException();
 
-           $globalErrors = $ex->getGlobalErrors();
-           $dataErrors = $ex->getDataErrors();
+        $globalErrors = $ex->getGlobalErrors();
+        $dataErrors = $ex->getDataErrors();
 
-           // add a generic error message
-           if (!$dataErrors && !$globalErrors) {
-               $form->addError(new FormError('form.error.invalid_payment_instruction'));
+        // add a generic error message
+        if (!$dataErrors && !$globalErrors) {
+            $form->addError(new FormError('form.error.invalid_payment_instruction'));
 
-               return;
-          }
+            return;
+        }
 
-          foreach ($globalErrors as $error) {
-              $form->addError(new FormError($error));
-          }
+        foreach ($globalErrors as $error) {
+            $form->addError(new FormError($error));
+        }
 
-          foreach ($dataErrors as $field => $error) {
-              $form->get($field)->addError(new FormError($error));
-          }
+        foreach ($dataErrors as $path => $error) {
+            $path = explode('.', $path);
+            $field = $form;
+            do {
+                $field = $field->get(array_shift($path));
+            } while ($path);
+
+            $field->addError(new FormError($error));
+        }
     }
 
     private function buildChoices(array $methods)
