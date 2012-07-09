@@ -10,55 +10,55 @@ object or equivalent. This could look like:
 .. code-block :: php
 
     <?php
-    
+
     use Doctrine\ORM\Mapping as ORM;
     use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-    
+
     class Order
     {
         /** @ORM\OneToOne(targetEntity="JMSPaymentCore:PaymentInstruction") */
         private $paymentInstruction;
-        
+
         /** @ORM\Column(type="string", unique = true) */
         private $orderNumber;
-    
+
         /** @ORM\Column(type="decimal", precision = 2) */
         private $amount;
-        
+
         // ...
-        
+
         public function __construct($amount, $orderNumber)
         {
             $this->amount = $amount;
             $this->orderNumber = $orderNumber;
         }
-    
+
         public function getOrderNumber()
         {
             return $this->orderNumber;
         }
-        
+
         public function getAmount()
         {
             return $this->amount;
         }
-        
+
         public function getPaymentInstruction()
         {
             return $this->paymentInstruction;
         }
-        
+
         public function setPaymentInstruction(PaymentInstruction $instruction)
         {
             $this->paymentInstruction = $instruction;
         }
-        
+
         // ...
     }
 
 .. note ::
 
-    An order object, or the like is not strictly necessary, but since it is 
+    An order object, or the like is not strictly necessary, but since it is
     regularly available, we will be using it in this chapter for demonstration
     purposes.
 
@@ -76,9 +76,9 @@ which we will leverage.
 
 .. warning ::
 
-    We have completely left out any security considerations, in a real-world 
+    We have completely left out any security considerations, in a real-world
     scenario, you have to make sure the following actions are sufficiently
-    covered by access rules, for example by using @PreAuthorize from 
+    covered by access rules, for example by using @PreAuthorize from
     JMSSecurityExtraBundle_.
 
 .. code-block :: php
@@ -93,7 +93,7 @@ which we will leverage.
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
-    
+
     /**
      * @Route("/payments")
      */
@@ -103,14 +103,14 @@ which we will leverage.
         private $request;
 
         /** @DI\Inject */
-        private $router;        
-        
+        private $router;
+
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
-        
+
         /** @DI\Inject("payment.plugin_controller") */
         private $ppc;
-    
+
         /**
          * @Route("/{orderNumber}/details", name = "payment_details")
          * @Template
@@ -118,8 +118,9 @@ which we will leverage.
         public function detailsAction(Order $order)
         {
             $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
-                'currency' => 'EUR',
                 'amount'   => $order->getAmount(),
+                'currency' => 'EUR',
+                'default_method' => 'payment_paypal', // Optional
                 'predefined_data' => array(
                     'paypal_express_checkout' => array(
                         'return_url' => $this->router->generate('payment_complete', array(
@@ -131,30 +132,30 @@ which we will leverage.
                     ),
                 ),
             ));
-    
+
             if ('POST' === $this->request->getMethod()) {
                 $form->bindRequest($this->request);
-    
+
                 if ($form->isValid()) {
                     $this->ppc->createPaymentInstruction($instruction = $form->getData());
-                    
+
                     $order->setPaymentInstruction($instruction);
                     $this->em->persist($order);
                     $this->em->flush($order);
-                        
+
                     return new RedirectResponse($this->router->generate('payment_complete', array(
                         'orderNumber' => $order->getOrderNumber(),
                     )));
                 }
             }
-    
+
             return array(
                 'form' => $form->createView()
             );
         }
-        
+
         // ...
-        
+
         /** @DI\LookupMethod("form.factory") */
         protected function getFormFactory() { }
     }
@@ -162,7 +163,7 @@ which we will leverage.
 The ``jms_choose_payment_method`` form type will automatically render a form
 with all available payment methods. Upon binding, the form type will validate
 the data for the chosen payment method, and on success will give us a valid
-``PaymentInstruction`` instance back. 
+``PaymentInstruction`` instance back.
 
 Depositing Money
 ----------------
@@ -183,7 +184,7 @@ route for which we will now create the corresponding action in our controller:
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
     use Symfony\Component\HttpFoundation\RedirectResponse;
-    
+
     /**
      * @Route("/payments")
      */
@@ -197,12 +198,12 @@ route for which we will now create the corresponding action in our controller:
 
         /** @DI\Inject("doctrine.orm.entity_manager") */
         private $em;
-        
+
         /** @DI\Inject("payment.plugin_controller") */
         private $ppc;
-    
+
         // ... see previous section
-    
+
         /**
          * @Route("/{orderNumber}/complete", name = "payment_complete")
          */
@@ -214,25 +215,25 @@ route for which we will now create the corresponding action in our controller:
             } else {
                 $payment = $pendingTransaction->getPayment();
             }
-            
+
             $result = $this->ppc->approveAndDeposit($payment->getId(), $payment->getTargetAmount());
             if (Result::STATUS_PENDING === $result->getStatus()) {
                 $ex = $result->getPluginException();
-    
+
                 if ($ex instanceof ActionRequiredException) {
                     $action = $ex->getAction();
-    
+
                     if ($action instanceof VisitUrl) {
                         return new RedirectResponse($action->getUrl());
                     }
-    
+
                     throw $ex;
                 }
             } else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
                 throw new \RuntimeException('Transaction was not successful: '.$result->getReasonCode());
             }
-            
-            // payment was successful, do something interesting with the order          
+
+            // payment was successful, do something interesting with the order
         }
     }
 
