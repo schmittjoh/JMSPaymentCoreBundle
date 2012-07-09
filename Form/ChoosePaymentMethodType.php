@@ -64,6 +64,7 @@ class ChoosePaymentMethodType extends AbstractType
         $builder->add('method', 'choice', array(
             'choices' => $this->buildChoices($options['available_methods']),
             'expanded' => true,
+            'data' => $options['default_method'],
         ));
 
         foreach ($options['available_methods'] as $method) {
@@ -161,8 +162,9 @@ class ChoosePaymentMethodType extends AbstractType
     public function getDefaultOptions()
     {
         return array(
-            'currency'        => null,
             'amount'          => null,
+            'currency'        => null,
+            'default_method'  => null,
             'predefined_data' => array(),
         );
     }
