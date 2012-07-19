@@ -348,7 +348,7 @@ abstract class PluginController implements PluginControllerInterface
                 $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
                 $processedAmount = $transaction->getProcessedAmount();
 
-                $payment->setState(PaymentInterface::STATE_APPROVED);
+                $payment->setState(PaymentInterface::STATE_DEPOSITED);
                 $payment->setApprovingAmount(0.0);
                 $payment->setDepositingAmount(0.0);
                 $payment->setApprovedAmount($processedAmount);
