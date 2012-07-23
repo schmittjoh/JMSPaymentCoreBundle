@@ -159,7 +159,7 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    public function getDefaultOptions()
+    public function getDefaultOptions(array $options)
     {
         return array(
             'amount'          => null,
