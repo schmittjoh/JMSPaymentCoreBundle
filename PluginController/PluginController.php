@@ -335,7 +335,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $retry = true;
         } else {
-            throw new InvalidPaymentException('Payment\'s state must e NEW, or APPROVING.');
+            throw new InvalidPaymentException('Payment\'s state must be NEW, or APPROVING.');
         }
 
         $plugin = $this->getPlugin($instruction->getPaymentSystemName());
