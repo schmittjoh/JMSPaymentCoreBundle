@@ -596,6 +596,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $result = $this->callApprove($controller, array($payment, 100));
 
         $this->assertSame($transaction, $result->getFinancialTransaction());
+        $this->assertSame($transaction, $payment->getApproveTransaction());
         $this->assertInstanceOf('JMS\Payment\CoreBundle\PluginController\Result', $result);
         $this->assertTrue(PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode());
         $this->assertSame(PluginInterface::RESPONSE_CODE_SUCCESS, $transaction->getResponseCode());
