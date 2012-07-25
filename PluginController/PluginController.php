@@ -211,6 +211,7 @@ abstract class PluginController implements PluginControllerInterface
             $transaction->setPayment($payment);
             $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE);
             $transaction->setRequestedAmount($amount);
+            $payment->addTransaction($transaction);
 
             $payment->setState(PaymentInterface::STATE_APPROVING);
             $payment->setApprovingAmount($amount);
