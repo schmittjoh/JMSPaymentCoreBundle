@@ -1,4 +1,4 @@
-JMSPaymentCoreBundle
+JMSPaymentCoreBundle [![Build Status](https://secure.travis-ci.org/schmittjoh/JMSPaymentCoreBundle.png?branch=master)](http://travis-ci.org/schmittjoh/JMSPaymentCoreBundle)
 ====================
 
 Documentation: 
