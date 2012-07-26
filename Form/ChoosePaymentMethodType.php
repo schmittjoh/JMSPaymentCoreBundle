@@ -4,17 +4,15 @@ namespace JMS\Payment\CoreBundle\Form;
 
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-use JMS\Payment\CoreBundle\PluginController\Result;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
-use Symfony\Component\Form\CallbackTransformer;
+use JMS\Payment\CoreBundle\PluginController\Result;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Util\PropertyPath;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -127,13 +125,13 @@ class ChoosePaymentMethodType extends AbstractType
                 $extendedData->set($k, $v);
             }
         }
-
+        
         return new PaymentInstruction($options['amount'], $options['currency'], $method, $extendedData);
     }
 
-    public function validate(FormInterface $form, array $options)
+    public function validate(FormEvent $event, array $options)
     {
-        $instruction = $form->getData();
+        $instruction = $event->getForm()->getData();
 
         if (null === $instruction->getPaymentSystemName()) {
             $form->addError(new FormError('form.error.payment_method_required'));
