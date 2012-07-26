@@ -7,7 +7,6 @@ use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\PluginController\Result;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\CallbackValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,6 +15,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\PropertyPath;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Form Type for Choosing a Payment Method.
@@ -73,17 +73,17 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         $self = $this;
-        $builder->addValidator(new CallbackValidator(function($form) use ($self, $options) {
+        $builder->addEventListener(FormEvents::POST_BIND, function($form) use ($self, $options) {
             $self->validate($form, $options);
-        }));
-        $builder->appendNormTransformer(new CallbackTransformer(
+        });
+        $builder->addModelTransformer(new CallbackTransformer(
             function($data) use ($self, $options) {
                 return $self->transform($data, $options);
             },
             function($data) use ($self, $options) {
                 return $self->reverseTransform($data, $options);
             }
-        ));
+        ), true);
     }
 
     public function transform($data, array $options)
@@ -159,14 +159,14 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    public function getDefaultOptions()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'amount'          => null,
             'currency'        => null,
             'default_method'  => null,
             'predefined_data' => array(),
-        );
+        ));
     }
 
     public function getName()
