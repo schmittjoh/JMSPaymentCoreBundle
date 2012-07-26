@@ -32,6 +32,11 @@ class JMSPaymentCoreBundle extends Bundle
         if (false === Type::hasType(ExtendedDataType::NAME)) {
             ExtendedDataType::setEncryptionService($this->container->get('payment.encryption_service'));
             Type::addType(ExtendedDataType::NAME, 'JMS\Payment\CoreBundle\Entity\ExtendedDataType');
+            
+            if ($this->container->has('doctrine.dbal.default_connection')) {     
+                $platform = $this->container->get('doctrine.dbal.default_connection')->getDatabasePlatform();
+                $platform->markDoctrineTypeCommented(Type::getType(ExtendedDataType::NAME));
+            }
         }
     }
 
