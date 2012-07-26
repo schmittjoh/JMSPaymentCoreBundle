@@ -18,6 +18,15 @@
         "ext-mcrypt": "*"
     },
     "require-dev": {
+        "symfony/class-loader": "*",
+        "symfony/twig-bundle": "*",
+        "symfony/finder": "*",
+        "symfony/browser-kit": "*",
+        "symfony/css-selector": "*",
+        "symfony/form": "*",
+        "symfony/validator": "*",
+        "symfony/process": "*",
+        "symfony/yaml": "*",
         "sensio/framework-extra-bundle": "*",
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "*",
