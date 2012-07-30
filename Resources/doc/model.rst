@@ -17,8 +17,12 @@ information.
 
     Any payment related data may be automatically encrypted if you request this.
 
+Below you find the different states that a ``PaymentInstruction`` can go through:
+
 .. uml ::
     :alt: PaymentInstruction State Flow
+
+    left to right direction
 
     [*] --> New
     New --> Valid
