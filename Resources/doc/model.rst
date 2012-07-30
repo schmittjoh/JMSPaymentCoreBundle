@@ -17,7 +17,15 @@ information.
 
     Any payment related data may be automatically encrypted if you request this.
 
-TODO: Include payment instruction state flow here
+.. uml ::
+    :alt: PaymentInstruction State Flow
+
+    [*] --> New
+    New --> Valid
+    New --> Invalid
+    Valid --> Closed
+    Invalid --> [*]
+    Closed --> [*]
 
 Payment
 -------
