@@ -40,7 +40,30 @@ initiated, approved, deposited, etc.
 This allows you for example to request a fraction of the total amount to be
 deposited before an order ships, and the rest afterwards.
 
-TODO: Include payment state flow here
+Below, you find the different states that a ``Payment`` can go through:
+
+.. uml ::
+    :alt: Payment State Flow
+
+    left to right direction
+
+    [*] --> New
+    
+    New --> Canceled
+    New --> Approving
+    
+    Approving --> Approved
+    Approving --> Failed
+    
+    Approved --> Depositing
+    
+    Depositing --> Deposited
+    Depositing --> Expired
+
+    Canceled --> [*]
+    Failed --> [*]
+    Expired --> [*]
+    Deposited --> [*]
 
 FinancialTransaction
 --------------------
@@ -53,5 +76,23 @@ a credit card payment, this could for example be an authorization transaction.
     There may only ever be one open transaction for each ``PaymentInstruction`` 
     at a time. This is enforced, and guaranteed.
 
-TODO: Include transaction state flow here
+Below, you find the different states that a ``FinancialTransaction`` can go through:
+
+.. uml ::
+    :alt: Financial Transaction State Flow
+
+    left to right direction
+
+    [*] --> New
     
+    New --> Pending
+    New --> Failed
+    New --> Success
+    New --> Canceled
+
+    Pending --> Failed
+    Pending --> Success
+
+    Failed --> [*]
+    Success --> [*]
+    Canceled --> [*]
