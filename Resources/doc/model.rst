@@ -59,6 +59,7 @@ Below, you find the different states that a ``Payment`` can go through:
     
     Depositing --> Deposited
     Depositing --> Expired
+    Depositing --> Failed
 
     Canceled --> [*]
     Failed --> [*]
