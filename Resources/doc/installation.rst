@@ -41,7 +41,7 @@ register the new bundle:
     // in AppKernel::registerBundles()
     $bundles = array(
         // ...
-        new JMS\PaymentCoreBundle\JMSPaymentCoreBundle(),
+        new JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
         // ...
     );
     
