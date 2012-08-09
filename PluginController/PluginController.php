@@ -265,6 +265,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -392,6 +393,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -563,6 +565,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -687,6 +690,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -793,6 +797,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -929,6 +934,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
@@ -1027,6 +1033,7 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
+			
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
