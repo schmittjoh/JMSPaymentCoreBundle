@@ -125,13 +125,14 @@ class ChoosePaymentMethodType extends AbstractType
                 $extendedData->set($k, $v);
             }
         }
-        
+
         return new PaymentInstruction($options['amount'], $options['currency'], $method, $extendedData);
     }
 
     public function validate(FormEvent $event, array $options)
     {
-        $instruction = $event->getForm()->getData();
+        $form        = $event->getForm();
+        $instruction = $form->getData();
 
         if (null === $instruction->getPaymentSystemName()) {
             $form->addError(new FormError('form.error.payment_method_required'));
