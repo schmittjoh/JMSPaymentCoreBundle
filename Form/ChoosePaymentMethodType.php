@@ -37,14 +37,7 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!isset($options['currency'])) {
-            throw new \InvalidArgumentException(sprintf('The option "currency" must be given for form type "%s".', $this->getName()));
-        }
-        if (!isset($options['amount'])) {
-            throw new \InvalidArgumentException(sprintf('The option "amount" must be given for form type "%s".', $this->getName()));
-        }
-
-        $allowAllMethods = !isset($options['allowed_methods']);
+        $allowAllMethods = !count($options['allowed_methods']);
 
         $options['available_methods'] = array();
         foreach ($this->paymentMethods as $method) {
@@ -161,10 +154,21 @@ class ChoosePaymentMethodType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'amount'          => null,
-            'currency'        => null,
+            'allowed_methods' => array(),
             'default_method'  => null,
             'predefined_data' => array(),
+        ));
+
+        $resolver->setRequired(array(
+            'amount',
+            'currency',
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'allowed_methods' => 'array',
+            'amount'          => 'numeric',
+            'currency'        => 'string',
+            'predefined_data' => 'array',
         ));
     }
 
