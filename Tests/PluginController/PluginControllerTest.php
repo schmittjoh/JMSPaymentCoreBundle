@@ -342,7 +342,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($transaction, $result->getFinancialTransaction());
         $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
         $this->assertSame(PluginInterface::REASON_CODE_SUCCESS, $result->getReasonCode());
-        $this->assertSame(PaymentInterface::STATE_APPROVED, $payment->getState());
+        $this->assertSame(PaymentInterface::STATE_DEPOSITED, $payment->getState());
         $this->assertEquals(0, $payment->getApprovingAmount());
         $this->assertEquals(0, $payment->getDepositingAmount());
         $this->assertEquals(50, $payment->getApprovedAmount());
@@ -387,7 +387,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($transaction, $result->getFinancialTransaction());
         $this->assertSame(Result::STATUS_SUCCESS, $result->getStatus());
         $this->assertSame(PluginInterface::REASON_CODE_SUCCESS, $result->getReasonCode());
-        $this->assertSame(PaymentInterface::STATE_APPROVED, $payment->getState());
+        $this->assertSame(PaymentInterface::STATE_DEPOSITED, $payment->getState());
         $this->assertEquals(0, $payment->getApprovingAmount());
         $this->assertEquals(0, $payment->getDepositingAmount());
         $this->assertEquals(50, $payment->getApprovedAmount());
