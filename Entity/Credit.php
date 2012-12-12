@@ -183,4 +183,14 @@ class Credit implements CreditInterface
     {
         $this->updatedAt = new \DateTime;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 }
