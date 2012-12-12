@@ -286,4 +286,14 @@ class Payment implements PaymentInterface
     {
         $this->state = $state;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 }
