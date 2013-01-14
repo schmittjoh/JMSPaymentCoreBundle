@@ -35,8 +35,8 @@
         "jms/di-extra-bundle": "*"
     },
     "suggest": {
-        "symfony/form": ">=2.1,<2.2-dev",
-        "symfony/validator": ">=2.1,<2.2-dev"
+        "symfony/form": ">=2.1,<2.3-dev",
+        "symfony/validator": ">=2.1,<2.3-dev"
     },
     "minimum-stability": "dev",
     "autoload": {
