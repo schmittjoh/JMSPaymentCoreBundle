@@ -8,7 +8,8 @@ Available Payment Backends
 This is an incomplete list of implemented payment backends:
 
 - Paypal: JMSPaymentPaypalBundle_
+- Dotpay: ETSPaymentDotpayBundle_
 
 
 .. _JMSPaymentPaypalBundle: http://jmsyst.com/bundles/JMSPaymentPaypalBundle
-
+.. _ETSPaymentDotpayBundle: https://github.com/ETSGlobal/ETSPaymentDotpayBundle
