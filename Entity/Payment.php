@@ -296,4 +296,9 @@ class Payment implements PaymentInterface
     {
         return $this->updatedAt;
     }
+
+    public function isAllowRefund()
+    {
+        return $this->getState() == PaymentInterface::STATE_DEPOSITED;
+    }
 }
