@@ -37,7 +37,6 @@
         "symfony/form": ">=2.1,<2.2-dev",
         "symfony/validator": ">=2.1,<2.2-dev"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
     },
