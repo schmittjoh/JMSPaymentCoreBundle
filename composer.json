@@ -29,7 +29,7 @@
         "sensio/framework-extra-bundle": "*",
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "*",
-        "jms/payment-paypal-bundle": "*",
+        "jms/payment-paypal-bundle": "*@dev",
         "jms/aop-bundle": "*",
         "jms/di-extra-bundle": "*"
     },
