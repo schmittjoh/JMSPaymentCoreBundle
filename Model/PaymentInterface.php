@@ -64,4 +64,5 @@ interface PaymentInterface
     function setReversingCreditedAmount($amount);
     function setReversingDepositedAmount($amount);
     function setState($state);
+    function isAllowRefund();
 }
