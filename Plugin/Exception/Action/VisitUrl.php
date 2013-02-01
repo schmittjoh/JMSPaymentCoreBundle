@@ -18,17 +18,62 @@ namespace JMS\Payment\CoreBundle\Plugin\Exception\Action;
  * limitations under the License.
  */
 
+/**
+ * VisitUrl action
+ *
+ * Parameter of an ActionRequiredException, it allow the user to catch
+ * this case and redirect the user to this target url
+ */
 class VisitUrl
 {
+    /**
+     * @var string
+     */
     protected $url;
 
-    public function __construct($url)
+    /**
+     * @var string
+     */
+    protected $method;
+
+    /**
+     * @var array
+     */
+    protected $parameters;
+
+    /**
+     * @param string $url
+     * @param string $method
+     * @param array  $parameters
+     */
+    public function __construct($url, $method = 'GET', array $parameters = array())
     {
         $this->url = $url;
+        $this->parameters = $parameters;
+        $this->method = $method;
     }
 
+    /**
+     * @return string
+     */
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
     }
 }
