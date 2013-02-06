@@ -44,6 +44,7 @@ class PaymentInstruction implements PaymentInstructionInterface
     private $reversingDepositedAmount;
     private $state;
     private $updatedAt;
+    private $order;
 
     public function __construct($amount, $currency, $paymentSystemName, ExtendedData $data = null)
     {
@@ -217,6 +218,11 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->updatedAt;
     }
 
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
     public function hasPendingTransaction()
     {
         return null !== $this->getPendingTransaction();
@@ -287,4 +293,10 @@ class PaymentInstruction implements PaymentInstructionInterface
     {
         $this->state = $state;
     }
+
+    public function setOrder($order)
+    {
+        $this->order = $order;
+    }
+
 }

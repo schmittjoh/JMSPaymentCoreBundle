@@ -24,7 +24,6 @@
         <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" scale="5" />
         <field name="state" type="smallint" />
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
-        
         <one-to-many field="credits" mapped-by="paymentInstruction" target-entity="Credit">
             <cascade>
                 <cascade-remove/>
@@ -38,6 +37,8 @@
                 <cascade-refresh/>
             </cascade>
         </one-to-many>
+
+        <one-to-one field="order" target-entity="NextLove\PaymentBundle\Entity\Order" mapped-by="paymentInstruction" />
 
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPreSave"/>
