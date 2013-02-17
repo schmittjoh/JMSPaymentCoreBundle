@@ -421,7 +421,7 @@ abstract class PluginController implements PluginControllerInterface
         }
 
         $paymentState = $payment->getState();
-        if (!$payment->isAllowRefund()) {
+        if (!$payment->isRefundAllowed()) {
             throw new InvalidPaymentException('Payment\'s state must be DEPOSITED.');
         }
 
@@ -466,7 +466,7 @@ abstract class PluginController implements PluginControllerInterface
                 /** @var PaymentInterface $payment  */
                 $payment = $credit->getPayment();
                 $paymentState = $payment->getState();
-                if (!$payment->isAllowRefund()) {
+                if (!$payment->isRefundAllowed()) {
                     throw new InvalidPaymentException('Payment\'s state must be DEPOSITED.');
                 }
 
@@ -499,7 +499,7 @@ abstract class PluginController implements PluginControllerInterface
             if (false === $credit->isIndependent()) {
                 /** @var Payment $payment  */
                 $payment = $credit->getPayment();
-                if (!$payment->isAllowRefund()) {
+                if (!$payment->isRefundAllowed()) {
                     throw new InvalidPaymentException('Payment\'s state must be DEPOSITED.');
                 }
 
