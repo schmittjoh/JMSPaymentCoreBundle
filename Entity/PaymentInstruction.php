@@ -299,4 +299,9 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->order = $order;
     }
 
+    public function setExtendedData($extendedData)
+    {
+        $this->extendedData = $extendedData;
+    }
+
 }
