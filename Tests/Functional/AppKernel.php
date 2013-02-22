@@ -30,6 +30,7 @@ class AppKernel extends Kernel
     {
         return array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new \Propel\PropelBundle\PropelBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),

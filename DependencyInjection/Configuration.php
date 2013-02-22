@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('orm')
                         ->defaultValue('entity')
                         ->validate()
-                            ->ifNotInArray(array('entity'))
+                            ->ifNotInArray(array('propel', 'entity'))
                             ->thenInvalid('Invalid orm "%s"')
                         ->end()
                     ->end()

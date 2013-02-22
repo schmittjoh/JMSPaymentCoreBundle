@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="default" namespace="JMS\Payment\CoreBundle\Propel" defaultIdMethod="native">
+
+    <table name="extended_data">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="datas" type="ARRAY" required="true" />
+    </table>
+
+    <table name="payment_instruction">
+
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="approved_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="approving_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="credited_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="crediting_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="deposited_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="depositing_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="reversing_approved_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="reversing_credited_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+        <column name="reversing_deposited_amount" type="DECIMAL" required="true" size="10"  scale="5" />
+
+        <column name="payment_system_name" type="VARCHAR" required="true" size="100" />
+        <column name="currency" type="VARCHAR" required="true" size="3" />
+        <column name="state" type="ENUM" valueSet="closed, invalid, new, valid" required="true" default="new" />
+
+        <column name="extended_data_id" type="FLOAT" required="true" />
+
+        <foreign-key foreignTable="extended_data">
+            <reference local="extended_data_id" foreign="id" />
+        </foreign-key>
+
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="payment">
+
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="approved_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="approving_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="credited_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="crediting_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="deposited_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="depositing_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="reversing_approved_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="reversing_credited_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="reversing_deposited_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="target_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+
+        <column name="expiration_date" type="FLOAT" required="false" />
+        <column name="state" type="ENUM" valueSet="approved, approving, canceled, expired, failed, new, depositing, deposited" required="true" default="new" />
+        <column name="attention_required" type="BOOLEAN" required="true" default="false" />
+        <column name="expired" type="BOOLEAN" required="true" default="false" />
+
+        <column name="payment_instruction_id" type="FLOAT" required="true" />
+
+        <foreign-key foreignTable="payment_instruction">
+            <reference local="payment_instruction_id" foreign="id" />
+        </foreign-key>
+
+        <behavior name="timestampable" />
+        <behavior name="typehintable">
+            <parameter name="expiration_date" value="DateTime" />
+        </behavior>
+
+    </table>
+
+    <table name="credit">
+
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="attention_required" type="BOOLEAN" required="true" default="false" />
+        <column name="credited_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="crediting_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="reversing_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="target_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+
+        <column name="payment_id" type="INTEGER" required="false" />
+        <column name="payment_instruction_id" type="INTEGER" required="true" />
+
+        <column name="state" type="ENUM" valueSet="canceled, credited, crediting, failed, new" required="true" default="new" />
+
+        <foreign-key foreignTable="payment_instruction">
+            <reference local="payment_instruction_id" foreign="id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="payment">
+            <reference local="payment_id" foreign="id" />
+        </foreign-key>
+
+        <behavior name="timestampable" />
+        <behavior name="typehintable">
+            <parameter name="payment" value="JMS\Payment\CoreBundle\Model\PaymentInterface" />
+        </behavior>
+
+    </table>
+
+    <table name="financial_transaction">
+
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="credit_id" type="INTEGER" required="false" />
+        <column name="payment_id" type="INTEGER" required="false" />
+        <column name="extended_data_id" type="INTEGER" required="true" />
+
+        <column name="processed_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+        <column name="requested_amount" type="DECIMAL" required="true" size="10"  scale="5" default="0.0" />
+
+        <column name="reason_code" type="VARCHAR" required="false" size="100" />
+        <column name="response_code" type="VARCHAR" required="false" size="100" />
+        <column name="reference_number" type="VARCHAR" required="false" size="100" />
+        <column name="tracking_id" type="VARCHAR" required="false" size="100" />
+
+        <column name="state" type="ENUM" valueSet="canceled, failed, new, pending, success" required="true" default="new" />
+        <column name="transaction_type" type="ENUM" valueSet="approve, approve-and-deposit, credit, deposit, reverse-approval, reverse-credit, reverse-deposit" required="true" />
+
+        <foreign-key foreignTable="credit">
+            <reference local="credit_id" foreign="id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="payment">
+            <reference local="payment_id" foreign="id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="extended_data">
+            <reference local="extended_data_id" foreign="id" />
+        </foreign-key>
+
+        <behavior name="typehintable">
+            <parameter name="credit" value="JMS\Payment\CoreBundle\Model\CreditInterface" />
+            <parameter name="payment" value="JMS\Payment\CoreBundle\Model\PaymentInterface" />
+            <parameter name="extended_data" value="JMS\Payment\CoreBundle\Model\ExtendedDataInterface" />
+        </behavior>
+
+        <behavior name="timestampable" />
+    </table>
+
+</database>
