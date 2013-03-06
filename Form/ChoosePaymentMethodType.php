@@ -23,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ChoosePaymentMethodType extends AbstractType
 {
     private $pluginController;
-    private $paymentMethods;
+    protected $paymentMethods;
 
     public function __construct(PluginControllerInterface $pluginController, array $paymentMethods)
     {
@@ -35,7 +35,7 @@ class ChoosePaymentMethodType extends AbstractType
         $this->paymentMethods = $paymentMethods;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    protected function buildForm(FormBuilderInterface $builder, array $options)
     {
         $allowAllMethods = !count($options['allowed_methods']);
 
