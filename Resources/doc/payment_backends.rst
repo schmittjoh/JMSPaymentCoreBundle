@@ -11,10 +11,10 @@ This is an incomplete list of implemented payment backends:
 - Dotpay: ETSPaymentDotpayBundle_
 - Ogone: ETSPaymentOgoneBundle_
 - Merchant e-Solutions (Trident): PaymentMeSBundle_
-- Qiwi: _ChewbaccoPaymentQiwiWalletBundle_
+- Qiwi: ChewbaccoPaymentQiwiWalletBundle_
 
 .. _JMSPaymentPaypalBundle: http://jmsyst.com/bundles/JMSPaymentPaypalBundle
 .. _ETSPaymentDotpayBundle: https://github.com/ETSGlobal/ETSPaymentDotpayBundle
 .. _ETSPaymentOgoneBundle: https://github.com/ETSGlobal/ETSPaymentOgoneBundle
 .. _PaymentMeSBundle: https://github.com/immersivelabs/PaymentMeSBundle
-.. _ChewbaccoPaymentQiwiWalletBundle: https://github.com/Chewbacco/ChewbaccoPaymentQiwiWalletBundle
+.. _ChewbaccoPaymentQiwiWalletBundle: https://github.com/chewbacco/ChewbaccoPaymentQiwiWalletBundle
