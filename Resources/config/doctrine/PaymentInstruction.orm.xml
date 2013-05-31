@@ -38,7 +38,7 @@
             </cascade>
         </one-to-many>
 
-        <one-to-one field="order" target-entity="NextLove\PaymentBundle\Entity\Order" mapped-by="paymentInstruction" />
+        <one-to-one field="order" target-entity="Digisec\PaymentBundle\Entity\Order" mapped-by="paymentInstruction" />
 
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPreSave"/>
