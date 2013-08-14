@@ -7,6 +7,9 @@ use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 
 class PaymentWorkflowTest extends BaseTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testPaymentDetails()
     {
         $client = $this->createClient();
