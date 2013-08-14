@@ -36,5 +36,10 @@
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
     },
-    "target-dir": "JMS/Payment/CoreBundle"
+    "target-dir": "JMS/Payment/CoreBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }
