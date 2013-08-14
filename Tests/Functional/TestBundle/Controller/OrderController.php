@@ -46,7 +46,11 @@ class OrderController
         ));
 
         if ('POST' === $this->request->getMethod()) {
-            $form->submit($this->request);
+            if (method_exists($form, 'submit')) {
+                $form->submit($this->request);
+            } else {
+                $form->bindRequest($this->request);
+            }
 
             if ($form->isValid()) {
                 $instruction = $form->getData();
