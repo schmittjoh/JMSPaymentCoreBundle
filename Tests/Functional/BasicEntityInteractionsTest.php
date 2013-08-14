@@ -10,6 +10,9 @@ use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 class BasicEntityInteractionsTest extends BaseTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testIndependentCredit()
     {
         $this->createClient();
