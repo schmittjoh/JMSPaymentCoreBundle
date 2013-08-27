@@ -20,3 +20,4 @@ This is an incomplete list of implemented payment backends:
 .. _PaymentMeSBundle: https://github.com/immersivelabs/PaymentMeSBundle
 .. _ChewbaccoPaymentQiwiWalletBundle: https://github.com/chewbacco/ChewbaccoPaymentQiwiWalletBundle
 .. _PaymentBe2billBundle: https://github.com/rezzza/PaymentBe2billBundle
+.. _KarserRobokassaBundle: https://github.com/karser/RobokassaBundle
