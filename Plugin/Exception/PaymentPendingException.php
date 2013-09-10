@@ -25,4 +25,28 @@ namespace JMS\Payment\CoreBundle\Plugin\Exception;
  */
 class PaymentPendingException extends BlockedException
 {
+    /**
+     * @var string
+     */
+    protected $pendingReason;
+
+    /**
+     * set pendingReason
+     *
+     * @param string $pendingReason
+     */
+    public function setPendingReason($pendingReason)
+    {
+        $this->pendingReason = $pendingReason;
+    }
+
+    /**
+     * get pendingReason
+     *
+     * @return string
+     */
+    public function getPendingReason()
+    {
+        return $this->pendingReason;
+    }
 }
