@@ -26,9 +26,11 @@ namespace JMS\Payment\CoreBundle\Plugin\Exception;
 class PaymentPendingException extends BlockedException
 {
     /**
+     * The pendingReason depends on the used payment plugin
+     * 
      * @var string
      */
-    protected $pendingReason;
+    private $pendingReason;
 
     /**
      * set pendingReason
