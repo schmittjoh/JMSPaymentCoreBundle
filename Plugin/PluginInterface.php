@@ -38,6 +38,7 @@ interface PluginInterface
     const REASON_CODE_INVALID = 'invalid';
     const REASON_CODE_SUCCESS = 'none';
     const REASON_CODE_TIMEOUT = 'timeout';
+    const REASON_CODE_AUTHORIZATION = 'authorization';
 
     /**
      * This method executes an approve transaction.
