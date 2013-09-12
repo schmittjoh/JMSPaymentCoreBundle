@@ -14,6 +14,7 @@ use JMS\Payment\CoreBundle\Plugin\PluginInterface;
 use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
 use JMS\Payment\CoreBundle\Plugin\Exception\BlockedException as PluginBlockedException;
+use JMS\Payment\CoreBundle\Plugin\Exception\PaymentPendingException as PluginPaymentPendingException;
 use JMS\Payment\CoreBundle\Plugin\Exception\Exception as PluginException;
 use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException as PluginFinancialException;
 use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
@@ -272,6 +273,8 @@ abstract class PluginController implements PluginControllerInterface
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
             } else if ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
+            } else if ($blocked instanceof PluginPaymentPendingException) {
+                $reasonCode = $blocked->getPendingReason();    
             } else if (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
