@@ -2,10 +2,10 @@
 
 namespace JMS\Payment\CoreBundle\PluginController;
 
+use JMS\Payment\CoreBundle\PluginController\Event\Events;
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
 use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
@@ -85,7 +85,11 @@ abstract class PluginController implements PluginControllerInterface
      */
     public function closePaymentInstruction(PaymentInstructionInterface $instruction)
     {
+        $oldState = $instruction->getState();
+
         $instruction->setState(PaymentInstructionInterface::STATE_CLOSED);
+
+        $this->dispatchPaymentInstructionStateChange($instruction, $oldState);
     }
 
     /**
@@ -1049,19 +1053,37 @@ abstract class PluginController implements PluginControllerInterface
 
     protected function onSuccessfulPaymentInstructionValidation(PaymentInstructionInterface $instruction)
     {
+        $oldState = $instruction->getState();
+
         $instruction->setState(PaymentInstructionInterface::STATE_VALID);
+
+        $this->dispatchPaymentInstructionStateChange($instruction, $oldState);
 
         return $this->buildPaymentInstructionResult($instruction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
     }
 
     protected function onUnsuccessfulPaymentInstructionValidation(PaymentInstructionInterface $instruction, PluginInvalidPaymentInstructionException $invalid)
     {
+        $oldState = $instruction->getState();
+
         $instruction->setState(PaymentInstructionInterface::STATE_INVALID);
+
+        $this->dispatchPaymentInstructionStateChange($instruction, $oldState);
 
         $result = $this->buildPaymentInstructionResult($instruction, Result::STATUS_FAILED, PluginInterface::REASON_CODE_INVALID);
         $result->setPluginException($invalid);
 
         return $result;
+    }
+
+    private function dispatchPaymentInstructionStateChange(PaymentInstructionInterface $instruction, $oldState)
+    {
+        if (null === $this->dispatcher) {
+            return;
+        }
+
+        $event = new PaymentInstructionStateChangeEvent($instruction, $oldState);
+        $this->dispatcher->dispatch(Events::PAYMENT_INSTRUCTION_STATE_CHANGE, $event);
     }
 
     private function dispatchPaymentStateChange(PaymentInterface $payment, $oldState)
@@ -1071,6 +1093,6 @@ abstract class PluginController implements PluginControllerInterface
         }
 
         $event = new PaymentStateChangeEvent($payment, $oldState);
-        $this->dispatcher->dispatch('payment.state_change', $event);
+        $this->dispatcher->dispatch(Events::PAYMENT_STATE_CHANGE, $event);
     }
 }

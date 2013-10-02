@@ -2,6 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\Tests\PluginController;
 
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
 use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
 
 use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
@@ -906,8 +907,15 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with('payment.state_change', new PaymentStateChangeEvent($payment, PaymentInterface::STATE_APPROVING))
         ;
+        $this->dispatcher
+            ->expects($this->at(2))
+            ->method('dispatch')
+            ->with('payment_instruction.state_change', new PaymentInstructionStateChangeEvent($instruction, PaymentInstructionInterface::STATE_VALID))
+        ;
 
         $this->callApprove($controller, array($payment, 100));
+
+        $controller->closePaymentInstruction($instruction);
     }
 
     protected function getPlugin()
