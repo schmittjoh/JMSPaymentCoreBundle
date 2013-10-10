@@ -168,7 +168,7 @@ class ChoosePaymentMethodType extends AbstractType
 
         $resolver->setAllowedTypes(array(
             'allowed_methods' => 'array',
-            'amount'          => array('numeric' ,'closure'),
+            'amount'          => array('numeric', 'closure'),
             'currency'        => 'string',
             'predefined_data' => 'array',
         ));
