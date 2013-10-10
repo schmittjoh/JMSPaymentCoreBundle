@@ -165,6 +165,27 @@ with all available payment methods. Upon binding, the form type will validate
 the data for the chosen payment method, and on success will give us a valid
 ``PaymentInstruction`` instance back.
 
+You might want to add extra costs for a specific payment method. You can easily
+handle this by passing on a closure to the ``amount`` of the form:
+
+.. code-block :: php
+
+    <?php
+
+    use JMS\Payment\CoreBundle\Entity\ExtendedData;
+
+    $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
+        'amount' => function($currency, $paymentSystemName, ExtendedData $data) use ($order) {
+            if ('paypal_express_checkout' == $paymentSystemName) {
+                return $order->getAmount() * 1.05;
+            }
+
+            return $order->getAmount();
+        },
+
+        // ...
+    ));
+
 Depositing Money
 ----------------
 In the previous section, we have created our ``PaymentInstruction``. Now, we
