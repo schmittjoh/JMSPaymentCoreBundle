@@ -119,11 +119,7 @@ class ChoosePaymentMethodType extends AbstractType
             }
         }
 
-        if ($options['amount'] instanceof \Closure) {
-            $amount = $options['amount']($options['currency'], $method, $extendedData);
-        } else {
-            $amount = $options['amount'];
-        }
+        $amount = $this->computeAmount($options['amount'], $options['currency'], $method, $extendedData);
 
         return new PaymentInstruction($amount, $options['currency'], $method, $extendedData);
     }
@@ -220,5 +216,14 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         return $choices;
+    }
+
+    private function computeAmount($amount, $currency, $method, ExtendedData $extendedData)
+    {
+        if ($amount instanceof \Closure) {
+            return $amount($currency, $method, $extendedData);
+        }
+
+        return $amount;
     }
 }
