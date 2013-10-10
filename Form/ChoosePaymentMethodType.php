@@ -119,7 +119,9 @@ class ChoosePaymentMethodType extends AbstractType
             }
         }
 
-        return new PaymentInstruction($options['amount'], $options['currency'], $method, $extendedData);
+        $amount = $this->computeAmount($options['amount'], $options['currency'], $method, $extendedData);
+
+        return new PaymentInstruction($amount, $options['currency'], $method, $extendedData);
     }
 
     public function validate(FormEvent $event, array $options)
@@ -166,7 +168,7 @@ class ChoosePaymentMethodType extends AbstractType
 
         $resolver->setAllowedTypes(array(
             'allowed_methods' => 'array',
-            'amount'          => 'numeric',
+            'amount'          => array('numeric' ,'closure'),
             'currency'        => 'string',
             'predefined_data' => 'array',
         ));
@@ -214,5 +216,14 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         return $choices;
+    }
+
+    private function computeAmount($amount, $currency, $method, ExtendedData $extendedData)
+    {
+        if ($amount instanceof \Closure) {
+            return $amount($currency, $method, $extendedData);
+        }
+
+        return $amount;
     }
 }
