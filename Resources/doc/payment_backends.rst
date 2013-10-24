@@ -22,3 +22,6 @@ This is an incomplete list of implemented payment backends:
 .. _ChewbaccoPaymentQiwiWalletBundle: https://github.com/chewbacco/ChewbaccoPaymentQiwiWalletBundle
 .. _PaymentBe2billBundle: https://github.com/rezzza/PaymentBe2billBundle
 .. _KarserRobokassaBundle: https://github.com/karser/RobokassaBundle
+.. RuudkPaymentAdyenBundle: https://github.com/ruudk/PaymentAdyenBundle
+.. RuudkPaymentMollieBundle: https://github.com/ruudk/PaymentMollieBundle
+.. RuudkPaymentMultisafepayBundle: https://github.com/ruudk/PaymentMultisafepayBundle
