@@ -268,7 +268,10 @@ abstract class PluginController implements PluginControllerInterface
 
             $this->dispatchPaymentStateChange($payment, $oldState);
 
-            return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+            $result->setPluginException($ex);
+            
+            return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
 
