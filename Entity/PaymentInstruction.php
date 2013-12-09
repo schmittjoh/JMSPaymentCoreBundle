@@ -229,7 +229,7 @@ class PaymentInstruction implements PaymentInstructionInterface
 
     public function onPreSave()
     {
-        $this->updatedAt = new \Datetime;
+        $this->updatedAt = new \DateTime();
 
         // this is necessary until Doctrine adds an interface for comparing
         // value objects. Right now this is done by referential equality
