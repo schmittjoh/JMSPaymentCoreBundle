@@ -718,7 +718,7 @@ abstract class PluginController implements PluginControllerInterface
     {
         $instruction = $payment->getPaymentInstruction();
         if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
-            throw new InvaliPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
+            throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
         }
 
         if (PaymentInterface::STATE_APPROVED !== $payment->getState()) {
