@@ -18,6 +18,7 @@ This is an incomplete list of implemented payment backends:
 - Mollie: RuudkPaymentMollieBundle_
 - Multisafepay: RuudkPaymentMultisafepayBundle_
 - Atos SIPS: KptivePaymentSipsBundle_
+- Paymill: MemeoirsPaymillBundle_
 
 .. _JMSPaymentPaypalBundle: http://jmsyst.com/bundles/JMSPaymentPaypalBundle
 .. _ETSPaymentDotpayBundle: https://github.com/ETSGlobal/ETSPaymentDotpayBundle
@@ -30,3 +31,5 @@ This is an incomplete list of implemented payment backends:
 .. _RuudkPaymentMollieBundle: https://github.com/ruudk/PaymentMollieBundle
 .. _RuudkPaymentMultisafepayBundle: https://github.com/ruudk/PaymentMultisafepayBundle
 .. _KptivePaymentSipsBundle: https://github.com/KptiveStudio/KptivePaymentSipsBundle
+.. _MemeoirsPaymillBundle: https://github.com/memeoirs/paymill-bundle
+
