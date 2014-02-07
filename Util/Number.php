@@ -22,36 +22,36 @@ class Number
 {
     const EPSILON = 1.0E-8;
 
-    public static function compare($float1, $float2, $comparision = null)
+    public static function compare($float1, $float2, $comparison = null)
     {
         if (abs($float1 - $float2) < self::EPSILON) {
-            if (null === $comparision) {
+            if (null === $comparison) {
                 return 0;
             }
-            if ('==' === $comparision || '>=' === $comparision || '<=' === $comparision) {
+            if ('==' === $comparison || '>=' === $comparison || '<=' === $comparison) {
                 return true;
             }
-            if ('>' === $comparision || '<' === $comparision) {
+            if ('>' === $comparison || '<' === $comparison) {
                 return false;
             }
             
-            throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
+            throw new \InvalidArgumentException(sprintf('Invalid comparison "%s".', $comparison));
         }
 
-        if (null === $comparision) {
+        if (null === $comparison) {
             return $float1 > $float2 ? 1 : -1;
         }
-        if ('==' === $comparision) {
+        if ('==' === $comparison) {
             return false;
         }
-        if ('>=' === $comparision || '>' === $comparision) {
+        if ('>=' === $comparison || '>' === $comparison) {
             return $float1 > $float2;
         }
-        if ('<=' === $comparision || '<' === $comparision) {
+        if ('<=' === $comparison || '<' === $comparison) {
             return $float1 < $float2;
         }
         
-        throw new \InvalidArgumentException(sprintf('Invalid comparision "%s".', $comparision));
+        throw new \InvalidArgumentException(sprintf('Invalid comparison "%s".', $comparison));
     }
 
     private final function __construct() {}

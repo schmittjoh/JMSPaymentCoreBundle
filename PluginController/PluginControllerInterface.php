@@ -226,7 +226,7 @@ interface PluginControllerInterface
      * The implementation will ensure that:
      * - PaymentInstruction's state is VALID
      * - Credit's state is NEW (retry: false), or CREDITING (retry: true)
-     * - Assuming retry = false: requested amount <= PaymentInstrunction.depositedAmount
+     * - Assuming retry = false: requested amount <= PaymentInstruction.depositedAmount
      *                                             - PaymentInstruction.reversingDepositedAmount
      *                                             - PaymentInstruction.creditingAmount
      *                                             - PaymentInstruction.creditedAmount
@@ -523,7 +523,7 @@ interface PluginControllerInterface
      * This method validates the correctness of any account associated with a
      * PaymentInstruction.
      *
-     * It is meant to provide a more thorough validation of the PaymentInstrunction
+     * It is meant to provide a more thorough validation of the PaymentInstruction
      * than checkPaymentInstruction() does. Therefore, it might connect to a payment
      * back-end system to actually verify the existence of accounts.
      *
