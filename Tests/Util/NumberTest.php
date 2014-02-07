@@ -7,14 +7,14 @@ use JMS\Payment\CoreBundle\Util\Number;
 class NumberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider getComparisionTests
+     * @dataProvider getComparisonTests
      */
-    public function testWithComparision($float1, $float2, $comparision, $expected)
+    public function testWithComparison($float1, $float2, $comparison, $expected)
     {
-        $this->assertSame($expected, Number::compare($float1, $float2, $comparision));
+        $this->assertSame($expected, Number::compare($float1, $float2, $comparison));
     }
 
-    public function getComparisionTests()
+    public function getComparisonTests()
     {
         return array(
             array(0, 0, '==', true),

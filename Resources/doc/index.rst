@@ -12,7 +12,7 @@ Key Points:
 - Simple, Unified API (integrate once, and use any payment provider)
 - Persistence of Financial Entities (such as payments, transactions, etc.)
 - Transaction Management including Retry Logic
-- Encyption of Sensitive Data
+- Encryption of Sensitive Data
 
 Documentation
 -------------

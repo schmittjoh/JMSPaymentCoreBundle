@@ -103,7 +103,7 @@ an existing exception when doing so.
 
 .. tip ::
 
-    All exceptions which are relevent for plugins are located in the namespace 
+    All exceptions which are relevant for plugins are located in the namespace
     ``JMS\Payment\CoreBundle\Plugin\Exception``.
 
 +------------------------------------+-----------------------------+---------------------------+
@@ -145,7 +145,7 @@ an existing exception when doing so.
 +------------------------------------+-----------------------------+---------------------------+
 | TimeoutException                   | This exception is thrown    | Sets the transaction to   |
 | (sub-class of BlockedException)    | when there is an enduring   | STATE_PENDING, and        |
-|                                    | communicaton problem with   | converts the exception to |
+|                                    | communication problem with  | converts the exception to |
 |                                    | the payment backend system. | a Result object.          |
 +------------------------------------+-----------------------------+---------------------------+
 | ActionRequiredException            | This exception is thrown    | Sets the transaction to   |

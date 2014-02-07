@@ -434,7 +434,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \RuntimeException
      * @expectedMessage foo
      */
-    public function testAproveAndDepositPluginThrowsException()
+    public function testApproveAndDepositPluginThrowsException()
     {
         $controller = $this->getController();
         $payment = $this->getPayment();

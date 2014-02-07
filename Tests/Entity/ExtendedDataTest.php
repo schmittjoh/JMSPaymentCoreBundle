@@ -56,7 +56,7 @@ class ExtendedDataTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testSetThrowsExceptionOnEncriptionOfNonPersistedValue()
+    public function testSetThrowsExceptionOnEncryptionOfNonPersistedValue()
     {
         $extendedData = new ExtendedData;
         $extendedData->set('foo', 'bar', true, false);

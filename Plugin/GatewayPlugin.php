@@ -65,7 +65,6 @@ abstract class GatewayPlugin extends AbstractPlugin
      *
      * @throws CommunicationException when an curl error occurs
      * @param Request $request
-     * @param mixed $parameters either an array for form-data, or an url-encoded string
      * @return Response
      */
     public function request(Request $request)
