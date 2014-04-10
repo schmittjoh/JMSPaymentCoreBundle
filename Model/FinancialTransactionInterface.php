@@ -34,10 +34,23 @@ interface FinancialTransactionInterface
     const TRANSACTION_TYPE_REVERSE_CREDIT = 6;
     const TRANSACTION_TYPE_REVERSE_DEPOSIT = 7;
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\CreditInterface|null
+     */
     function getCredit();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\ExtendedDataInterface|null
+     */
     function getExtendedData();
+
     function getId();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInterface|null
+     */
     function getPayment();
+
     function getProcessedAmount();
     function getReasonCode();
     function getReferenceNumber();

@@ -30,10 +30,27 @@ interface CreditInterface
     function getCreditingAmount();
     function getCreditTransaction();
     function getId();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInterface
+     */
     function getPayment();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
+     */
     function getPaymentInstruction();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     function getPendingTransaction();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
+     */
     function getReverseCreditTransactions();
+
     function getReversingAmount();
     function getState();
     function getTargetAmount();

@@ -25,11 +25,28 @@ use JMS\Payment\CoreBundle\Model\PaymentInterface;
 
 class FinancialTransaction implements FinancialTransactionInterface
 {
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\Credit|null
+     */
     private $credit;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\ExtendedData|null
+     */
     private $extendedData;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\ExtendedData|null
+     */
     private $extendedDataOriginal;
+
     private $id;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\Payment|null
+     */
     private $payment;
+
     private $processedAmount;
     private $reasonCode;
     private $referenceNumber;
@@ -49,11 +66,17 @@ class FinancialTransaction implements FinancialTransactionInterface
         $this->requestedAmount = 0.0;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\Credit|null
+     */
     public function getCredit()
     {
         return $this->credit;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\ExtendedData|null
+     */
     public function getExtendedData()
     {
         if (null !== $this->extendedData) {
@@ -74,6 +97,9 @@ class FinancialTransaction implements FinancialTransactionInterface
         return $this->id;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\Payment|null
+     */
     public function getPayment()
     {
         return $this->payment;

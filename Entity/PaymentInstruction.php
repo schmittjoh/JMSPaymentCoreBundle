@@ -30,14 +30,33 @@ class PaymentInstruction implements PaymentInstructionInterface
     private $createdAt;
     private $creditedAmount;
     private $creditingAmount;
+
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\Credit[]
+     */
     private $credits;
+
     private $currency;
     private $depositedAmount;
     private $depositingAmount;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\ExtendedData
+     */
     private $extendedData;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\ExtendedData
+     */
     private $extendedDataOriginal;
+
     private $id;
+
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\Payment[]
+     */
     private $payments;
+
     private $paymentSystemName;
     private $reversingApprovedAmount;
     private $reversingCreditedAmount;
@@ -120,6 +139,9 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->paymentSystemName;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\ExtendedData
+     */
     public function getExtendedData()
     {
         return $this->extendedData;
@@ -165,16 +187,25 @@ class PaymentInstruction implements PaymentInstructionInterface
         return $this->depositingAmount;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\Credit[]
+     */
     public function getCredits()
     {
         return $this->credits;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\Payment[]
+     */
     public function getPayments()
     {
         return $this->payments;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\FinancialTransaction|null
+     */
     public function getPendingTransaction()
     {
         foreach ($this->payments as $payment) {
