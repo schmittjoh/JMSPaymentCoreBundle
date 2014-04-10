@@ -16,11 +16,17 @@ class PaymentStateChangeEvent extends Event
         $this->oldState = $oldState;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInterface
+     */
     public function getPayment()
     {
         return $this->payment;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
+     */
     public function getPaymentInstruction()
     {
         return $this->payment->getPaymentInstruction();

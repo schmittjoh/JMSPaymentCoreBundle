@@ -36,21 +36,33 @@ class Exception extends PaymentBundleException
     protected $payment;
     protected $paymentInstruction;
 
+    /**
+     * @return CreditInterface
+     */
     public function getCredit()
     {
         return $this->credit;
     }
 
+    /**
+     * @return FinancialTransactionInterface
+     */
     public function getFinancialTransaction()
     {
         return $this->financialTransaction;
     }
 
+    /**
+     * @return PaymentInterface
+     */
     public function getPayment()
     {
         return $this->payment;
     }
 
+    /**
+     * @return PaymentInstructionInterface
+     */
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;

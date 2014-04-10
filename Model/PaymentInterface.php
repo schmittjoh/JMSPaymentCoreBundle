@@ -30,19 +30,46 @@ interface PaymentInterface
     const STATE_DEPOSITED = 8;
 
     function getApprovedAmount();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     function getApproveTransaction();
+
     function getApprovingAmount();
     function getCreditedAmount();
     function getCreditingAmount();
     function getDepositedAmount();
     function getDepositingAmount();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
+     */
     function getDepositTransactions();
+
     function getExpirationDate();
     function getId();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
+     */
     function getPaymentInstruction();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     function getPendingTransaction();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
+     */
     function getReverseApprovalTransactions();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
+     */
     function getReverseDepositTransactions();
+
     function getReversingApprovedAmount();
     function getReversingCreditedAmount();
     function getReversingDepositedAmount();

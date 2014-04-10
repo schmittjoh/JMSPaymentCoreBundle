@@ -29,10 +29,26 @@ class Result
     const STATUS_SUCCESS = 3;
     const STATUS_UNKNOWN = 4;
 
+    /**
+     * @var \JMS\Payment\CoreBundle\Model\CreditInterface|null
+     */
     protected $credit;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     protected $financialTransaction;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Model\PaymentInterface|null
+     */
     protected $payment;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
+     */
     protected $paymentInstruction;
+
     protected $paymentRequiresAttention;
     protected $pluginException;
     protected $reasonCode;
@@ -58,6 +74,9 @@ class Result
         return $this->pluginException;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     public function getFinancialTransaction()
     {
         return $this->financialTransaction;
@@ -73,16 +92,25 @@ class Result
         return $this->reasonCode;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\CreditInterface|null
+     */
     public function getCredit()
     {
         return $this->credit;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInterface|null
+     */
     public function getPayment()
     {
         return $this->payment;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
+     */
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;

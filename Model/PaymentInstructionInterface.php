@@ -31,15 +31,35 @@ interface PaymentInstructionInterface
     function getApprovingAmount();
     function getCreditedAmount();
     function getCreditingAmount();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\CreditInterface[]
+     */
     function getCredits();
+
     function getCurrency();
     function getDepositedAmount();
     function getDepositingAmount();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\ExtendedDataInterface
+     */
     function getExtendedData();
+
     function getId();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\PaymentInterface[]
+     */
     function getPayments();
+
     function getPaymentSystemName();
+
+    /**
+     * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
+     */
     function getPendingTransaction();
+
     function getReversingApprovedAmount();
     function getReversingCreditedAmount();
     function getReversingDepositedAmount();

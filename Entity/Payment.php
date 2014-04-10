@@ -33,13 +33,23 @@ class Payment implements PaymentInterface
     private $depositingAmount;
     private $expirationDate;
     private $id;
+
+    /**
+     * @var \JMS\Payment\CoreBundle\Entity\PaymentInstruction
+     */
     private $paymentInstruction;
+
     private $reversingApprovedAmount;
     private $reversingCreditedAmount;
     private $reversingDepositedAmount;
     private $state;
     private $targetAmount;
+
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\FinancialTransaction[]
+     */
     private $transactions;
+
     private $attentionRequired;
     private $expired;
     private $updatedAt;
@@ -77,6 +87,9 @@ class Payment implements PaymentInterface
         return $this->approvedAmount;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\FinancialTransaction|null
+     */
     public function getApproveTransaction()
     {
         foreach ($this->transactions as $transaction) {
@@ -117,6 +130,9 @@ class Payment implements PaymentInterface
         return $this->depositingAmount;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection|\JMS\Payment\CoreBundle\Entity\FinancialTransaction[]
+     */
     public function getDepositTransactions()
     {
         return $this->transactions->filter(function($transaction) {
@@ -134,11 +150,17 @@ class Payment implements PaymentInterface
         return $this->id;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\PaymentInstruction
+     */
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;
     }
 
+    /**
+     * @return \JMS\Payment\CoreBundle\Entity\FinancialTransaction|null
+     */
     public function getPendingTransaction()
     {
         foreach ($this->transactions as $transaction) {
@@ -150,6 +172,9 @@ class Payment implements PaymentInterface
         return null;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection|\JMS\Payment\CoreBundle\Entity\FinancialTransaction[]
+     */
     public function getReverseApprovalTransactions()
     {
         return $this->transactions->filter(function($transaction) {
@@ -157,6 +182,9 @@ class Payment implements PaymentInterface
         });
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection|\JMS\Payment\CoreBundle\Entity\FinancialTransaction[]
+     */
     public function getReverseDepositTransactions()
     {
         return $this->transactions->filter(function($transaction) {
@@ -189,6 +217,9 @@ class Payment implements PaymentInterface
         return $this->targetAmount;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection|\JMS\Payment\CoreBundle\Entity\FinancialTransaction[]
+     */
     public function getTransactions()
     {
         return $this->transactions;
