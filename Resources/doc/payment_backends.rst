@@ -17,6 +17,7 @@ This is an incomplete list of implemented payment backends:
 - Adyen: RuudkPaymentAdyenBundle_
 - Mollie: RuudkPaymentMollieBundle_
 - Multisafepay: RuudkPaymentMultisafepayBundle_
+- Stripe: RuudkPaymentStripeBundle_
 - Atos SIPS: KptivePaymentSipsBundle_
 - Paymill: MemeoirsPaymillBundle_
 
@@ -30,6 +31,7 @@ This is an incomplete list of implemented payment backends:
 .. _RuudkPaymentAdyenBundle: https://github.com/ruudk/PaymentAdyenBundle
 .. _RuudkPaymentMollieBundle: https://github.com/ruudk/PaymentMollieBundle
 .. _RuudkPaymentMultisafepayBundle: https://github.com/ruudk/PaymentMultisafepayBundle
+.. _RuudkPaymentStripeBundle: https://github.com/ruudk/PaymentStripeBundle
 .. _KptivePaymentSipsBundle: https://github.com/KptiveStudio/KptivePaymentSipsBundle
 .. _MemeoirsPaymillBundle: https://github.com/memeoirs/paymill-bundle
 
