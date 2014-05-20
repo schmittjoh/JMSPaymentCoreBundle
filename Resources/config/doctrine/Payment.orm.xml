@@ -8,18 +8,18 @@
     <entity name="JMS\Payment\CoreBundle\Entity\Payment" table="payments" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
         
-        <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
-        <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
-        <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
-        <field name="creditingAmount" column="crediting_amount" type="decimal" scale="5" />
-        <field name="depositedAmount" column="deposited_amount" type="decimal" scale="5" />
-        <field name="depositingAmount" column="depositing_amount" type="decimal" scale="5" />
+        <field name="approvedAmount" column="approved_amount" type="decimal" precision="14" scale="3" />
+        <field name="approvingAmount" column="approving_amount" type="decimal" precision="14" scale="3" />
+        <field name="creditedAmount" column="credited_amount" type="decimal" precision="14" scale="3" />
+        <field name="creditingAmount" column="crediting_amount" type="decimal" precision="14" scale="3" />
+        <field name="depositedAmount" column="deposited_amount" type="decimal" precision="14" scale="3" />
+        <field name="depositingAmount" column="depositing_amount" type="decimal" precision="14" scale="3" />
         <field name="expirationDate" column="expiration_date" type="datetime" nullable="true" />
-        <field name="reversingApprovedAmount" column="reversing_approved_amount" type="decimal" scale="5" />
-        <field name="reversingCreditedAmount" column="reversing_credited_amount" type="decimal" scale="5" />
-        <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" scale="5" />
+        <field name="reversingApprovedAmount" column="reversing_approved_amount" type="decimal" precision="14" scale="3" />
+        <field name="reversingCreditedAmount" column="reversing_credited_amount" type="decimal" precision="14" scale="3" />
+        <field name="reversingDepositedAmount" column="reversing_deposited_amount" type="decimal" precision="14" scale="3" />
         <field name="state" type="smallint" />
-        <field name="targetAmount" column="target_amount" type="decimal" scale="5" />
+        <field name="targetAmount" column="target_amount" type="decimal" precision="14" scale="3" />
         <field name="attentionRequired" column="attention_required" type="boolean" />
         <field name="expired" type="boolean" />
         <field name="createdAt" column="created_at" type="datetime" />
