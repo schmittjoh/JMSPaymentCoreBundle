@@ -63,9 +63,9 @@ class ChoosePaymentMethodType extends AbstractType
             $builder->add('data_'.$method, $method, $methodOptions);
         }
         
-        foreach ($options['extra_fields'] as $name => $options) {
-            $methodOptions = isset($options['data']) ? $options['data'] : array();
-            $builder->add('data_'.$name, $options['type'], $methodOptions);
+        foreach ($options['extra_fields'] as $field_name => $field_options) {
+            $methodOptions = isset($field_options['data']) ? $field_options['data'] : array();
+            $builder->add('data_'.$field_name, $field_options['type'], $methodOptions);
         }
 
         $self = $this;
