@@ -63,9 +63,9 @@ class ChoosePaymentMethodType extends AbstractType
             $builder->add('data_'.$method, $method, $methodOptions);
         }
         
-        foreach ($options['extra_fields'] as $method) {
-            $methodOptions = isset($options['extra_field_options'][$method]['data']) ? $options['extra_field_options'][$method]['data'] : array();
-            $builder->add('data_'.$method, $options['extra_field_options'][$method]['type'], $methodOptions);
+        foreach ($options['extra_fields'] as $name => $options) {
+            $methodOptions = isset($options['data']) ? $options['data'] : array();
+            $builder->add('data_'.$name, $options['type'], $methodOptions);
         }
 
         $self = $this;
@@ -165,7 +165,6 @@ class ChoosePaymentMethodType extends AbstractType
             'default_method'  => null,
             'predefined_data' => array(),
             'extra_fields' => array(),
-            'extra_field_options' => array(),
         ));
 
         $resolver->setRequired(array(
@@ -179,7 +178,6 @@ class ChoosePaymentMethodType extends AbstractType
             'currency'        => 'string',
             'predefined_data' => 'array',
             'extra_fields' => 'array',
-            'extra_field_options' => 'array',
         ));
     }
 
