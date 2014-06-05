@@ -60,6 +60,7 @@ class ChoosePaymentMethodType extends AbstractType
 
         foreach ($options['available_methods'] as $method) {
             $methodOptions = isset($options['method_options'][$method]) ? $options['method_options'] : array();
+            $methodOptions['label'] = false;
             $builder->add('data_'.$method, $method, $methodOptions);
         }
         
