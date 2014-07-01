@@ -3,6 +3,7 @@
 namespace JMS\Payment\CoreBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -20,9 +21,9 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  * limitations under the License.
  */
 
-class Configuration
+class Configuration implements ConfigurationInterface
 {
-    public function getConfigTree()
+    public function getConfigTreeBuilder()
     {
         $tb = new TreeBuilder();
 
@@ -30,8 +31,14 @@ class Configuration
             ->root('jms_payment_core', 'array')
                 ->children()
                     ->scalarNode('secret')->isRequired()->cannotBeEmpty()->end()
+                    ->scalarNode('orm')
+                        ->defaultValue('entity')
+                        ->validate()
+                            ->ifNotInArray(array('propel', 'entity'))
+                            ->thenInvalid('Invalid orm "%s"')
+                        ->end()
+                    ->end()
                 ->end()
-            ->end()
-            ->buildTree();
+            ->end();
     }
 }

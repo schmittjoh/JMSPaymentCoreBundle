@@ -1,0 +1,10 @@
+propel:
+    path:       "%kernel.root_dir%/../../vendor/propel/propel1"
+    phing_path: "%kernel.root_dir%/../../vendor/phing/phing"
+    dbal:
+        driver:               pdo_sqlite
+        user:
+        password:
+        dsn:                  sqlite::in_memory
+        options:              {}
+        attributes:           {}

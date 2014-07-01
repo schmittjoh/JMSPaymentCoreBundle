@@ -26,5 +26,5 @@ interface ExtendedDataInterface
     function get($name);
     function has($name);
     function all();
-    function equals(ExtendedDataInterface $data);
+    function equals($data);
 }

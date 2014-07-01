@@ -81,8 +81,12 @@ class ExtendedData implements ExtendedDataInterface
         return $this->data;
     }
 
-    public function equals(ExtendedDataInterface $data)
+    public function equals($data)
     {
+        if (!$data instanceof ExtendedDataInterface) {
+            return false;
+        }
+
         $data = $data->all();
         ksort($data);
 

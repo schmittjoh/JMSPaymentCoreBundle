@@ -26,13 +26,17 @@
         "symfony/validator": "*",
         "symfony/process": "*",
         "symfony/yaml": "*",
+        "symfony/http-foundation": "*",
         "sensio/framework-extra-bundle": "*",
+        "propel/propel-bundle": "*",
+        "willdurand/propel-typehintable-behavior": "dev-master",
+        "jms/payment-paypal-bundle": "dev-master",
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "*",
-        "jms/payment-paypal-bundle": "*@dev",
         "jms/aop-bundle": "*",
         "jms/di-extra-bundle": "*"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
     },

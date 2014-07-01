@@ -12,15 +12,18 @@ be using for encrypting your data if you have requested this:
     
         jms_payment_core:
             secret: someS3cretP4ssw0rd
+            orm: propel|entity (default: entity, for Doctrine)
             
     .. code-block :: xml
     
-        <jms-payment-core secret="someS3cretP4assw0rd" />
+        <jms-payment-core secret="someS3cretP4assw0rd" orm="propel|entity" />
         
 .. note ::
     
     If you change the secret, then all data encrypted with the old secret 
     will become unreadable.
+
+    The orm parameter is optional if you use Doctrine.
     
 Payment Backend Configuration
 -----------------------------
