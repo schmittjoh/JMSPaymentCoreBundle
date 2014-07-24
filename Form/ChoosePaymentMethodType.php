@@ -22,8 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class ChoosePaymentMethodType extends AbstractType
 {
-    private $pluginController;
-    private $paymentMethods;
+    protected $pluginController;
+    protected $paymentMethods;
 
     public function __construct(PluginControllerInterface $pluginController, array $paymentMethods)
     {
