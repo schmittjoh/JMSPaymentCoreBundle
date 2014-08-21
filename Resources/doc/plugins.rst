@@ -211,13 +211,13 @@ Now, we need to wire the form type with the dependency injection container:
                 class: CreditCardType
                 tags:
                     - { name: form.type, alias: credit_card }
-                    - { name: payment.method_type }
+                    - { name: payment.method_form_type }
                     
     .. code-block :: xml
      
         <service id="credit_card_type" class="CreditCardType">
             <tag name="form.type" alias="credit_card" />
-            <tag name="payment.method_type" />
+            <tag name="payment.method_form_type" />
         </service>    
 
 Validating the Submitted User Data
