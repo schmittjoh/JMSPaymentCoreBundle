@@ -8,6 +8,10 @@
     <entity name="JMS\Payment\CoreBundle\Entity\Credit" table="credits" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO" /></id>
 
+        <indexes>
+            <index columns="attention_required"/>
+        </indexes>
+
         <field name="attentionRequired" column="attention_required" type="boolean" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />

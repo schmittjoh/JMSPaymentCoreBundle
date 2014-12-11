@@ -8,6 +8,11 @@
     <entity name="JMS\Payment\CoreBundle\Entity\Payment" table="payments" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
 
+
+        <indexes>
+            <index columns="attention_required"/>
+        </indexes>
+
         <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
         <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
         <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
