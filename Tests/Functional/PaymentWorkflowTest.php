@@ -30,7 +30,8 @@ class PaymentWorkflowTest extends BaseTestCase
         $response = $client->getResponse();
         $this->assertSame(201, $response->getStatusCode(), substr($response, 0, 2000));
 
-        $em->refresh($order);
+        $em->clear();
+        $order = $em->getRepository('TestBundle:Order')->find($order->getId());
         $this->assertTrue(Number::compare(123.45, $order->getPaymentInstruction()->getAmount(), '=='));
         $this->assertEquals('bar', $order->getPaymentInstruction()->getExtendedData()->get('foo'));
     }
