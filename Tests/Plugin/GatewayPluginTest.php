@@ -20,7 +20,6 @@ class GatewayPluginTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(file_get_contents(__DIR__.'/Fixtures/sampleResponse'), $response->getContent());
         $this->assertEquals(200, $response->getStatus());
-        $this->assertEquals('200 OK', $response->getHeader('Status'));
     }
 
     protected function getPlugin()
