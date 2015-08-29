@@ -28,16 +28,6 @@ use JMS\Payment\CoreBundle\DependencyInjection\Compiler\RegisterExtendedDataType
 
 class JMSPaymentCoreBundle extends Bundle
 {
-    public function boot()
-    {
-        if (false === Type::hasType(ExtendedDataType::NAME)) {
-            if ($this->container->has('doctrine.dbal.default_connection')) {     
-                $platform = $this->container->get('doctrine.dbal.default_connection')->getDatabasePlatform();
-                $platform->markDoctrineTypeCommented(Type::getType(ExtendedDataType::NAME));
-            }
-        }
-    }
-
     public function build(ContainerBuilder $builder)
     {
         parent::build($builder);

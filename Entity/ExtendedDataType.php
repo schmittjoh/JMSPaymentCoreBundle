@@ -92,4 +92,9 @@ class ExtendedDataType extends ObjectType
     {
         return self::NAME;
     }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
