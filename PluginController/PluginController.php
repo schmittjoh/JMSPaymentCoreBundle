@@ -292,6 +292,79 @@ abstract class PluginController implements PluginControllerInterface
         }
     }
 
+    protected function doReApprove(PaymentInterface $payment, $amount) {
+
+        $instruction = $payment->getPaymentInstruction();
+
+        if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
+            throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
+        }
+
+        $paymentState = $payment->getState();
+        if (PaymentInterface::STATE_APPROVED === $paymentState) {
+
+            if ($instruction->hasPendingTransaction()) {
+                throw new InvalidPaymentInstructionException('The PaymentInstruction can only have one pending transaction at a time.');
+            }
+
+            if (Number::compare($amount, $payment->getApprovedAmount()) === 1) {
+                throw new Exception('The amount cannot be greater than the approved amount of the Payment.');
+            }
+
+            $plugin = $this->getPlugin($instruction->getPaymentSystemName());
+            $transaction = $payment->getApproveTransaction();
+            $oldState = $payment->getState();
+
+            try {
+                $plugin->doReApprove($transaction);
+
+                if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
+                    $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+
+                    return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
+                } else {
+                    $payment->setState(PaymentInterface::STATE_FAILED);
+                    $payment->setAttentionRequired(true);
+                    $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+
+                    $this->dispatchPaymentStateChange($payment, $oldState);
+
+                    return $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+                }
+            } catch (PluginFinancialException $ex) {
+                $payment->setState(PaymentInterface::STATE_FAILED);
+                $payment->setAttentionRequired(true);
+
+                $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
+
+                $this->dispatchPaymentStateChange($payment, $oldState);
+
+                $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
+                $result->setPluginException($ex);
+
+                return $result;
+            } catch (PluginBlockedException $blocked) {
+                $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
+
+                if ($blocked instanceof PluginTimeoutException) {
+                    $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
+                } else if ($blocked instanceof PluginActionRequiredException) {
+                    $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
+                } else if (null === $reasonCode = $transaction->getReasonCode()) {
+                    $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
+                }
+                $transaction->setReasonCode($reasonCode);
+                $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_PENDING);
+
+                $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, $reasonCode);
+                $result->setPluginException($blocked);
+                $result->setRecoverable();
+
+                return $result;
+            }
+        }
+    }
+
     /**
      * {@inheritdoc}
      */

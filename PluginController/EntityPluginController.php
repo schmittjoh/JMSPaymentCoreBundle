@@ -71,6 +71,28 @@ class EntityPluginController extends PluginController
         }
     }
 
+    public function reApprove($paymentId, $amount)
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+
+        try {
+            $payment = $this->getPayment($paymentId);
+
+            $result = $this->doReApprove($payment, $amount);
+
+            $this->entityManager->persist($payment);
+            $this->entityManager->persist($result->getFinancialTransaction());
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+
+            return $result;
+        } catch (\Exception $failure) {
+            $this->entityManager->getConnection()->rollback();
+            $this->entityManager->close();
+
+            throw $failure;
+        }
+    }
     /**
      * {@inheritdoc}
      */
