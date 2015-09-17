@@ -55,6 +55,13 @@ interface PluginInterface
     public function approve(FinancialTransactionInterface $transaction, $retry);
 
     /**
+     * This method executes a re-authorisation on a previous authorisation
+     * @param FinancialTransactionInterface $transaction
+     * @return void
+     */
+    function reApprove(FinancialTransactionInterface $transaction);
+
+    /**
      * This method executes a deposit transaction without prior approval
      * (aka "sale", or "authorization with capture" transaction).
      *

@@ -299,7 +299,6 @@ abstract class PluginController implements PluginControllerInterface
         if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
             throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
         }
-
         $paymentState = $payment->getState();
         if (PaymentInterface::STATE_APPROVED === $paymentState) {
 
@@ -316,7 +315,7 @@ abstract class PluginController implements PluginControllerInterface
             $oldState = $payment->getState();
 
             try {
-                $plugin->doReApprove($transaction);
+                $plugin->reApprove($transaction);
 
                 if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
                     $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
@@ -324,7 +323,6 @@ abstract class PluginController implements PluginControllerInterface
                     return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
                 } else {
                     $payment->setState(PaymentInterface::STATE_FAILED);
-                    $payment->setAttentionRequired(true);
                     $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
 
                     $this->dispatchPaymentStateChange($payment, $oldState);
@@ -333,12 +331,8 @@ abstract class PluginController implements PluginControllerInterface
                 }
             } catch (PluginFinancialException $ex) {
                 $payment->setState(PaymentInterface::STATE_FAILED);
-                $payment->setAttentionRequired(true);
-
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
-
                 $this->dispatchPaymentStateChange($payment, $oldState);
-
                 $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
                 $result->setPluginException($ex);
 
@@ -349,6 +343,14 @@ abstract class PluginController implements PluginControllerInterface
                 if ($blocked instanceof PluginTimeoutException) {
                     $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
                 } else if ($blocked instanceof PluginActionRequiredException) {
+
+                    $payment->setState(PaymentInterface::STATE_APPROVING);
+                    $payment->setApprovingAmount($amount);
+                    $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
+                    $instruction->setApprovedAmount(0.0);
+                    $payment->setApprovedAmount(0.0);
+                    $this->dispatchPaymentStateChange($payment, $oldState);
+
                     $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
                 } else if (null === $reasonCode = $transaction->getReasonCode()) {
                     $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
