@@ -300,7 +300,8 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
         }
         $paymentState = $payment->getState();
-        if (PaymentInterface::STATE_APPROVED === $paymentState) {
+
+        if (!in_array($paymentState, [PaymentInterface::STATE_DEPOSITED, PaymentInterface::STATE_DEPOSITING])) {
 
             if ($instruction->hasPendingTransaction()) {
                 throw new InvalidPaymentInstructionException('The PaymentInstruction can only have one pending transaction at a time.');
@@ -319,6 +320,8 @@ abstract class PluginController implements PluginControllerInterface
 
                 if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
                     $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
+                    $payment->setState(PaymentInterface::STATE_APPROVED);
+                    $payment->setAttentionRequired(false);
 
                     return $this->buildFinancialTransactionResult($transaction, Result::STATUS_SUCCESS, PluginInterface::REASON_CODE_SUCCESS);
                 } else {
@@ -364,6 +367,8 @@ abstract class PluginController implements PluginControllerInterface
 
                 return $result;
             }
+        } else {
+            throw new InvalidPaymentException('Payment\'s state can not be DEPOSITING, or DEPOSITED.');
         }
     }
 
