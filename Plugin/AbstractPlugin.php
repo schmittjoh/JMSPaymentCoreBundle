@@ -36,6 +36,11 @@ abstract class AbstractPlugin implements PluginInterface
         throw new FunctionNotSupportedException('approve() is not supported by this plugin.');
     }
 
+    public function reApprove(FinancialTransactionInterface $transaction)
+    {
+        throw new FunctionNotSupportedException('reApprove() is not supported by this plugin.');
+    }
+
     public function approveAndDeposit(FinancialTransactionInterface $transaction, $retry)
     {
         throw new FunctionNotSupportedException('approveAndDeposit() is not supported by this plugin.');
