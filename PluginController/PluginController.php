@@ -626,6 +626,7 @@ abstract class PluginController implements PluginControllerInterface
             } else {
                 $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
                 $credit->setState(CreditInterface::STATE_FAILED);
+                $credit->setAttentionRequired(true);
 
                 $credit->setCreditingAmount(0.0);
                 $instruction->setCreditingAmount($instruction->getCreditingAmount() - $amount);
@@ -639,6 +640,7 @@ abstract class PluginController implements PluginControllerInterface
         } catch (PluginFinancialException $ex) {
             $transaction->setState(FinancialTransactionInterface::STATE_FAILED);
             $credit->setState(CreditInterface::STATE_FAILED);
+            $credit->setAttentionRequired(true);
 
             $credit->setCreditingAmount(0.0);
             $instruction->setCreditingAmount($instruction->getCreditingAmount() - $amount);
