@@ -31,7 +31,8 @@
         "doctrine/orm": "*",
         "jms/payment-paypal-bundle": "*@dev",
         "jms/aop-bundle": "*",
-        "jms/di-extra-bundle": "*"
+        "jms/di-extra-bundle": "*",
+        "phpunit/phpunit": "^5.4"
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
