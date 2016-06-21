@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -64,7 +65,7 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         $self = $this;
-        $builder->addEventListener(FormEvents::POST_BIND, function($form) use ($self, $options) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function($form) use ($self, $options) {
             $self->validate($form, $options);
         });
         $builder->addModelTransformer(new CallbackTransformer(
@@ -153,7 +154,7 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'allowed_methods' => array(),
@@ -166,12 +167,10 @@ class ChoosePaymentMethodType extends AbstractType
             'currency',
         ));
 
-        $resolver->setAllowedTypes(array(
-            'allowed_methods' => 'array',
-            'amount'          => array('numeric', 'closure'),
-            'currency'        => 'string',
-            'predefined_data' => 'array',
-        ));
+        $resolver->setAllowedTypes('allowed_methods', 'array');
+        $resolver->setAllowedTypes('amount', array('numeric', 'closure'));
+        $resolver->setAllowedTypes('currency', 'string');
+        $resolver->setAllowedTypes('predefined_data', 'array');
     }
 
     public function getName()
