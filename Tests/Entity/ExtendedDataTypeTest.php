@@ -27,11 +27,11 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($service, ExtendedDataType::getEncryptionService());
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
         $type = Type::getType(ExtendedDataType::NAME);
 
-        $this->assertEquals(ExtendedDataType::NAME, $type->getName());
+        $this->assertEquals(ExtendedDataType::NAME, $type->getBlockPrefix());
         $this->assertNotEmpty($type->getName());
     }
 
