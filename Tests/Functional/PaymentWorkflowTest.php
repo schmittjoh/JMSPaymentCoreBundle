@@ -22,7 +22,7 @@ class PaymentWorkflowTest extends BaseTestCase
         $crawler = $client->request('GET', $router->generate('payment_details', array('id' => $order->getId())));
         $form = $crawler->selectButton('submit_btn')->form();
         $form->setValues([
-            'choose_payment_method[method]' => 'form.label.paypal_express_checkout',
+            'jms_choose_payment_method[method]' => 'form.label.paypal_express_checkout',
         ]);
 
         $client->submit($form);
