@@ -9,6 +9,7 @@ use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use JMS\Payment\CoreBundle\PluginController\Result;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -54,7 +55,8 @@ class ChoosePaymentMethodType extends AbstractType
             throw new \RuntimeException(sprintf('You have not selected any payment methods. Available methods: "%s"', implode(', ', $this->paymentMethods)));
         }
 
-        $builder->add('method', 'choice', array(
+        $builder->add('method', ChoiceType::class, array(
+            'choices_as_values' => true,
             'choices' => $this->buildChoices($options['available_methods']),
             'expanded' => true,
             'data' => $options['default_method'],
@@ -179,7 +181,7 @@ class ChoosePaymentMethodType extends AbstractType
         $resolver->setAllowedTypes('predefined_data', 'array');
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'jms_choose_payment_method';
     }

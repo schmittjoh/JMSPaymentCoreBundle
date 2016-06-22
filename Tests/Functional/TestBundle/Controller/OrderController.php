@@ -2,6 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller;
 
+use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
@@ -32,7 +33,7 @@ class OrderController
      */
     public function paymentDetailsAction(Order $order)
     {
-        $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
+        $form = $this->getFormFactory()->create(ChoosePaymentMethodType::class, null, array(
             'currency' => 'EUR',
             'amount' => $order->getAmount(),
             'csrf_protection' => false,

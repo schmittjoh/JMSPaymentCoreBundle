@@ -88,7 +88,7 @@ class ExtendedDataType extends ObjectType
         }
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }
