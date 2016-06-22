@@ -104,6 +104,8 @@ class ChoosePaymentMethodType extends AbstractType
     public function reverseTransform($data, array $options)
     {
         $method = isset($data['method']) ? $data['method'] : null;
+        $method = str_replace('form.label.', '', $method);
+
         $data = isset($data['data_'.$method]) ? $data['data_'.$method] : array();
 
         $extendedData = new ExtendedData();

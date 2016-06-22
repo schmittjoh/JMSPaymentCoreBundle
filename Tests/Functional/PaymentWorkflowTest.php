@@ -21,15 +21,18 @@ class PaymentWorkflowTest extends BaseTestCase
 
         $crawler = $client->request('GET', $router->generate('payment_details', array('id' => $order->getId())));
         $form = $crawler->selectButton('submit_btn')->form();
-        $field = $form['choose_payment_method']['method'];
-        $field->select('form.label.paypal_express_checkout');
+        $form->setValues([
+            'choose_payment_method[method]' => 'form.label.paypal_express_checkout',
+        ]);
 
         $client->submit($form);
 
         $response = $client->getResponse();
         $this->assertSame(201, $response->getStatusCode(), substr($response, 0, 2000));
 
-        $em->refresh($order);
+        $em->clear();
+        $order = $em->getRepository('TestBundle:Order')->find($order->getId());
+
         $this->assertTrue(Number::compare(123.45, $order->getPaymentInstruction()->getAmount(), '=='));
         $this->assertEquals('bar', $order->getPaymentInstruction()->getExtendedData()->get('foo'));
     }
