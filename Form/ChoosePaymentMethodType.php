@@ -4,6 +4,7 @@ namespace JMS\Payment\CoreBundle\Form;
 
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use JMS\Payment\CoreBundle\PluginController\Result;
 use Symfony\Component\Form\AbstractType;
@@ -127,7 +128,9 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function validate(FormEvent $event, array $options)
     {
-        $form        = $event->getForm();
+        $form = $event->getForm();
+
+        /** @var PaymentInstructionInterface $instruction */
         $instruction = $form->getData();
 
         if (null === $instruction->getPaymentSystemName()) {
@@ -157,9 +160,10 @@ class ChoosePaymentMethodType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'allowed_methods' => array(),
-            'default_method'  => null,
-            'predefined_data' => array(),
+            'allowed_methods'    => array(),
+            'default_method'     => null,
+            'predefined_data'    => array(),
+            'allow_extra_fields' => true,
         ));
 
         $resolver->setRequired(array(

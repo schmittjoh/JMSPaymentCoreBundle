@@ -7,9 +7,6 @@ use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 
 class PaymentWorkflowTest extends BaseTestCase
 {
-    /**
-     * @runInSeparateProcess
-     */
     public function testPaymentDetails()
     {
         $client = $this->createClient();
@@ -24,7 +21,9 @@ class PaymentWorkflowTest extends BaseTestCase
 
         $crawler = $client->request('GET', $router->generate('payment_details', array('id' => $order->getId())));
         $form = $crawler->selectButton('submit_btn')->form();
-        $form['jms_choose_payment_method[method]']->select('paypal_express_checkout');
+        $field = $form['choose_payment_method']['method'];
+        $field->select('form.label.paypal_express_checkout');
+
         $client->submit($form);
 
         $response = $client->getResponse();

@@ -45,7 +45,12 @@ class OrderController
 
         if ('POST' === $this->request->getMethod()) {
             if (method_exists($form, 'submit')) {
-                $form->submit($this->request);
+
+                /** @var ParameterBag $request */
+                $request = $this->request->request;
+                $parameters = $request->all();
+
+                $form->submit($parameters);
             } else {
                 $form->bindRequest($this->request);
             }
