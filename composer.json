@@ -32,7 +32,8 @@
         "jms/payment-paypal-bundle": "*@dev",
         "jms/aop-bundle": "*",
         "jms/di-extra-bundle": "*",
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^5.4",
+        "symfony/phpunit-bridge": "^3.1"
     },
     "autoload": {
         "psr-0": { "JMS\\Payment\\CoreBundle": "" }
