@@ -22,7 +22,7 @@
         "symfony/finder": "*",
         "symfony/browser-kit": "*",
         "symfony/css-selector": "*",
-        "symfony/form": "*",
+        "symfony/form": "^2.8",
         "symfony/validator": "*",
         "symfony/process": "*",
         "symfony/yaml": "*",
