@@ -11,25 +11,31 @@
             "email": "schmittjoh@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/TicketSwap/JMSPaymentPaypalBundle"
+        }
+    ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/framework-bundle": "~2.0",
+        "symfony/framework-bundle": "~2.0|~3.1",
         "ext-mcrypt": "*"
     },
     "require-dev": {
-        "symfony/class-loader": "*",
-        "symfony/twig-bundle": "*",
-        "symfony/finder": "*",
-        "symfony/browser-kit": "*",
-        "symfony/css-selector": "*",
-        "symfony/form": "^2.8",
-        "symfony/validator": "*",
-        "symfony/process": "*",
-        "symfony/yaml": "*",
-        "sensio/framework-extra-bundle": "*",
-        "doctrine/doctrine-bundle": "*",
-        "doctrine/orm": "*",
-        "jms/payment-paypal-bundle": "*@dev",
+        "symfony/class-loader": "^3.1",
+        "symfony/twig-bundle": "^3.1",
+        "symfony/finder": "^3.1",
+        "symfony/browser-kit": "^3.1",
+        "symfony/css-selector": "^3.1",
+        "symfony/form": "^3.1",
+        "symfony/validator": "^3.1",
+        "symfony/process": "^3.1",
+        "symfony/yaml": "^3.1",
+        "sensio/framework-extra-bundle": "^3.0",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/orm": "^2.5",
+        "ticketswap/payment-paypal-bundle": "dev-feature/fix-deprecations",
         "jms/aop-bundle": "*",
         "jms/di-extra-bundle": "*",
         "phpunit/phpunit": "^5.4",
