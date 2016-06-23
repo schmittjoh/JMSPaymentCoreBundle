@@ -1,5 +1,5 @@
 {
-    "name": "jms/payment-core-bundle",
+    "name": "ticketswap/payment-core-bundle",
     "type": "symfony-bundle",
     "description": "This bundle is providing the foundation for various payment plugins.",
     "keywords": ["payment"],
