@@ -920,7 +920,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
 
     protected function getPlugin()
     {
-        $plugin = $this->getMock('JMS\Payment\CoreBundle\Plugin\PluginInterface');
+        $plugin = $this->createMock('JMS\Payment\CoreBundle\Plugin\PluginInterface');
         $plugin
             ->expects($this->once())
             ->method('processes')
@@ -941,7 +941,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         if (count($mockMethods) === 0) {
             $credit = new Credit($arguments[0], $arguments[1]);
         } else {
-            $credit = $this->getMock(
+            $credit = $this->createMock(
                 'JMS\Payment\CoreBundle\Entity\Credit',
                 $mockMethods,
                 $arguments
@@ -966,7 +966,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             return new Payment($arguments[0], $arguments[1]);
         }
 
-        return $this->getMock(
+        return $this->createMock(
             'JMS\Payment\CoreBundle\Entity\Payment',
             $mockMethods,
             $arguments
@@ -986,7 +986,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
             return new PaymentInstruction($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
         }
 
-        return $this->getMock(
+        return $this->createMock(
             'JMS\Payment\CoreBundle\Entity\PaymentInstruction',
             $mockMethods,
             $arguments
@@ -1003,7 +1003,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $args = array($options);
 
         if ($withDispatcher) {
-            $args[] = $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+            $args[] = $this->dispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         }
 
         $mock = $this->getMockForAbstractClass(

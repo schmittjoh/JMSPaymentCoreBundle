@@ -4,15 +4,18 @@ namespace JMS\Payment\CoreBundle\Form;
 
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use JMS\Payment\CoreBundle\PluginController\Result;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -52,7 +55,8 @@ class ChoosePaymentMethodType extends AbstractType
             throw new \RuntimeException(sprintf('You have not selected any payment methods. Available methods: "%s"', implode(', ', $this->paymentMethods)));
         }
 
-        $builder->add('method', 'choice', array(
+        $builder->add('method', ChoiceType::class, array(
+            'choices_as_values' => true,
             'choices' => $this->buildChoices($options['available_methods']),
             'expanded' => true,
             'data' => $options['default_method'],
@@ -64,7 +68,7 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         $self = $this;
-        $builder->addEventListener(FormEvents::POST_BIND, function($form) use ($self, $options) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function($form) use ($self, $options) {
             $self->validate($form, $options);
         });
         $builder->addModelTransformer(new CallbackTransformer(
@@ -102,6 +106,8 @@ class ChoosePaymentMethodType extends AbstractType
     public function reverseTransform($data, array $options)
     {
         $method = isset($data['method']) ? $data['method'] : null;
+        $method = str_replace('form.label.', '', $method);
+
         $data = isset($data['data_'.$method]) ? $data['data_'.$method] : array();
 
         $extendedData = new ExtendedData();
@@ -126,7 +132,9 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function validate(FormEvent $event, array $options)
     {
-        $form        = $event->getForm();
+        $form = $event->getForm();
+
+        /** @var PaymentInstructionInterface $instruction */
         $instruction = $form->getData();
 
         if (null === $instruction->getPaymentSystemName()) {
@@ -153,12 +161,13 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'allowed_methods' => array(),
-            'default_method'  => null,
-            'predefined_data' => array(),
+            'allowed_methods'    => array(),
+            'default_method'     => null,
+            'predefined_data'    => array(),
+            'allow_extra_fields' => true,
         ));
 
         $resolver->setRequired(array(
@@ -166,15 +175,13 @@ class ChoosePaymentMethodType extends AbstractType
             'currency',
         ));
 
-        $resolver->setAllowedTypes(array(
-            'allowed_methods' => 'array',
-            'amount'          => array('numeric', 'closure'),
-            'currency'        => 'string',
-            'predefined_data' => 'array',
-        ));
+        $resolver->setAllowedTypes('allowed_methods', 'array');
+        $resolver->setAllowedTypes('amount', array('numeric', 'closure'));
+        $resolver->setAllowedTypes('currency', 'string');
+        $resolver->setAllowedTypes('predefined_data', 'array');
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'jms_choose_payment_method';
     }

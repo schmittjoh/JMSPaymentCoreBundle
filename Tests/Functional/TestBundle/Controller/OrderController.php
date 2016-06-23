@@ -2,14 +2,13 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller;
 
+use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 use JMS\DiExtraBundle\Annotation as DI;
-use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 /**
  * @Route("/order")
@@ -34,7 +33,7 @@ class OrderController
      */
     public function paymentDetailsAction(Order $order)
     {
-        $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
+        $form = $this->getFormFactory()->create(ChoosePaymentMethodType::class, null, array(
             'currency' => 'EUR',
             'amount' => $order->getAmount(),
             'csrf_protection' => false,
@@ -47,7 +46,7 @@ class OrderController
 
         if ('POST' === $this->request->getMethod()) {
             if (method_exists($form, 'submit')) {
-                $form->submit($this->request);
+                $form->handleRequest($this->request);
             } else {
                 $form->bindRequest($this->request);
             }
@@ -67,6 +66,10 @@ class OrderController
         return array('form' => $form->createView());
     }
 
-    /** @DI\LookupMethod("form.factory") */
+    /**
+     * @DI\LookupMethod("form.factory")
+     *
+     * @return FormFactory
+     */
     protected function getFormFactory() { }
 }
