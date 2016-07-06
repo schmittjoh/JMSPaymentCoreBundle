@@ -21,6 +21,7 @@ This is an incomplete list of implemented payment backends:
 - Atos SIPS: KptivePaymentSipsBundle_
 - Paymill: MemeoirsPaymillBundle_
 - Webpay: JakubZapletalPaymentWebpayBundle_
+- YandexKassa: RsipoYandexKassaBundle_
 
 .. _JMSPaymentPaypalBundle: http://jmsyst.com/bundles/JMSPaymentPaypalBundle
 .. _ETSPaymentDotpayBundle: https://github.com/ETSGlobal/ETSPaymentDotpayBundle
@@ -37,4 +38,3 @@ This is an incomplete list of implemented payment backends:
 .. _MemeoirsPaymillBundle: https://github.com/memeoirs/paymill-bundle
 .. _JakubZapletalPaymentWebpayBundle: https://github.com/jakubzapletal/payment-webpay-bundle
 .. _RsipoYandexKassaBundle: https://github.com/rispo-service/RispoYandexKassaBundle
-
