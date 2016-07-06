@@ -36,4 +36,5 @@ This is an incomplete list of implemented payment backends:
 .. _KptivePaymentSipsBundle: https://github.com/KptiveStudio/KptivePaymentSipsBundle
 .. _MemeoirsPaymillBundle: https://github.com/memeoirs/paymill-bundle
 .. _JakubZapletalPaymentWebpayBundle: https://github.com/jakubzapletal/payment-webpay-bundle
+.. _RsipoYandexKassaBundle: https://github.com/rispo-service/RispoYandexKassaBundle
 
