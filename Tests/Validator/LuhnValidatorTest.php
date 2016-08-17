@@ -12,7 +12,11 @@ class LuhnValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContext', array(), array(), '', false);
+        $this->context = $this->getMockBuilder('Symfony\Component\Validator\ExecutionContext')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
         $this->validator = new LuhnValidator();
         $this->validator->initialize($this->context);
     }
