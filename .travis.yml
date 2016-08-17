@@ -2,8 +2,13 @@ language: php
 
 php:
   - 5.3
-  - 5.4
+  - 5.6
+  - 7.0
 
-before_script:
-    - curl -s http://getcomposer.org/installer | php
-    - COMPOSER_ROOT_VERSION=dev-master php composer.phar install --dev
+before_install:
+  # Disable xdebug for improved performance
+  - phpenv config-rm xdebug.ini
+  # Prevent Travis throwing an out of memory error on PHP 5.3
+  - if [[ $(phpenv version-name) == 5.3 ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/5.3/etc/conf.d/travis.ini; fi
+
+install: composer update --prefer-dist
