@@ -9,10 +9,10 @@
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
         
         <field name="extendedData" column="extended_data" type="extended_payment_data" nullable="true" />
-        <field name="processedAmount" column="processed_amount" type="decimal" scale="5" />
+        <field name="processedAmount" column="processed_amount" type="decimal" precision="14" scale="3" />
         <field name="reasonCode" column="reason_code" type="string" length="100" nullable="true" />
         <field name="referenceNumber" column="reference_number" type="string" length="100" nullable="true" />
-        <field name="requestedAmount" column="requested_amount" type="decimal" scale="5" />
+        <field name="requestedAmount" column="requested_amount" type="decimal" precision="14" scale="3" />
         <field name="responseCode" column="response_code" type="string" length="100" nullable="true" />
         <field name="state" type="smallint" />
         <field name="createdAt" column="created_at" type="datetime" />
