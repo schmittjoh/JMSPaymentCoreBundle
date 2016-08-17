@@ -4,9 +4,7 @@ namespace JMS\Payment\CoreBundle\Tests\PluginController;
 
 use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
 use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
-
 use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
-
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Entity\Credit;
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
@@ -15,7 +13,6 @@ use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\Payment;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Plugin\PluginInterface;
-use JMS\Payment\CoreBundle\Plugin\Exception\Exception as PluginException;
 use JMS\Payment\CoreBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
@@ -323,7 +320,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $instruction->setApprovingAmount(110);
         $instruction->setDepositingAmount(110);
 
-        $transaction = new FinancialTransaction;
+        $transaction = new FinancialTransaction();
         $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE_AND_DEPOSIT);
         $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
         $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
@@ -494,7 +491,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     public function testApproveAndDepositThrowsExceptionWhenRequestedAmountIsNotEqualToApprovingOrDepositingAmountOnRetry($amount)
     {
         $controller = $this->getController();
-        $payment = $this->getPayment(array(), array(1 => 123.45));
+        $payment = $this->getPayment(array(1 => 123.45));
         $payment->setState(PaymentInterface::STATE_APPROVING);
         $payment->getPaymentInstruction()->setState(PaymentInstructionInterface::STATE_VALID);
         $payment->setApprovingAmount(12.34);
@@ -519,7 +516,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     public function testApproveAndDepositThrowsExceptionWhenRequestedAmountIsGreaterThanTargetAmount()
     {
         $controller = $this->getController();
-        $payment = $this->getPayment(array(), array(1 => 123.45));
+        $payment = $this->getPayment(array(1 => 123.45));
         $payment->getPaymentInstruction()->setState(PaymentInstructionInterface::STATE_VALID);
 
         $this->callApproveAndDeposit($controller, array($payment, 123.46));
@@ -585,7 +582,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         ;
         $controller->addPlugin($plugin);
 
-        $transaction = new FinancialTransaction;
+        $transaction = new FinancialTransaction();
         $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
         $transaction->setProcessedAmount(50.12);
         $controller
@@ -615,7 +612,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     {
         $controller = $this->getController();
         $payment = $this->getPayment();
-        $instruction  = $payment->getPaymentInstruction();
+        $instruction = $payment->getPaymentInstruction();
         $instruction->setState(PaymentInstructionInterface::STATE_VALID);
 
         $plugin = $this->getPlugin();
@@ -746,7 +743,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
     {
         $controller = $this->getController();
 
-        $payment = $this->getPayment(array(), array(1 => 50));
+        $payment = $this->getPayment(array(1 => 50));
 
         $instruction = $payment->getPaymentInstruction();
         $instruction->setState(PaymentInstructionInterface::STATE_VALID);
@@ -818,7 +815,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $controller
             ->expects($this->once())
             ->method('buildFinancialTransaction')
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 $transaction = new FinancialTransaction();
                 $transaction->setProcessedAmount(123.45);
                 $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
@@ -888,7 +885,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         ;
         $controller->addPlugin($plugin);
 
-        $transaction = new FinancialTransaction;
+        $transaction = new FinancialTransaction();
         $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_SUCCESS);
         $transaction->setProcessedAmount(50.12);
         $controller
@@ -920,7 +917,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
 
     protected function getPlugin()
     {
-        $plugin = $this->getMock('JMS\Payment\CoreBundle\Plugin\PluginInterface');
+        $plugin = $this->getMockBuilder('JMS\Payment\CoreBundle\Plugin\PluginInterface')->getMock();
         $plugin
             ->expects($this->once())
             ->method('processes')
@@ -931,22 +928,14 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         return $plugin;
     }
 
-    protected function getCredit($independent = true, $mockMethods = array(), $arguments = array())
+    protected function getCredit($independent = true, $arguments = array())
     {
         $arguments = $arguments + array(
             $this->getInstruction(),
             123.45,
         );
 
-        if (count($mockMethods) === 0) {
-            $credit = new Credit($arguments[0], $arguments[1]);
-        } else {
-            $credit = $this->getMock(
-                'JMS\Payment\CoreBundle\Entity\Credit',
-                $mockMethods,
-                $arguments
-            );
-        }
+        $credit = new Credit($arguments[0], $arguments[1]);
 
         if (false === $independent) {
             $credit->setPayment(new Payment($arguments[0], 200));
@@ -955,42 +944,26 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         return $credit;
     }
 
-    protected function getPayment($mockMethods = array(), $arguments = array())
+    protected function getPayment($arguments = array())
     {
         $arguments = $arguments + array(
             $this->getInstruction(),
-            123.45
+            123.45,
         );
 
-        if (count($mockMethods) === 0) {
-            return new Payment($arguments[0], $arguments[1]);
-        }
-
-        return $this->getMock(
-            'JMS\Payment\CoreBundle\Entity\Payment',
-            $mockMethods,
-            $arguments
-        );
+        return new Payment($arguments[0], $arguments[1]);
     }
 
-    protected function getInstruction($mockMethods = array(), $arguments = array())
+    protected function getInstruction($arguments = array())
     {
         $arguments = $arguments + array(
             123.45,
             'EUR',
             'foo',
-            new ExtendedData()
+            new ExtendedData(),
         );
 
-        if (count($mockMethods) === 0) {
-            return new PaymentInstruction($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
-        }
-
-        return $this->getMock(
-            'JMS\Payment\CoreBundle\Entity\PaymentInstruction',
-            $mockMethods,
-            $arguments
-        );
+        return new PaymentInstruction($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
     }
 
     protected function getController(array $options = array(), $addTransaction = true, $withDispatcher = false)
@@ -1003,7 +976,7 @@ class PluginControllerTest extends \PHPUnit_Framework_TestCase
         $args = array($options);
 
         if ($withDispatcher) {
-            $args[] = $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+            $args[] = $this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
         }
 
         $mock = $this->getMockForAbstractClass(
