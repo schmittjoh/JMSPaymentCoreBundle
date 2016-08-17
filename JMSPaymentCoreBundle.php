@@ -8,6 +8,7 @@ use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentPluginsPass;
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\RegisterExtendedDataTypePass;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -27,24 +28,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class JMSPaymentCoreBundle extends Bundle
 {
-    public function boot()
-    {
-        if (false === Type::hasType(ExtendedDataType::NAME)) {
-            ExtendedDataType::setEncryptionService($this->container->get('payment.encryption_service'));
-            Type::addType(ExtendedDataType::NAME, 'JMS\Payment\CoreBundle\Entity\ExtendedDataType');
-            
-            if ($this->container->has('doctrine.dbal.default_connection')) {     
-                $platform = $this->container->get('doctrine.dbal.default_connection')->getDatabasePlatform();
-                $platform->markDoctrineTypeCommented(Type::getType(ExtendedDataType::NAME));
-            }
-        }
-    }
-
     public function build(ContainerBuilder $builder)
     {
         parent::build($builder);
 
         $builder->addCompilerPass(new AddPaymentPluginsPass());
         $builder->addCompilerPass(new AddPaymentMethodFormTypesPass());
+        $builder->addCompilerPass(new RegisterExtendedDataTypePass());
     }
 }
