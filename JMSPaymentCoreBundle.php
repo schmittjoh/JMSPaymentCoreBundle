@@ -28,12 +28,16 @@ use JMS\Payment\CoreBundle\DependencyInjection\Compiler\RegisterExtendedDataType
 
 class JMSPaymentCoreBundle extends Bundle
 {
+    public function boot()
+    {
+        ExtendedDataType::setEncryptionService($this->container->get('payment.encryption_service'));
+    }
+
     public function build(ContainerBuilder $builder)
     {
         parent::build($builder);
 
         $builder->addCompilerPass(new AddPaymentPluginsPass());
         $builder->addCompilerPass(new AddPaymentMethodFormTypesPass());
-        $builder->addCompilerPass(new RegisterExtendedDataTypePass());
     }
 }

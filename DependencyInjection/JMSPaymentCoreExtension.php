@@ -3,9 +3,11 @@
 namespace JMS\Payment\CoreBundle\DependencyInjection;
 
 use JMS\Payment\CoreBundle\DependencyInjection\Configuration;
-use Symfony\Component\Config\FileLocator;
+use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -27,8 +29,19 @@ use Symfony\Component\HttpKernel\Kernel;
  * limitations under the License.
  */
 
-class JMSPaymentCoreExtension extends Extension
+class JMSPaymentCoreExtension extends Extension implements PrependExtensionInterface
 {
+    public function prepend(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig('doctrine', array(
+            'dbal' => array(
+                'types' => array(
+                    ExtendedDataType::NAME => 'JMS\Payment\CoreBundle\Entity\ExtendedDataType'
+                )
+            )
+        ));
+    }
+
     public function load(array $configs, ContainerBuilder $container)
     {
         $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
