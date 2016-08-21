@@ -49,11 +49,14 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
 
         $configuration = new Configuration();
         $processor = new Processor();
-        $config = $processor->process($configuration->getConfigTree(), $configs);
+        $config = $processor->processConfiguration($configuration, $configs);
 
         if (isset($config['secret'])) {
             $container->setParameter('payment.encryption_service.secret', $config['secret']);
         }
+
+        $container->setAlias('payment.plugin_controller', 'payment.plugin_controller.'.$config['orm']);
+        $container->setAlias('payment.form.data_transformer.choose_payment_method', 'payment.form.data_transformer.choose_payment_method.'.$config['orm']);
 
         if (version_compare(Kernel::VERSION, '2.1.0-DEV', '<')) {
             $container->removeDefinition('payment.form.choose_payment_method_type');
