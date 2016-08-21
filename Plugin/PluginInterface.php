@@ -38,6 +38,10 @@ interface PluginInterface
     const REASON_CODE_INVALID = 'invalid';
     const REASON_CODE_SUCCESS = 'none';
     const REASON_CODE_TIMEOUT = 'timeout';
+    /**
+     * The payment is pending because it has been authorized but not settled. You must capture the funds first.
+     */ 
+    const REASON_CODE_AUTHORIZED = 'authorized';
 
     /**
      * This method executes an approve transaction.
