@@ -52,14 +52,18 @@ class ChoosePaymentMethodType extends AbstractType
             throw new \RuntimeException(sprintf('You have not selected any payment methods. Available methods: "%s"', implode(', ', $this->paymentMethods)));
         }
 
-        $builder->add('method', 'choice', array(
-            'choices' => $this->buildChoices($options['available_methods']),
-            'expanded' => true,
-            'data' => $options['default_method'],
-        ));
+        $methodChoiceOptions = array_merge(
+            $options['method_choice_options'],
+            array(
+                'choices' => $this->buildChoices($options['available_methods']),
+                'expanded' => true,
+                'data' => $options['default_method'],
+            )
+        );
+        $builder->add('method', 'choice', $methodChoiceOptions);
 
         foreach ($options['available_methods'] as $method) {
-            $methodOptions = isset($options['method_options'][$method]) ? $options['method_options'] : array();
+            $methodOptions = isset($options['method_options'][$method]) ? $options['method_options'][$method] : array();
             $builder->add('data_'.$method, $method, $methodOptions);
         }
 
@@ -159,6 +163,8 @@ class ChoosePaymentMethodType extends AbstractType
             'allowed_methods' => array(),
             'default_method'  => null,
             'predefined_data' => array(),
+            'method_options'  => array(),
+            'method_choice_options' => array(),
         ));
 
         $resolver->setRequired(array(
@@ -171,6 +177,8 @@ class ChoosePaymentMethodType extends AbstractType
             'amount'          => array('numeric', 'closure'),
             'currency'        => 'string',
             'predefined_data' => 'array',
+            'method_options'  => 'array',
+            'method_choice_options' => 'array',
         ));
     }
 
