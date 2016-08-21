@@ -12,3 +12,4 @@ before_install:
   - if [[ $(phpenv version-name) == 5.3 ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/5.3/etc/conf.d/travis.ini; fi
 
 install: composer update --prefer-dist
+script: vendor/bin/phpunit
