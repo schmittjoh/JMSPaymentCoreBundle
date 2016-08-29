@@ -1,2 +1,2 @@
-composer.*
-vendor
+composer.lock
+vendor/
