@@ -2,6 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\DependencyInjection\Compiler;
 
+use JMS\Payment\CoreBundle\Util\Legacy;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -32,7 +33,10 @@ class AddPaymentMethodFormTypesPass implements CompilerPassInterface
                 throw new \RuntimeException(sprintf('Please define an alias attribute for tag "form.type" of service "%s".', $id));
             }
 
-            $paymentMethodFormTypes[] = $attributes[0]['alias'];
+            $paymentMethodFormTypes[$attributes[0]['alias']] = Legacy::supportsFormTypeName()
+                ? $attributes[0]['alias']
+                : $definition->getClass()
+            ;
         }
 
         $container->getDefinition('payment.form.choose_payment_method_type')
