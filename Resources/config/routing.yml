@@ -1,3 +1,0 @@
-payment:
-    pattern:  /payment
-    defaults: { _controller: JMSPaymentCoreBundle:Demo:index }
