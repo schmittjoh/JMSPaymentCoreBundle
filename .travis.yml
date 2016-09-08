@@ -1,15 +1,20 @@
 language: php
 
-php:
-  - 5.3
-  - 5.6
-  - 7.0
+branches:
+  only:
+    - master
+matrix:
+  include:
+    # old PHP versions
+    - php: 5.3
+      env: SYMFONY_VERSION=2.8.* # Symfony 3 doesn't support PHP 5.3
+    - php: 7.0
+      env: SYMFONY_VERSION=2.3.*
+    - php: 7.0
+      env: SYMFONY_VERSION=2.7.*
+    - php: 7.0
+      env: SYMFONY_VERSION=2.8.*
 
-before_install:
-  # Disable xdebug for improved performance
-  - phpenv config-rm xdebug.ini
-  # Prevent Travis throwing an out of memory error on PHP 5.3
-  - if [[ $(phpenv version-name) == 5.3 ]]; then echo "memory_limit=-1" >> ~/.phpenv/versions/5.3/etc/conf.d/travis.ini; fi
-
-install: composer update --prefer-dist
-script: vendor/bin/phpunit
+before_install: ./.travis/before_install.php
+install: ./.travis/install.php
+script: ./.travis/script.php
