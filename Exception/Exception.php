@@ -19,7 +19,7 @@ namespace JMS\Payment\CoreBundle\Exception;
  */
 
 /**
- * Base Exception for the PaymentBundle
+ * Base Exception for the PaymentBundle.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

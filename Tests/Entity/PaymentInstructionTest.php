@@ -3,11 +3,10 @@
 namespace JMS\Payment\CoreBundle\Tests\Entity;
 
 use JMS\Payment\CoreBundle\Entity\Credit;
-
-use JMS\Payment\CoreBundle\Entity\Payment;
-use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
+use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
+use JMS\Payment\CoreBundle\Entity\Payment;
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 {
@@ -137,7 +136,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($instruction->hasPendingTransaction());
 
-        $transaction = new FinancialTransaction;
+        $transaction = new FinancialTransaction();
         $payment->addTransaction($transaction);
         $transaction->setState(FinancialTransaction::STATE_PENDING);
 
@@ -151,7 +150,7 @@ class PaymentInstructionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($instruction->hasPendingTransaction());
 
-        $transaction = new FinancialTransaction;
+        $transaction = new FinancialTransaction();
         $credit->addTransaction($transaction);
         $transaction->setState(FinancialTransaction::STATE_PENDING);
 

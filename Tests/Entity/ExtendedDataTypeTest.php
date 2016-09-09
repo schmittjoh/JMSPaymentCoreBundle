@@ -2,10 +2,10 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Entity;
 
+use Doctrine\DBAL\Types\Type;
+use JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService;
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
-use JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService;
-use Doctrine\DBAL\Types\Type;
 
 class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +39,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
     {
         ExtendedDataType::setEncryptionService(new MCryptEncryptionService('foo'));
 
-        $extendedData = new ExtendedData;
+        $extendedData = new ExtendedData();
         $extendedData->set('foo', 'foo', false);
         $extendedData->set('foo2', 'secret', true);
         $extendedData->set('dont_persist', 'nono', false, false);

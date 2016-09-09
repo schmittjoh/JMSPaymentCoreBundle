@@ -34,7 +34,7 @@ class Number
             if ('>' === $comparison || '<' === $comparison) {
                 return false;
             }
-            
+
             throw new \InvalidArgumentException(sprintf('Invalid comparison "%s".', $comparison));
         }
 
@@ -50,9 +50,11 @@ class Number
         if ('<=' === $comparison || '<' === $comparison) {
             return $float1 < $float2;
         }
-        
+
         throw new \InvalidArgumentException(sprintf('Invalid comparison "%s".', $comparison));
     }
 
-    private final function __construct() {}
+    final private function __construct()
+    {
+    }
 }

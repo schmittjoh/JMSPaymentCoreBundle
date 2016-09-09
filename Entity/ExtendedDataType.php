@@ -2,10 +2,10 @@
 
 namespace JMS\Payment\CoreBundle\Entity;
 
-use JMS\Payment\CoreBundle\Cryptography\EncryptionServiceInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\ObjectType;
+use JMS\Payment\CoreBundle\Cryptography\EncryptionServiceInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -69,14 +69,14 @@ class ExtendedDataType extends ObjectType
 
         if (null === $data) {
             return null;
-        } else if (is_array($data)) {
+        } elseif (is_array($data)) {
             foreach ($data as $name => $value) {
                 if (true === $value[1]) {
                     $data[$name][0] = unserialize(self::$encryptionService->decrypt($value[0]));
                 }
             }
 
-            $extendedData = new ExtendedData;
+            $extendedData = new ExtendedData();
             $reflection = new \ReflectionProperty($extendedData, 'data');
             $reflection->setAccessible(true);
             $reflection->setValue($extendedData, $data);

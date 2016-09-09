@@ -2,17 +2,15 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 use JMS\DiExtraBundle\Annotation as DI;
-use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
+use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/order")
+ *
  * @author Johannes
  */
 class OrderController
@@ -68,5 +66,7 @@ class OrderController
     }
 
     /** @DI\LookupMethod("form.factory") */
-    protected function getFormFactory() { }
+    protected function getFormFactory()
+    {
+    }
 }

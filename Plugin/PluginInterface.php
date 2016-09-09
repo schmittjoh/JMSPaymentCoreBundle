@@ -50,10 +50,9 @@ interface PluginInterface
      * authorized.
      *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry Whether this is a retry transaction
-     * @return void
+     * @param bool                          $retry       Whether this is a retry transaction
      */
-    function approve(FinancialTransactionInterface $transaction, $retry);
+    public function approve(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method executes a deposit transaction without prior approval
@@ -65,10 +64,9 @@ interface PluginInterface
      * another transaction.
      *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function approveAndDeposit(FinancialTransactionInterface $transaction, $retry);
+    public function approveAndDeposit(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method checks whether all required parameters exist in the given
@@ -81,10 +79,10 @@ interface PluginInterface
      * be considered to be valid.
      *
      * @param PaymentInstructionInterface $paymentInstruction
+     *
      * @throws JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException if the the PaymentInstruction is not valid
-     * @return void
      */
-    function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * This method executes a credit transaction (aka refund transaction).
@@ -94,10 +92,9 @@ interface PluginInterface
      * associated with the transaction.
      *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function credit(FinancialTransactionInterface $transaction, $retry);
+    public function credit(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method executes a deposit transaction (aka capture transaction).
@@ -108,43 +105,42 @@ interface PluginInterface
      * A typical use case are Credit Card payments.
      *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function deposit(FinancialTransactionInterface $transaction, $retry);
+    public function deposit(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method cancels a previously approved payment.
      *
      * @throws InvalidDataException if a partial amount is passed, but this is
      *                              not supported by the payment backend system
+     *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function reverseApproval(FinancialTransactionInterface $transaction, $retry);
+    public function reverseApproval(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method cancels a previously issued Credit.
      *
      * @throws InvalidDataException if a partial amount is passed, but this is
      *                              not supported by the payment backend system
+     *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function reverseCredit(FinancialTransactionInterface $transaction, $retry);
+    public function reverseCredit(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method cancels a previously deposited amount.
      *
      * @throws InvalidDataException if a partial amount is passed, but this is
      *                              not supported by the payment backend system
+     *
      * @param FinancialTransactionInterface $transaction
-     * @param boolean $retry
-     * @return void
+     * @param bool                          $retry
      */
-    function reverseDeposit(FinancialTransactionInterface $transaction, $retry);
+    public function reverseDeposit(FinancialTransactionInterface $transaction, $retry);
 
     /**
      * This method validates the correctness, and existence of any account
@@ -155,10 +151,10 @@ interface PluginInterface
      * be transferred, though.
      *
      * @throws JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not valid
+     *
      * @param PaymentInstructionInterface $paymentInstruction
-     * @return void
      */
-    function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * Whether this plugin can process payments for the given payment system.
@@ -169,9 +165,10 @@ interface PluginInterface
      * indirectly.
      *
      * @param string $paymentSystemName
-     * @return boolean
+     *
+     * @return bool
      */
-    function processes($paymentSystemName);
+    public function processes($paymentSystemName);
 
     /**
      * Whether independent credit is supported by this plugin.
@@ -184,7 +181,7 @@ interface PluginInterface
      * awarded "independently" to a PaymentInstruction. The amount is not restricted
      * by any deposited amount.
      *
-     * @return boolean
+     * @return bool
      */
-    function isIndependentCreditSupported();
+    public function isIndependentCreditSupported();
 }

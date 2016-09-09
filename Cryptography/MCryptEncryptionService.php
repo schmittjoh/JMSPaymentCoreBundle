@@ -34,7 +34,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
     protected $mode;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $secret
      * @param string $cipher
@@ -69,7 +69,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function decrypt($encryptedValue)
     {
@@ -81,7 +81,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function encrypt($rawValue)
     {

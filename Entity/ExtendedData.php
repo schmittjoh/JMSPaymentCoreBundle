@@ -43,7 +43,7 @@ class ExtendedData implements ExtendedDataInterface
 
         return $this->data[$name][1];
     }
-    
+
     public function mayBePersisted($name)
     {
         if (!isset($this->data[$name])) {
@@ -58,7 +58,7 @@ class ExtendedData implements ExtendedDataInterface
         if ($encrypt && !$persist) {
             throw new \InvalidArgumentException(sprintf('Non persisted field cannot be encrypted "%s".', $name));
         }
-        
+
         $this->data[$name] = array($value, $encrypt, $persist);
     }
 

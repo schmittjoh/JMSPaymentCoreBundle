@@ -2,12 +2,12 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 class BaseTestCase extends WebTestCase
 {
-    static protected function createKernel(array $options = array())
+    protected static function createKernel(array $options = array())
     {
         return self::$kernel = new AppKernel(
             isset($options['config']) ? $options['config'] : 'default.yml'
@@ -20,7 +20,7 @@ class BaseTestCase extends WebTestCase
         $fs->remove(sys_get_temp_dir().'/JMSPaymentCoreBundle/');
     }
 
-    protected final function importDatabaseSchema()
+    final protected function importDatabaseSchema()
     {
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 

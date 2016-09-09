@@ -2,11 +2,11 @@
 
 namespace JMS\Payment\CoreBundle\Plugin\Exception;
 
+use JMS\Payment\CoreBundle\Exception\Exception as PaymentBundleException;
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
-use JMS\Payment\CoreBundle\Exception\Exception as PaymentBundleException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -25,7 +25,7 @@ use JMS\Payment\CoreBundle\Exception\Exception as PaymentBundleException;
  */
 
 /**
- * Base Exception for plugins
+ * Base Exception for plugins.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

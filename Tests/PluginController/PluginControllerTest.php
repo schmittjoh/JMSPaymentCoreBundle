@@ -2,22 +2,22 @@
 
 namespace JMS\Payment\CoreBundle\Tests\PluginController;
 
-use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
-use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
-use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
-use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Entity\Credit;
-use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
-use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
+use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
 use JMS\Payment\CoreBundle\Entity\Payment;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-use JMS\Payment\CoreBundle\Plugin\PluginInterface;
-use JMS\Payment\CoreBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
-use JMS\Payment\CoreBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Model\CreditInterface;
+use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-use JMS\Payment\CoreBundle\PluginController\Result;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
+use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException;
+use JMS\Payment\CoreBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use JMS\Payment\CoreBundle\Plugin\PluginInterface;
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
 use JMS\Payment\CoreBundle\PluginController\PluginController;
+use JMS\Payment\CoreBundle\PluginController\Result;
 
 class PluginControllerTest extends \PHPUnit_Framework_TestCase
 {

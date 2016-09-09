@@ -2,14 +2,12 @@
 
 namespace JMS\Payment\CoreBundle\DependencyInjection;
 
-use JMS\Payment\CoreBundle\DependencyInjection\Configuration;
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -36,9 +34,9 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
         $container->prependExtensionConfig('doctrine', array(
             'dbal' => array(
                 'types' => array(
-                    ExtendedDataType::NAME => 'JMS\Payment\CoreBundle\Entity\ExtendedDataType'
-                )
-            )
+                    ExtendedDataType::NAME => 'JMS\Payment\CoreBundle\Entity\ExtendedDataType',
+                ),
+            ),
         ));
     }
 

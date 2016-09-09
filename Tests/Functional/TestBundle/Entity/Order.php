@@ -2,8 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity;
 
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 /**
  * @ORM\Entity

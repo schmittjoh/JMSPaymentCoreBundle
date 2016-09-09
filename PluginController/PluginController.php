@@ -2,29 +2,28 @@
 
 namespace JMS\Payment\CoreBundle\PluginController;
 
-use JMS\Payment\CoreBundle\PluginController\Event\Events;
-use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
-use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
-use JMS\Payment\CoreBundle\Model\PaymentInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-use JMS\Payment\CoreBundle\Plugin\PluginInterface;
-use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
+use JMS\Payment\CoreBundle\Model\PaymentInterface;
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException as PluginActionRequiredException;
 use JMS\Payment\CoreBundle\Plugin\Exception\BlockedException as PluginBlockedException;
-use JMS\Payment\CoreBundle\Plugin\Exception\Exception as PluginException;
 use JMS\Payment\CoreBundle\Plugin\Exception\FinancialException as PluginFinancialException;
 use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
 use JMS\Payment\CoreBundle\Plugin\Exception\InvalidPaymentInstructionException as PluginInvalidPaymentInstructionException;
 use JMS\Payment\CoreBundle\Plugin\Exception\TimeoutException as PluginTimeoutException;
+use JMS\Payment\CoreBundle\Plugin\PluginInterface;
+use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
+use JMS\Payment\CoreBundle\PluginController\Event\Events;
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentInstructionStateChangeEvent;
+use JMS\Payment\CoreBundle\PluginController\Event\PaymentStateChangeEvent;
 use JMS\Payment\CoreBundle\PluginController\Exception\Exception;
 use JMS\Payment\CoreBundle\PluginController\Exception\InvalidCreditException;
 use JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentException;
 use JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException;
 use JMS\Payment\CoreBundle\PluginController\Exception\PluginNotFoundException;
 use JMS\Payment\CoreBundle\Util\Number;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -63,7 +62,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
     {
@@ -81,7 +80,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function closePaymentInstruction(PaymentInstructionInterface $instruction)
     {
@@ -93,7 +92,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createPayment($instructionId, $amount)
     {
@@ -113,7 +112,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction)
     {
@@ -123,7 +122,7 @@ abstract class PluginController implements PluginControllerInterface
             if (Result::STATUS_SUCCESS !== $result->getStatus()) {
                 throw new InvalidPaymentInstructionException('The PaymentInstruction could not be validated.');
             }
-        } else if (PaymentInstructionInterface::STATE_VALID !== $paymentInstruction->getState()) {
+        } elseif (PaymentInstructionInterface::STATE_VALID !== $paymentInstruction->getState()) {
             throw new InvalidPaymentInstructionException('The PaymentInstruction\'s state must be VALID, or NEW.');
         }
 
@@ -142,7 +141,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $instruction)
     {
@@ -156,7 +155,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction)
     {
@@ -222,7 +221,7 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
 
             $this->dispatchPaymentStateChange($payment, PaymentInterface::STATE_NEW);
-        } else if (PaymentInterface::STATE_APPROVING === $paymentState) {
+        } elseif (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
                 throw new Exception('The Payment\'s target amount must equal the requested amount in a retry transaction.');
             }
@@ -270,16 +269,16 @@ abstract class PluginController implements PluginControllerInterface
 
             $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_FAILED, $transaction->getReasonCode());
             $result->setPluginException($ex);
-            
+
             return $result;
         } catch (PluginBlockedException $blocked) {
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -294,7 +293,7 @@ abstract class PluginController implements PluginControllerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function doApproveAndDeposit(PaymentInterface $payment, $amount)
     {
@@ -330,7 +329,7 @@ abstract class PluginController implements PluginControllerInterface
             $this->dispatchPaymentStateChange($payment, $paymentState);
 
             $retry = false;
-        } else if (PaymentInterface::STATE_APPROVING === $paymentState) {
+        } elseif (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (0 !== Number::compare($amount, $payment->getApprovingAmount())) {
                 throw new \InvalidArgumentException('$amount must be equal to Payment\'s approving amount.');
             }
@@ -405,9 +404,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -496,7 +495,7 @@ abstract class PluginController implements PluginControllerInterface
             }
 
             $retry = false;
-        } else if (CreditInterface::STATE_CREDITING === $creditState) {
+        } elseif (CreditInterface::STATE_CREDITING === $creditState) {
             if (1 === Number::compare($amount, $instruction->getCreditingAmount())) {
                 throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (PaymentInstruction restriction).', $instruction->getCreditingAmount()));
             }
@@ -574,9 +573,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -620,7 +619,7 @@ abstract class PluginController implements PluginControllerInterface
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
 
             $this->dispatchPaymentStateChange($payment, $paymentState);
-        } else if (PaymentInterface::STATE_DEPOSITING === $paymentState) {
+        } elseif (PaymentInterface::STATE_DEPOSITING === $paymentState) {
             $transaction = $instruction->getPendingTransaction();
             if (null === $transaction) {
                 if (Number::compare($amount, $payment->getApprovedAmount() - $payment->getDepositedAmount()) === 1) {
@@ -696,9 +695,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -800,9 +799,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -934,9 +933,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);
@@ -1030,9 +1029,9 @@ abstract class PluginController implements PluginControllerInterface
 
             if ($blocked instanceof PluginTimeoutException) {
                 $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-            } else if ($blocked instanceof PluginActionRequiredException) {
+            } elseif ($blocked instanceof PluginActionRequiredException) {
                 $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-            } else if (null === $reasonCode = $transaction->getReasonCode()) {
+            } elseif (null === $reasonCode = $transaction->getReasonCode()) {
                 $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
             }
             $transaction->setReasonCode($reasonCode);

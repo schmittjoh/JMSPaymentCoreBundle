@@ -2,8 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
-use JMS\Payment\CoreBundle\Util\Number;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
+use JMS\Payment\CoreBundle\Util\Number;
 
 class PaymentWorkflowTest extends BaseTestCase
 {

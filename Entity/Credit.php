@@ -2,11 +2,11 @@
 
 namespace JMS\Payment\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -58,11 +58,11 @@ class Credit implements CreditInterface
         $this->creditedAmount = 0.0;
         $this->creditingAmount = 0.0;
         $this->paymentInstruction = $paymentInstruction;
-        $this->transactions = new ArrayCollection;
+        $this->transactions = new ArrayCollection();
         $this->reversingAmount = 0.0;
         $this->state = self::STATE_NEW;
         $this->targetAmount = $amount;
-        $this->createdAt = new \DateTime;
+        $this->createdAt = new \DateTime();
 
         $this->paymentInstruction->addCredit($this);
     }
@@ -137,7 +137,7 @@ class Credit implements CreditInterface
      */
     public function getReverseCreditTransactions()
     {
-        return $this->transactions->filter(function($transaction) {
+        return $this->transactions->filter(function ($transaction) {
             return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_CREDIT === $transaction->getTransactionType();
         });
     }
@@ -177,7 +177,7 @@ class Credit implements CreditInterface
 
     public function setAttentionRequired($boolean)
     {
-        $this->attentionRequired = !!$boolean;
+        $this->attentionRequired = (bool) $boolean;
     }
 
     public function setPayment(PaymentInterface $payment)
@@ -212,7 +212,7 @@ class Credit implements CreditInterface
 
     public function onPreSave()
     {
-        $this->updatedAt = new \DateTime;
+        $this->updatedAt = new \DateTime();
     }
 
     public function getCreatedAt()
