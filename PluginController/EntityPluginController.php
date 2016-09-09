@@ -2,18 +2,17 @@
 
 namespace JMS\Payment\CoreBundle\PluginController;
 
-use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
-use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManager;
 use JMS\Payment\CoreBundle\Entity\Payment;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
-use JMS\Payment\CoreBundle\PluginController\Exception\Exception;
-use JMS\Payment\CoreBundle\PluginController\Exception\PaymentNotFoundException;
-use JMS\Payment\CoreBundle\PluginController\Exception\PaymentInstructionNotFoundException;
 use JMS\Payment\CoreBundle\Plugin\Exception\FunctionNotSupportedException as PluginFunctionNotSupportedException;
-use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManager;
+use JMS\Payment\CoreBundle\Plugin\QueryablePluginInterface;
+use JMS\Payment\CoreBundle\PluginController\Exception\Exception;
+use JMS\Payment\CoreBundle\PluginController\Exception\PaymentInstructionNotFoundException;
+use JMS\Payment\CoreBundle\PluginController\Exception\PaymentNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /*
@@ -49,7 +48,7 @@ class EntityPluginController extends PluginController
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function approve($paymentId, $amount)
     {
@@ -76,7 +75,7 @@ class EntityPluginController extends PluginController
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function approveAndDeposit($paymentId, $amount)
     {
@@ -192,7 +191,7 @@ class EntityPluginController extends PluginController
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function deposit($paymentId, $amount)
     {
@@ -219,7 +218,7 @@ class EntityPluginController extends PluginController
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCredit($id)
     {
@@ -237,14 +236,15 @@ class EntityPluginController extends PluginController
 
                 $this->entityManager->persist($credit);
                 $this->entityManager->flush();
-            } catch (PluginFunctionNotSupportedException $notSupported) {}
+            } catch (PluginFunctionNotSupportedException $notSupported) {
+            }
         }
 
         return $credit;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPayment($id)
     {
@@ -261,14 +261,15 @@ class EntityPluginController extends PluginController
 
                 $this->entityManager->persist($payment);
                 $this->entityManager->flush();
-            } catch (PluginFunctionNotSupportedException $notSupported) {}
+            } catch (PluginFunctionNotSupportedException $notSupported) {
+            }
         }
 
         return $payment;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function reverseApproval($paymentId, $amount)
     {
@@ -344,7 +345,7 @@ class EntityPluginController extends PluginController
 
     protected function buildCredit(PaymentInstructionInterface $paymentInstruction, $amount)
     {
-        $class =& $this->options['credit_class'];
+        $class =&$this->options['credit_class'];
         $credit = new $class($paymentInstruction, $amount);
 
         return $credit;
@@ -352,9 +353,9 @@ class EntityPluginController extends PluginController
 
     protected function buildFinancialTransaction()
     {
-        $class =& $this->options['financial_transaction_class'];
+        $class =&$this->options['financial_transaction_class'];
 
-        return new $class;
+        return new $class();
     }
 
     protected function createFinancialTransaction(PaymentInterface $payment)
@@ -363,7 +364,7 @@ class EntityPluginController extends PluginController
             throw new Exception('This controller only supports Doctrine2 entities as Payment objects.');
         }
 
-        $class =& $this->options['financial_transaction_class'];
+        $class =&$this->options['financial_transaction_class'];
         $transaction = new $class();
         $payment->addTransaction($transaction);
 
@@ -376,7 +377,7 @@ class EntityPluginController extends PluginController
             throw new Exception('This controller only supports Doctrine2 entities as PaymentInstruction objects.');
         }
 
-        $class =& $this->options['payment_class'];
+        $class =&$this->options['payment_class'];
 
         return new $class($instruction, $amount);
     }

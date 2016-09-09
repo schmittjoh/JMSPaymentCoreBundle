@@ -2,8 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Wires payment method types.
@@ -17,7 +17,7 @@ class AddPaymentMethodFormTypesPass implements CompilerPassInterface
         if (!$container->hasDefinition('payment.form.choose_payment_method_type')) {
             return;
         }
-        
+
         $paymentMethodFormTypes = array();
         foreach ($container->findTaggedServiceIds('payment.method_form_type') as $id => $attributes) {
             $definition = $container->getDefinition($id);

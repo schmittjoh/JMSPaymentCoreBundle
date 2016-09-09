@@ -64,14 +64,14 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         $self = $this;
-        $builder->addEventListener(FormEvents::POST_BIND, function($form) use ($self, $options) {
+        $builder->addEventListener(FormEvents::POST_BIND, function ($form) use ($self, $options) {
             $self->validate($form, $options);
         });
         $builder->addModelTransformer(new CallbackTransformer(
-            function($data) use ($self, $options) {
+            function ($data) use ($self, $options) {
                 return $self->transform($data, $options);
             },
-            function($data) use ($self, $options) {
+            function ($data) use ($self, $options) {
                 return $self->reverseTransform($data, $options);
             }
         ), true);
@@ -85,7 +85,9 @@ class ChoosePaymentMethodType extends AbstractType
 
         if ($data instanceof PaymentInstruction) {
             $method = $data->getPaymentSystemName();
-            $methodData = array_map(function($v) { return $v[0]; }, $data->getExtendedData()->all());
+            $methodData = array_map(function ($v) {
+                return $v[0];
+            }, $data->getExtendedData()->all());
             if (isset($options['predefined_data'][$method])) {
                 $methodData = array_diff_key($methodData, $options['predefined_data'][$method]);
             }
@@ -126,7 +128,7 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function validate(FormEvent $event, array $options)
     {
-        $form        = $event->getForm();
+        $form = $event->getForm();
         $instruction = $form->getData();
 
         if (null === $instruction->getPaymentSystemName()) {

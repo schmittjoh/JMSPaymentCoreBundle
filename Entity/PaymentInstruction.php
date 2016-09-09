@@ -2,8 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Entity;
 
-use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -73,7 +73,7 @@ class PaymentInstruction implements PaymentInstructionInterface
         $this->amount = $amount;
         $this->approvedAmount = 0.0;
         $this->approvingAmount = 0.0;
-        $this->createdAt = new \DateTime;
+        $this->createdAt = new \DateTime();
         $this->creditedAmount = 0.0;
         $this->creditingAmount = 0.0;
         $this->credits = new ArrayCollection();
@@ -96,7 +96,6 @@ class PaymentInstruction implements PaymentInstructionInterface
      * This method is called automatically from Credit::__construct().
      *
      * @param Credit $credit
-     * @return void
      */
     public function addCredit(Credit $credit)
     {
@@ -113,7 +112,6 @@ class PaymentInstruction implements PaymentInstructionInterface
      * This method is called automatically from Payment::__construct().
      *
      * @param Payment $payment
-     * @return void
      */
     public function addPayment(Payment $payment)
     {
@@ -260,7 +258,7 @@ class PaymentInstruction implements PaymentInstructionInterface
 
     public function onPreSave()
     {
-        $this->updatedAt = new \Datetime;
+        $this->updatedAt = new \Datetime();
 
         // this is necessary until Doctrine adds an interface for comparing
         // value objects. Right now this is done by referential equality

@@ -2,10 +2,6 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
-use JMS\Payment\CoreBundle\Plugin\SuccessfulTransactionPlugin;
-
-use JMS\Payment\CoreBundle\Model\PaymentInterface;
-
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 
 class BasicEntityInteractionsTest extends BaseTestCase

@@ -66,7 +66,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase
         return array(
             array(0, 1),
             array(0.12, 0.123),
-            array(0.1234, 0.1235)
+            array(0.1234, 0.1235),
         );
     }
 

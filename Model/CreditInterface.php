@@ -26,41 +26,41 @@ interface CreditInterface
     const STATE_FAILED = 4;
     const STATE_NEW = 5;
 
-    function getCreditedAmount();
-    function getCreditingAmount();
-    function getCreditTransaction();
-    function getId();
+    public function getCreditedAmount();
+    public function getCreditingAmount();
+    public function getCreditTransaction();
+    public function getId();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\PaymentInterface
      */
-    function getPayment();
+    public function getPayment();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
      */
-    function getPaymentInstruction();
+    public function getPaymentInstruction();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
      */
-    function getPendingTransaction();
+    public function getPendingTransaction();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
      */
-    function getReverseCreditTransactions();
+    public function getReverseCreditTransactions();
 
-    function getReversingAmount();
-    function getState();
-    function getTargetAmount();
-    function hasPendingTransaction();
-    function isAttentionRequired();
-    function isIndependent();
-    function setCreditedAmount($amount);
-    function setCreditingAmount($amount);
-    function setAttentionRequired($boolean);
-    function setPayment(PaymentInterface $payment);
-    function setReversingAmount($amount);
-    function setState($state);
+    public function getReversingAmount();
+    public function getState();
+    public function getTargetAmount();
+    public function hasPendingTransaction();
+    public function isAttentionRequired();
+    public function isIndependent();
+    public function setCreditedAmount($amount);
+    public function setCreditingAmount($amount);
+    public function setAttentionRequired($boolean);
+    public function setPayment(PaymentInterface $payment);
+    public function setReversingAmount($amount);
+    public function setState($state);
 }

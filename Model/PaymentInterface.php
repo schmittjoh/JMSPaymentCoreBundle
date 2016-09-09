@@ -29,66 +29,66 @@ interface PaymentInterface
     const STATE_DEPOSITING = 7;
     const STATE_DEPOSITED = 8;
 
-    function getApprovedAmount();
+    public function getApprovedAmount();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
      */
-    function getApproveTransaction();
+    public function getApproveTransaction();
 
-    function getApprovingAmount();
-    function getCreditedAmount();
-    function getCreditingAmount();
-    function getDepositedAmount();
-    function getDepositingAmount();
+    public function getApprovingAmount();
+    public function getCreditedAmount();
+    public function getCreditingAmount();
+    public function getDepositedAmount();
+    public function getDepositingAmount();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
      */
-    function getDepositTransactions();
+    public function getDepositTransactions();
 
-    function getExpirationDate();
-    function getId();
+    public function getExpirationDate();
+    public function getId();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\PaymentInstructionInterface
      */
-    function getPaymentInstruction();
+    public function getPaymentInstruction();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface|null
      */
-    function getPendingTransaction();
+    public function getPendingTransaction();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
      */
-    function getReverseApprovalTransactions();
+    public function getReverseApprovalTransactions();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\FinancialTransactionInterface[]
      */
-    function getReverseDepositTransactions();
+    public function getReverseDepositTransactions();
 
-    function getReversingApprovedAmount();
-    function getReversingCreditedAmount();
-    function getReversingDepositedAmount();
-    function getState();
-    function getTargetAmount();
-    function hasPendingTransaction();
-    function isAttentionRequired();
-    function isExpired();
-    function setApprovedAmount($amount);
-    function setApprovingAmount($amount);
-    function setAttentionRequired($boolean);
-    function setCreditedAmount($amount);
-    function setCreditingAmount($amount);
-    function setDepositedAmount($amount);
-    function setDepositingAmount($amount);
-    function setExpirationDate(\DateTime $date);
-    function setExpired($boolean);
-    function setReversingApprovedAmount($amount);
-    function setReversingCreditedAmount($amount);
-    function setReversingDepositedAmount($amount);
-    function setState($state);
+    public function getReversingApprovedAmount();
+    public function getReversingCreditedAmount();
+    public function getReversingDepositedAmount();
+    public function getState();
+    public function getTargetAmount();
+    public function hasPendingTransaction();
+    public function isAttentionRequired();
+    public function isExpired();
+    public function setApprovedAmount($amount);
+    public function setApprovingAmount($amount);
+    public function setAttentionRequired($boolean);
+    public function setCreditedAmount($amount);
+    public function setCreditingAmount($amount);
+    public function setDepositedAmount($amount);
+    public function setDepositingAmount($amount);
+    public function setExpirationDate(\DateTime $date);
+    public function setExpired($boolean);
+    public function setReversingApprovedAmount($amount);
+    public function setReversingCreditedAmount($amount);
+    public function setReversingDepositedAmount($amount);
+    public function setState($state);
 }

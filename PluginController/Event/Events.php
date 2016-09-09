@@ -15,5 +15,7 @@ abstract class Events
      */
     const PAYMENT_STATE_CHANGE = 'payment.state_change';
 
-    private final function __construct() { }
+    final private function __construct()
+    {
+    }
 }

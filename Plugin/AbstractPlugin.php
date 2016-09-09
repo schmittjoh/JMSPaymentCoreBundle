@@ -28,7 +28,7 @@ abstract class AbstractPlugin implements PluginInterface
 
     public function __construct($isDebug = false)
     {
-        $this->debug = !!$isDebug;
+        $this->debug = (bool) $isDebug;
     }
 
     public function approve(FinancialTransactionInterface $transaction, $retry)
@@ -42,7 +42,7 @@ abstract class AbstractPlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
     {
@@ -81,11 +81,11 @@ abstract class AbstractPlugin implements PluginInterface
 
     public function setDebug($boolean)
     {
-        $this->debug = !!$boolean;
+        $this->debug = (bool) $boolean;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validatePaymentInstruction(PaymentInstructionInterface $instruction)
     {
@@ -93,7 +93,7 @@ abstract class AbstractPlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isIndependentCreditSupported()
     {

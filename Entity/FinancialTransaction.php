@@ -85,7 +85,7 @@ class FinancialTransaction implements FinancialTransactionInterface
 
         if (null !== $this->payment) {
             return $this->payment->getPaymentInstruction()->getExtendedData();
-        } else if (null !== $this->credit) {
+        } elseif (null !== $this->credit) {
             return $this->credit->getPaymentInstruction()->getExtendedData();
         }
 
@@ -164,10 +164,10 @@ class FinancialTransaction implements FinancialTransactionInterface
 
     public function onPrePersist()
     {
-        $this->updatedAt = new \DateTime;
+        $this->updatedAt = new \DateTime();
 
-        if (null !== $this->extendedDataOriginal 
-                 && null !== $this->extendedData 
+        if (null !== $this->extendedDataOriginal
+                 && null !== $this->extendedData
                  && false === $this->extendedData->equals($this->extendedDataOriginal)) {
             $this->extendedData = clone $this->extendedData;
         }

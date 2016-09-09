@@ -2,7 +2,6 @@
 
 namespace JMS\Payment\CoreBundle\PluginController;
 
-use JMS\Payment\CoreBundle\Model\ExtendedDataInterface;
 use JMS\Payment\CoreBundle\Model\CreditInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
@@ -75,11 +74,13 @@ interface PluginControllerInterface
      * - not persist any changes in the database
      *
      * @throws JMS\Payment\CoreBundle\PluginController\Exception\InvalidPaymentInstructionException if the PaymentInstruction is not in the desired state
-     * @param integer $paymentId
+     *
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return Result
      */
-    function approve($paymentId, $amount);
+    public function approve($paymentId, $amount);
 
     /**
      * This method executes an approveAndDeposit transaction against a payment
@@ -133,11 +134,12 @@ interface PluginControllerInterface
      * - keep PaymentInstruction's approving/depositing amounts unchanged
      * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
      *
-     * @param integer $paymentId
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return Result
      */
-    function approveAndDeposit($paymentId, $amount);
+    public function approveAndDeposit($paymentId, $amount);
 
     /**
      * This method calls checkPaymentInstruction on the plugin processing the
@@ -151,10 +153,12 @@ interface PluginControllerInterface
      * plugin controller to rollback the transaction.
      *
      * @see validatePaymentInstruction()
+     *
      * @param PaymentInstructionInterface $paymentInstruction
+     *
      * @return Result
      */
-    function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function checkPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * This method will set the PaymentInstruction's state to CLOSED.
@@ -166,9 +170,8 @@ interface PluginControllerInterface
      * the ExtendedData container associated with the given PaymentInstruction.
      *
      * @param PaymentInstructionInterface $paymentInstruction
-     * @return void
      */
-    function closePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function closePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * This method will create a dependent credit object linked to the PaymentInstruction
@@ -181,11 +184,12 @@ interface PluginControllerInterface
      * - PaymentInstruction's state is VALID
      * - Payment's state is APPROVED, or EXPIRED
      *
-     * @param integer $paymentId
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return CreditInterface
      */
-    function createDependentCredit($paymentId, $amount);
+    public function createDependentCredit($paymentId, $amount);
 
     /**
      * This method will create an independent credit object.
@@ -193,21 +197,23 @@ interface PluginControllerInterface
      * The implementation will ensure that the PaymentInstruction's state
      * is VALID.
      *
-     * @param integer $paymentInstructionId
+     * @param int   $paymentInstructionId
      * @param float $amount
+     *
      * @return CreditInterface
      */
-    function createIndependentCredit($paymentInstructionId, $amount);
+    public function createIndependentCredit($paymentInstructionId, $amount);
 
     /**
      * This method will create a Payment object for the PaymentInstruction which
      * can be used to perform transactions (approve & deposit).
      *
-     * @param integer $paymentInstructionId
+     * @param int   $paymentInstructionId
      * @param float $amount
+     *
      * @return PaymentInterface
      */
-    function createPayment($paymentInstructionId, $amount);
+    public function createPayment($paymentInstructionId, $amount);
 
     /**
      * This method creates a PaymentInstruction.
@@ -216,9 +222,8 @@ interface PluginControllerInterface
      * validatePaymentInstruction first.
      *
      * @param PaymentInstructionInterface $paymentInstruction
-     * @return void
      */
-    function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function createPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * This method executes a credit transaction against a Credit.
@@ -268,11 +273,12 @@ interface PluginControllerInterface
      *
      * All changes to Payment objects are only applicable to dependent Credit objects.
      *
-     * @param integer $creditId
+     * @param int   $creditId
      * @param float $amount
+     *
      * @return Result
      */
-    function credit($creditId, $amount);
+    public function credit($creditId, $amount);
 
     // FIXME: I guess it's not strictly necessary to provide a common interface for deletion, postponing this
 //    function deletePaymentInstruction($paymentInstructionId);
@@ -325,11 +331,12 @@ interface PluginControllerInterface
      * - rollback the transaction
      * - not persist any changes
      *
-     * @param integer $paymentId
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return Result
      */
-    function deposit($paymentId, $amount);
+    public function deposit($paymentId, $amount);
 
     /**
      * This method retrieves a Credit object.
@@ -341,10 +348,11 @@ interface PluginControllerInterface
      * the credit will be synchronized with the external data, and the updated
      * Credit will be returned.
      *
-     * @param integer $creditId
+     * @param int $creditId
+     *
      * @return CreditInterface
      */
-    function getCredit($creditId);
+    public function getCredit($creditId);
 
     /**
      * This method retrieves a Payment object.
@@ -356,21 +364,23 @@ interface PluginControllerInterface
      * payment will be synchronized with the external data, and the updated
      * Payment will be returned.
      *
-     * @param integer $paymentId
+     * @param int $paymentId
+     *
      * @return PaymentInterface
      */
-    function getPayment($paymentId);
+    public function getPayment($paymentId);
 
     /**
      * This method retrieves the PaymentInstruction with given identifier.
      *
      * Associated Payment, Credit, and ExtendedData should also be retrieved.
      *
-     * @param integer $paymentInstructionId
-     * @param boolean $maskSensitiveData
+     * @param int  $paymentInstructionId
+     * @param bool $maskSensitiveData
+     *
      * @return PaymentInstructionInterface
      */
-    function getPaymentInstruction($paymentInstructionId, $maskSensitiveData = true);
+    public function getPaymentInstruction($paymentInstructionId, $maskSensitiveData = true);
 
     /**
      * This method obtains the available amount in an account directly from a
@@ -380,9 +390,10 @@ interface PluginControllerInterface
      * real-time queries.
      *
      * @param PaymentInstructionInterface $paymentInstruction
+     *
      * @return float|null Returns the amount that may be consumed, or null if the amount could not be retrieved
      */
-    function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function getRemainingValueOnPaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 
     /**
      * This method will execute a reverseApproval transaction against Payment.
@@ -423,11 +434,12 @@ interface PluginControllerInterface
      * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
      * - keep all amounts in Payment, and PaymentInstruction unchanged
      *
-     * @param integer $paymentId
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return Result
      */
-    function reverseApproval($paymentId, $amount);
+    public function reverseApproval($paymentId, $amount);
 
     /**
      * This method executes a reverseCredit transaction against a Credit.
@@ -472,11 +484,12 @@ interface PluginControllerInterface
      * - keep all amounts in Payment, Credit, and PaymentInstruction unchanged
      * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
      *
-     * @param integer $creditId
+     * @param int   $creditId
      * @param float $amount
+     *
      * @return Result
      */
-    function reverseCredit($creditId, $amount);
+    public function reverseCredit($creditId, $amount);
 
     /**
      * This method executes a reverseDeposit transaction against a Payment.
@@ -513,11 +526,12 @@ interface PluginControllerInterface
      * - set reason code to PluginInterface::REASON_CODE_TIMEOUT
      * - keep all amounts in Payment, and PaymentInstruction unchanged
      *
-     * @param integer $paymentId
+     * @param int   $paymentId
      * @param float $amount
+     *
      * @return Result
      */
-    function reverseDeposit($paymentId, $amount);
+    public function reverseDeposit($paymentId, $amount);
 
     /**
      * This method validates the correctness of any account associated with a
@@ -532,7 +546,8 @@ interface PluginControllerInterface
      * considered valid.
      *
      * @param PaymentInstructionInterface $paymentInstruction
+     *
      * @return Result
      */
-    function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
+    public function validatePaymentInstruction(PaymentInstructionInterface $paymentInstruction);
 }

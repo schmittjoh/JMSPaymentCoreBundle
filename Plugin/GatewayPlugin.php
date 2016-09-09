@@ -45,9 +45,10 @@ abstract class GatewayPlugin extends AbstractPlugin
     }
 
     /**
-     * A small helper to url-encode an array
+     * A small helper to url-encode an array.
      *
      * @param array $encode
+     *
      * @return string
      */
     protected function urlEncodeArray(array $encode)
@@ -61,10 +62,12 @@ abstract class GatewayPlugin extends AbstractPlugin
     }
 
     /**
-     * Performs a request to an external payment service
+     * Performs a request to an external payment service.
      *
      * @throws CommunicationException when an curl error occurs
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function request(Request $request)
@@ -108,9 +111,9 @@ abstract class GatewayPlugin extends AbstractPlugin
             }
 
             curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
-        } else if ('PUT' === $method) {
+        } elseif ('PUT' === $method) {
             curl_setopt($curl, CURLOPT_PUT, true);
-        } else if ('HEAD' === $method) {
+        } elseif ('HEAD' === $method) {
             curl_setopt($curl, CURLOPT_NOBODY, true);
         }
 

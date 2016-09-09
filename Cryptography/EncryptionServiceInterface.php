@@ -19,7 +19,7 @@ namespace JMS\Payment\CoreBundle\Cryptography;
  */
 
 /**
- * Interface for encryption services
+ * Interface for encryption services.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -30,7 +30,7 @@ interface EncryptionServiceInterface
      *
      * @param string $encryptedValue
      */
-    function decrypt($encryptedValue);
+    public function decrypt($encryptedValue);
 
     /**
      * This method encrypts the passed value.
@@ -39,5 +39,5 @@ interface EncryptionServiceInterface
      *
      * @param string $rawValue
      */
-    function encrypt($rawValue);
+    public function encrypt($rawValue);
 }

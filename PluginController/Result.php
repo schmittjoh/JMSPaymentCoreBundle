@@ -62,7 +62,7 @@ class Result
 
         if (3 === $nbArgs && $args[0] instanceof FinancialTransactionInterface) {
             $this->constructFinancialTransactionResult($args[0], $args[1], $args[2]);
-        } else if (3 === $nbArgs && $args[0] instanceof PaymentInstructionInterface) {
+        } elseif (3 === $nbArgs && $args[0] instanceof PaymentInstructionInterface) {
             $this->constructPaymentInstructionResult($args[0], $args[1], $args[2]);
         } else {
             throw new \InvalidArgumentException('The given arguments are not supported.');
@@ -122,7 +122,7 @@ class Result
             throw new \LogicException('The result contains neither a payment, nor a credit.');
         }
 
-        return null !== $this->payment? $this->payment->isAttentionRequired() : $this->credit->isAttentionRequired();
+        return null !== $this->payment ? $this->payment->isAttentionRequired() : $this->credit->isAttentionRequired();
     }
 
     public function isRecoverable()
@@ -137,7 +137,7 @@ class Result
 
     public function setRecoverable($boolean = true)
     {
-        $this->recoverable = !!$boolean;
+        $this->recoverable = (bool) $boolean;
     }
 
     protected function constructFinancialTransactionResult(FinancialTransactionInterface $transaction, $status, $reasonCode)

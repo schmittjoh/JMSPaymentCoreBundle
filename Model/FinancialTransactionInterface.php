@@ -37,37 +37,37 @@ interface FinancialTransactionInterface
     /**
      * @return \JMS\Payment\CoreBundle\Model\CreditInterface|null
      */
-    function getCredit();
+    public function getCredit();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\ExtendedDataInterface|null
      */
-    function getExtendedData();
+    public function getExtendedData();
 
-    function getId();
+    public function getId();
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\PaymentInterface|null
      */
-    function getPayment();
+    public function getPayment();
 
-    function getProcessedAmount();
-    function getReasonCode();
-    function getReferenceNumber();
-    function getRequestedAmount();
-    function getResponseCode();
-    function getState();
-    function getTrackingId();
-    function getTransactionType();
-    function setCredit(CreditInterface $credit);
-    function setExtendedData(ExtendedDataInterface $data);
-    function setPayment(PaymentInterface $payment);
-    function setProcessedAmount($amount);
-    function setReasonCode($code);
-    function setReferenceNumber($referenceNumber);
-    function setRequestedAmount($amount);
-    function setResponseCode($code);
-    function setState($state);
-    function setTrackingId($id);
-    function setTransactionType($type);
+    public function getProcessedAmount();
+    public function getReasonCode();
+    public function getReferenceNumber();
+    public function getRequestedAmount();
+    public function getResponseCode();
+    public function getState();
+    public function getTrackingId();
+    public function getTransactionType();
+    public function setCredit(CreditInterface $credit);
+    public function setExtendedData(ExtendedDataInterface $data);
+    public function setPayment(PaymentInterface $payment);
+    public function setProcessedAmount($amount);
+    public function setReasonCode($code);
+    public function setReferenceNumber($referenceNumber);
+    public function setRequestedAmount($amount);
+    public function setResponseCode($code);
+    public function setState($state);
+    public function setTrackingId($id);
+    public function setTransactionType($type);
 }

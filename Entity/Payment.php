@@ -2,9 +2,9 @@
 
 namespace JMS\Payment\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Payment\CoreBundle\Model\FinancialTransactionInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -58,7 +58,7 @@ class Payment implements PaymentInterface
     {
         $this->approvedAmount = 0.0;
         $this->approvingAmount = 0.0;
-        $this->createdAt = new \DateTime;
+        $this->createdAt = new \DateTime();
         $this->creditedAmount = 0.0;
         $this->creditingAmount = 0.0;
         $this->depositedAmount = 0.0;
@@ -69,7 +69,7 @@ class Payment implements PaymentInterface
         $this->reversingDepositedAmount = 0.0;
         $this->state = self::STATE_NEW;
         $this->targetAmount = $amount;
-        $this->transactions = new ArrayCollection;
+        $this->transactions = new ArrayCollection();
         $this->attentionRequired = false;
         $this->expired = false;
 
@@ -97,7 +97,6 @@ class Payment implements PaymentInterface
 
             if (FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE === $type
                 || FinancialTransactionInterface::TRANSACTION_TYPE_APPROVE_AND_DEPOSIT === $type) {
-
                 return $transaction;
             }
         }
@@ -135,8 +134,8 @@ class Payment implements PaymentInterface
      */
     public function getDepositTransactions()
     {
-        return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT === $transaction->getTransactionType();
+        return $this->transactions->filter(function ($transaction) {
+            return FinancialTransactionInterface::TRANSACTION_TYPE_DEPOSIT === $transaction->getTransactionType();
         });
     }
 
@@ -177,8 +176,8 @@ class Payment implements PaymentInterface
      */
     public function getReverseApprovalTransactions()
     {
-        return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL === $transaction->getTransactionType();
+        return $this->transactions->filter(function ($transaction) {
+            return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_APPROVAL === $transaction->getTransactionType();
         });
     }
 
@@ -187,8 +186,8 @@ class Payment implements PaymentInterface
      */
     public function getReverseDepositTransactions()
     {
-        return $this->transactions->filter(function($transaction) {
-           return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT === $transaction->getTransactionType();
+        return $this->transactions->filter(function ($transaction) {
+            return FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT === $transaction->getTransactionType();
         });
     }
 
@@ -250,7 +249,7 @@ class Payment implements PaymentInterface
 
     public function onPreSave()
     {
-        $this->updatedAt = new \DateTime;
+        $this->updatedAt = new \DateTime();
     }
 
     public function setApprovedAmount($amount)
@@ -265,7 +264,7 @@ class Payment implements PaymentInterface
 
     public function setAttentionRequired($boolean)
     {
-        $this->attentionRequired = !!$boolean;
+        $this->attentionRequired = (bool) $boolean;
     }
 
     public function setCreditedAmount($amount)
@@ -295,7 +294,7 @@ class Payment implements PaymentInterface
 
     public function setExpired($boolean)
     {
-        $this->expired = !!$boolean;
+        $this->expired = (bool) $boolean;
     }
 
     public function setReversingApprovedAmount($amount)

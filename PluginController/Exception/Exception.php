@@ -21,7 +21,7 @@ use JMS\Payment\CoreBundle\Exception\Exception as PaymentBundleException;
  */
 
 /**
- * Base Exception for the payment plugin controller (PPC)
+ * Base Exception for the payment plugin controller (PPC).
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

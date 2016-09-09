@@ -22,11 +22,12 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 
 /**
- * Validates a PAN using the LUHN Algorithm
+ * Validates a PAN using the LUHN Algorithm.
  *
  * An example card number that passes this check is 4242 4242 4242 4242.
  *
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
+ *
  * @author Tim Nagel <t.nagel@infinite.net.au>
  * @author Greg Knapp http://gregk.me/2011/php-implementation-of-bank-card-luhn-algorithm/
  */
@@ -35,7 +36,7 @@ class LuhnValidator extends ConstraintValidator
     /**
      * Validates a creditcard number with the Luhn algorithm.
      *
-     * @param mixed $value
+     * @param mixed      $value
      * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
@@ -50,7 +51,7 @@ class LuhnValidator extends ConstraintValidator
 
         $length = strlen($value);
         $oddLength = $length % 2;
-        for ($sum = 0, $i = $length - 1; $i >= 0; $i--) {
+        for ($sum = 0, $i = $length - 1; $i >= 0; --$i) {
             $digit = (int) $value[$i];
             $sum += (($i % 2) === $oddLength) ? array_sum(str_split($digit * 2)) : $digit;
         }
@@ -60,4 +61,3 @@ class LuhnValidator extends ConstraintValidator
         }
     }
 }
-

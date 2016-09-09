@@ -2,9 +2,9 @@
 
 namespace JMS\Payment\CoreBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /*
  * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
