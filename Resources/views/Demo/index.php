@@ -1,1 +1,0 @@
-Your transaction was successful.
