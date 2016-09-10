@@ -1,5 +1,4 @@
-<form {{ form_enctype(form) }} method="POST">
-{{ form_widget(form) }}
-
-<input type="submit" name="submit_btn" />
-</form>
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <input type="submit" name="submit_btn" />
+{{ form_end(form) }}

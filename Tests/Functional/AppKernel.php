@@ -35,8 +35,6 @@ class AppKernel extends Kernel
             new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),
             new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
             new \JMS\Payment\PaypalBundle\JMSPaymentPaypalBundle(),
-            new \JMS\AopBundle\JMSAopBundle(),
-            new \JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
         );
     }

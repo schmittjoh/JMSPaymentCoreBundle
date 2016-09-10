@@ -6,6 +6,7 @@ use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\PluginController\PluginControllerInterface;
 use JMS\Payment\CoreBundle\PluginController\Result;
+use JMS\Payment\CoreBundle\Util\Legacy;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -37,36 +39,41 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $allowAllMethods = !count($options['allowed_methods']);
+        $options['available_methods'] = $this->getPaymentMethods($options['allowed_methods']);
 
-        $options['available_methods'] = array();
-        foreach ($this->paymentMethods as $method) {
-            if (!$allowAllMethods && !in_array($method, $options['allowed_methods'], true)) {
-                continue;
-            }
+        $choiceType = Legacy::supportsFormTypeName()
+            ? 'choice'
+            : 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+        ;
 
-            $options['available_methods'][] = $method;
-        }
-
-        if (!$options['available_methods']) {
-            throw new \RuntimeException(sprintf('You have not selected any payment methods. Available methods: "%s"', implode(', ', $this->paymentMethods)));
-        }
-
-        $builder->add('method', 'choice', array(
-            'choices' => $this->buildChoices($options['available_methods']),
+        $builderOptions = array(
             'expanded' => true,
-            'data' => $options['default_method'],
-        ));
+            'data'     => $options['default_method'],
+        );
 
-        foreach ($options['available_methods'] as $method) {
-            $methodOptions = isset($options['method_options'][$method]) ? $options['method_options'] : array();
-            $builder->add('data_'.$method, $method, $methodOptions);
+        $builderOptions['choices'] = array();
+        foreach ($options['available_methods'] as $methodKey => $methodClass) {
+            $label = 'form.label.'.$methodKey;
+
+            if (Legacy::formChoicesAsValues()) {
+                $builderOptions['choices'][$methodKey] = $label;
+            } else {
+                $builderOptions['choices'][$label] = $methodKey;
+            }
+        }
+
+        $builder->add('method', $choiceType, $builderOptions);
+
+        foreach ($options['available_methods'] as $methodKey => $methodClass) {
+            $methodOptions = isset($options['method_options'][$methodKey]) ? $options['method_options'] : array();
+            $builder->add('data_'.$methodKey, $methodClass, $methodOptions);
         }
 
         $self = $this;
-        $builder->addEventListener(FormEvents::POST_BIND, function ($form) use ($self, $options) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function ($form) use ($self, $options) {
             $self->validate($form, $options);
         });
+
         $builder->addModelTransformer(new CallbackTransformer(
             function ($data) use ($self, $options) {
                 return $self->transform($data, $options);
@@ -85,9 +92,11 @@ class ChoosePaymentMethodType extends AbstractType
 
         if ($data instanceof PaymentInstruction) {
             $method = $data->getPaymentSystemName();
+
             $methodData = array_map(function ($v) {
                 return $v[0];
             }, $data->getExtendedData()->all());
+
             if (isset($options['predefined_data'][$method])) {
                 $methodData = array_diff_key($methodData, $options['predefined_data'][$method]);
             }
@@ -136,7 +145,8 @@ class ChoosePaymentMethodType extends AbstractType
 
             return;
         }
-        if (!in_array($instruction->getPaymentSystemName(), $options['available_methods'], true)) {
+
+        if (!array_key_exists($instruction->getPaymentSystemName(), $options['available_methods'])) {
             $form->addError(new FormError('form.error.invalid_payment_method'));
 
             return;
@@ -155,7 +165,7 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'allowed_methods' => array(),
@@ -168,17 +178,42 @@ class ChoosePaymentMethodType extends AbstractType
             'currency',
         ));
 
-        $resolver->setAllowedTypes(array(
-            'allowed_methods' => 'array',
-            'amount'          => array('numeric', 'closure'),
-            'currency'        => 'string',
-            'predefined_data' => 'array',
-        ));
+        if (Legacy::supportsFormTypeConfigureOptions()) {
+            $resolver->setAllowedTypes(array(
+                'allowed_methods' => 'array',
+                'amount'          => array('numeric', 'closure'),
+                'currency'        => 'string',
+                'predefined_data' => 'array',
+            ));
+        } else {
+            $resolver
+                ->setAllowedTypes('allowed_methods', 'array')
+                ->setAllowedTypes('amount', array('numeric', 'closure'))
+                ->setAllowedTypes('currency', 'string')
+                ->setAllowedTypes('predefined_data', 'array')
+            ;
+        }
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'jms_choose_payment_method';
+    }
+
+    /**
+     * Legacy support for Symfony < 3.0.
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * Legacy support for Symfony < 3.0.
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
     }
 
     private function applyErrorsToForm(FormInterface $form, Result $result)
@@ -210,16 +245,6 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    private function buildChoices(array $methods)
-    {
-        $choices = array();
-        foreach ($methods as $method) {
-            $choices[$method] = 'form.label.'.$method;
-        }
-
-        return $choices;
-    }
-
     private function computeAmount($amount, $currency, $method, ExtendedData $extendedData)
     {
         if ($amount instanceof \Closure) {
@@ -227,5 +252,28 @@ class ChoosePaymentMethodType extends AbstractType
         }
 
         return $amount;
+    }
+
+    private function getPaymentMethods($allowedMethods = array())
+    {
+        $allowAllMethods = !count($allowedMethods);
+        $availableMethods = array();
+
+        foreach ($this->paymentMethods as $methodKey => $methodClass) {
+            if (!$allowAllMethods && !in_array($methodKey, $allowedMethods, true)) {
+                continue;
+            }
+
+            $availableMethods[$methodKey] = $methodClass;
+        }
+
+        if (empty($availableMethods)) {
+            throw new \RuntimeException(sprintf(
+                'You have not selected any payment methods. Available methods: "%s"',
+                implode(', ', $this->paymentMethods)
+            ));
+        }
+
+        return $availableMethods;
     }
 }

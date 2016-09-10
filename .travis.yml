@@ -5,15 +5,29 @@ branches:
     - master
 matrix:
   include:
-    # old PHP versions
+    # old PHP versions with latest Symfony version
     - php: 5.3
       env: SYMFONY_VERSION=2.8.* # Symfony 3 doesn't support PHP 5.3
+    - php: 5.6
+      env: SYMFONY_VERSION=3.1.*
+    # HHVM
+    - php: hhvm
+      env: SYMFONY_VERSION=3.1.*
+    # current PHP with all non-EOLed Symfony versions
     - php: 7.0
       env: SYMFONY_VERSION=2.3.*
     - php: 7.0
       env: SYMFONY_VERSION=2.7.*
     - php: 7.0
       env: SYMFONY_VERSION=2.8.*
+    - php: 7.0
+      env: SYMFONY_VERSION=3.0.*
+    - php: 7.0
+      env: SYMFONY_VERSION=3.1.*
+    - php: 7.0
+      env: SYMFONY_VERSION=dev-master
+  allow_failures:
+    - env: SYMFONY_VERSION=dev-master
 
 before_install: ./.travis/before_install.php
 install: ./.travis/install.php

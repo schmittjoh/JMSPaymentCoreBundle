@@ -2,10 +2,11 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller;
 
-use JMS\DiExtraBundle\Annotation as DI;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
+use JMS\Payment\CoreBundle\Util\Legacy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -13,26 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Johannes
  */
-class OrderController
+class OrderController extends Controller
 {
-    /** @DI\Inject */
-    private $em;
-
-    /** @DI\Inject */
-    private $request;
-
-    /** @DI\Inject("payment.plugin_controller") */
-    private $ppc;
-
     /**
      * @Route("/{id}/payment-details", name = "payment_details")
-     * @Template
+     * @Template("TestBundle:Order:paymentDetails.html.twig")
      *
      * @param Order $order
      */
     public function paymentDetailsAction(Order $order)
     {
-        $form = $this->getFormFactory()->create('jms_choose_payment_method', null, array(
+        $formType = Legacy::supportsFormTypeName()
+            ? 'jms_choose_payment_method'
+            : 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
+        ;
+
+        $form = $this->get('form.factory')->create($formType, null, array(
             'currency' => 'EUR',
             'amount' => $order->getAmount(),
             'csrf_protection' => false,
@@ -43,30 +40,33 @@ class OrderController
             ),
         ));
 
-        if ('POST' === $this->request->getMethod()) {
-            if (method_exists($form, 'submit')) {
-                $form->submit($this->request);
+        $em = $this->getDoctrine()->getManager();
+        $ppc = $this->get('payment.plugin_controller');
+
+        $request = Legacy::supportsRequestService()
+            ? $this->getRequest()
+            : $this->get('request_stack')->getCurrentRequest()
+        ;
+
+        if ('POST' === $request->getMethod()) {
+            if (Legacy::supportsHandleRequest()) {
+                $form->handleRequest($request);
             } else {
-                $form->bindRequest($this->request);
+                $form->bindRequest($request);
             }
 
             if ($form->isValid()) {
                 $instruction = $form->getData();
-                $this->ppc->createPaymentInstruction($instruction);
+                $ppc->createPaymentInstruction($instruction);
 
                 $order->setPaymentInstruction($instruction);
-                $this->em->persist($order);
-                $this->em->flush();
+                $em->persist($order);
+                $em->flush();
 
                 return new Response('', 201);
             }
         }
 
         return array('form' => $form->createView());
-    }
-
-    /** @DI\LookupMethod("form.factory") */
-    protected function getFormFactory()
-    {
     }
 }
