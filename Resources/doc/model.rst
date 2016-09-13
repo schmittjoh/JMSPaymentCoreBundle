@@ -3,7 +3,7 @@ The Model
 
 Introduction
 ------------
-Before we are going to see how we can conduct payments, let me 
+Before we are going to see how we can conduct payments, let me
 give you a quick overlook over the model classes, and their purpose.
 
 PaymentInstruction
@@ -48,15 +48,15 @@ Below, you find the different states that a ``Payment`` can go through:
     left to right direction
 
     [*] --> New
-    
+
     New --> Canceled
     New --> Approving
-    
+
     Approving --> Approved
     Approving --> Failed
-    
+
     Approved --> Depositing
-    
+
     Depositing --> Deposited
     Depositing --> Expired
     Depositing --> Failed
@@ -66,6 +66,8 @@ Below, you find the different states that a ``Payment`` can go through:
     Expired --> [*]
     Deposited --> [*]
 
+.. _model-financial-transaction:
+
 FinancialTransaction
 --------------------
 Each ``Payment`` may have several transactions. Each ``FinancialTransaction``
@@ -73,8 +75,8 @@ represents a specific interaction with the payment backend. In the case of
 a credit card payment, this could for example be an authorization transaction.
 
 .. note ::
-    
-    There may only ever be one open transaction for each ``PaymentInstruction`` 
+
+    There may only ever be one open transaction for each ``PaymentInstruction``
     at a time. This is enforced, and guaranteed.
 
 Below, you find the different states that a ``FinancialTransaction`` can go through:
@@ -85,7 +87,7 @@ Below, you find the different states that a ``FinancialTransaction`` can go thro
     left to right direction
 
     [*] --> New
-    
+
     New --> Pending
     New --> Failed
     New --> Success
