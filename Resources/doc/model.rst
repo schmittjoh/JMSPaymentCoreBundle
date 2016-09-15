@@ -19,17 +19,14 @@ information.
 
 Below you find the different states that a ``PaymentInstruction`` can go through:
 
-.. uml ::
-    :alt: PaymentInstruction State Flow
+.. digraph:: PaymentInstruction_State_Flow
 
-    left to right direction
-
-    [*] --> New
-    New --> Valid
-    New --> Invalid
-    Valid --> Closed
-    Invalid --> [*]
-    Closed --> [*]
+    "Start" -> "New";
+    "New" -> "Valid";
+    "New" -> "Invalid";
+    "Valid" -> "Closed";
+    "Invalid" -> "End";
+    "Closed" -> "End";
 
 Payment
 -------
@@ -42,29 +39,26 @@ deposited before an order ships, and the rest afterwards.
 
 Below, you find the different states that a ``Payment`` can go through:
 
-.. uml ::
-    :alt: Payment State Flow
+.. digraph:: Payment_State_Flow
 
-    left to right direction
+    "Start" -> "New";
 
-    [*] --> New
+    "New" -> "Canceled"
+    "New" -> "Approving"
 
-    New --> Canceled
-    New --> Approving
+    "Approving" -> "Approved"
+    "Approving" -> "Failed"
 
-    Approving --> Approved
-    Approving --> Failed
+    "Approved" -> "Depositing"
 
-    Approved --> Depositing
+    "Depositing" -> "Deposited"
+    "Depositing" -> "Expired"
+    "Depositing" -> "Failed"
 
-    Depositing --> Deposited
-    Depositing --> Expired
-    Depositing --> Failed
-
-    Canceled --> [*]
-    Failed --> [*]
-    Expired --> [*]
-    Deposited --> [*]
+    "Canceled" -> "End"
+    "Failed" -> "End"
+    "Expired" -> "End"
+    "Deposited" -> "End"
 
 .. _model-financial-transaction:
 
@@ -81,21 +75,18 @@ a credit card payment, this could for example be an authorization transaction.
 
 Below, you find the different states that a ``FinancialTransaction`` can go through:
 
-.. uml ::
-    :alt: Financial Transaction State Flow
+.. digraph:: Financial_Transaction_State_Flow
 
-    left to right direction
+    "Start" -> "New"
 
-    [*] --> New
+    "New" -> "Pending"
+    "New" -> "Failed"
+    "New" -> "Success"
+    "New" -> "Canceled"
 
-    New --> Pending
-    New --> Failed
-    New --> Success
-    New --> Canceled
+    "Pending" -> "Failed"
+    "Pending" -> "Success"
 
-    Pending --> Failed
-    Pending --> Success
-
-    Failed --> [*]
-    Success --> [*]
-    Canceled --> [*]
+    "Failed" -> "End"
+    "Success" -> "End"
+    "Canceled" -> "End"

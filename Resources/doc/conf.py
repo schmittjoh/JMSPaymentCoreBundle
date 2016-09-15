@@ -10,7 +10,7 @@ project = u'JMSPaymentCoreBundle'
 
 extensions = [
     'sensio.sphinx.configurationblock',
-    'sphinxcontrib.plantuml'
+    'sphinx.ext.graphviz',
 ]
 
 master_doc = 'index'
@@ -18,3 +18,9 @@ master_doc = 'index'
 html_show_copyright = False
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+graphviz_output_format = 'png'
+graphviz_dot_args = [
+    '-Gbgcolor=transparent',
+    '-Grankdir=LR',
+]
