@@ -2,8 +2,8 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
-use JMS\Payment\CoreBundle\Util\Legacy;
 use Doctrine\ORM\Tools\SchemaValidator;
+use JMS\Payment\CoreBundle\Util\Legacy;
 
 class SchemaTest extends BaseTestCase
 {
