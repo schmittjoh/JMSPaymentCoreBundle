@@ -3,16 +3,16 @@ Plugins
 
 Introduction
 ------------
-A plugin is a flexible way of providing access to a specific payment back end, 
+A plugin is a flexible way of providing access to a specific payment back end,
 payment processor, or payment service provider.
 
 .. note ::
 
     If you are coming from symfony1, the term "plugin" as used by this bundle
     has nothing to do with symfony1's plugin extension system.
-    
-Plugins are used to execute :doc:`financial transactions <model/FinancialTransaction>` 
-against a payment service provider, such as Paypal.
+
+Plugins are used to execute a :ref:`model-financial-transaction` against a
+payment service provider, such as Paypal.
 
 Implementing a Custom Plugin
 ----------------------------
@@ -30,14 +30,14 @@ the remaining abstract methods:
             return 'paypal' === $name;
         }
     }
-    
+
 Now, you only need to set-up your plugin as a service, and it will be added to the
 plugin controller automatically:
 
 .. configuration-block ::
 
     .. code-block :: yaml
-    
+
         services:
             payment.plugin.paypal:
                 class: PaypalPlugin
@@ -48,10 +48,10 @@ plugin controller automatically:
         <service id="payment.plugin.paypal" class="PaypalPlugin">
             <tag name="payment.plugin" />
         </service>
-    
+
 That's it! You just created your first plugin :) Right now, it does not do anything
 useful, but we will get to the specific transactions that you can perform in
-the next section. 
+the next section.
 
 Available Transaction Types
 ---------------------------
@@ -61,7 +61,7 @@ used payment method, and the capabilities of the backend, you rarely need all of
 Following is a list of all available transactions, and two exemplary payment method
 plugins. A "x" indicates that the method is implement, "-" that it is not:
 
-+----------------------------+------------------+-----------------------+ 
++----------------------------+------------------+-----------------------+
 | Financial Transaction      | CreditCardPlugin | ElectronicCheckPlugin |
 +============================+==================+=======================+
 | checkPaymentInstruction    |        x         |           x           |
@@ -74,7 +74,7 @@ plugins. A "x" indicates that the method is implement, "-" that it is not:
 +----------------------------+------------------+-----------------------+
 | reverseApproval            |        x         |          \-           |
 +----------------------------+------------------+-----------------------+
-| deposit                    |        x         |           x           | 
+| deposit                    |        x         |           x           |
 +----------------------------+------------------+-----------------------+
 | reverseDeposit             |        x         |          \-           |
 +----------------------------+------------------+-----------------------+
@@ -91,15 +91,15 @@ which contains detailed descriptions for each of them.
     In cases, where a certain method does not make sense for your payment backend,
     you should throw a ``FunctionNotSupportedException``. If you extend the ``AbstractPlugin``
     base class, this is already done for you.
-    
+
 Available Exceptions
 --------------------
 Exceptions play an important part in the communication between the different payment plugin,
-and the ``PluginController`` which manages them. 
+and the ``PluginController`` which manages them.
 
 Following is a list with available exceptions, and how they are treated by the ``PluginController``.
-Of course, you can also add your own exceptions, but it is recommend that you sub-class 
-an existing exception when doing so. 
+Of course, you can also add your own exceptions, but it is recommend that you sub-class
+an existing exception when doing so.
 
 .. tip ::
 
@@ -164,17 +164,17 @@ Payment-related User Data
 -------------------------
 The Form Type
 ~~~~~~~~~~~~~
-The form type is necessary for collecting, and validating the user data that is necessary 
+The form type is necessary for collecting, and validating the user data that is necessary
 for your payment method. In the following, we assume that we are designing a form type for
 credit card payment which could look like this:
 
 .. code-block :: php
 
     <?php
-    
+
     use Symfony\Component\Form\AbstractType;
     use Symfony\Component\Form\FormBuilderInterface;
-    
+
     class CreditCardType extends AbstractType
     {
         public function buildForm(FormBuilderInterface $builder, array $options)
@@ -186,7 +186,7 @@ credit card payment which could look like this:
                 ->add('code', 'text', array('required' => false))
             ;
         }
-    
+
         public function getName()
         {
             return 'credit_card';
@@ -205,20 +205,20 @@ Now, we need to wire the form type with the dependency injection container:
 .. configuration-block ::
 
     .. code-block :: yaml
-    
+
         services:
             credit_card_type:
                 class: CreditCardType
                 tags:
                     - { name: form.type, alias: credit_card }
                     - { name: payment.method_form_type }
-                    
+
     .. code-block :: xml
-     
+
         <service id="credit_card_type" class="CreditCardType">
             <tag name="form.type" alias="credit_card" />
             <tag name="payment.method_form_type" />
-        </service>    
+        </service>
 
 Validating the Submitted User Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -232,36 +232,36 @@ We are now going to implement the ``checkPaymentInstruction`` method for our for
 .. code-block :: php
 
     <?php
-    
+
     use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
     use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
     use JMS\Payment\CoreBundle\Plugin\ErrorBuilder;
-    
+
     class CreditCardPlugin extends AbstractPlugin
     {
         public function checkPaymentInstruction(PaymentInstructionInterface $instruction)
         {
             $errorBuilder = new ErrorBuilder();
             $data = $instruction->getExtendedData();
-            
+
             if (!$data->get('holder')) {
                 $errorBuilder->addDataError('holder', 'form.error.required');
             }
             if (!$data->get('number')) {
                 $errorBuilder->addDataError('number', 'form.error.required');
             }
-            
+
             if ($instruction->getAmount() > 10000) {
                 $errorBuilder->addGlobalError('form.error.credit_card_max_limit_exceeded');
             }
-            
+
             // more checks here ...
-            
+
             if ($errorBuilder->hasErrors()) {
                 throw $errorBuilder->getException();
             }
         }
-    
+
         public function processes($method)
         {
             return 'credit_card' === $method;

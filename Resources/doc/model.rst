@@ -3,7 +3,7 @@ The Model
 
 Introduction
 ------------
-Before we are going to see how we can conduct payments, let me 
+Before we are going to see how we can conduct payments, let me
 give you a quick overlook over the model classes, and their purpose.
 
 PaymentInstruction
@@ -19,17 +19,14 @@ information.
 
 Below you find the different states that a ``PaymentInstruction`` can go through:
 
-.. uml ::
-    :alt: PaymentInstruction State Flow
+.. digraph:: PaymentInstruction_State_Flow
 
-    left to right direction
-
-    [*] --> New
-    New --> Valid
-    New --> Invalid
-    Valid --> Closed
-    Invalid --> [*]
-    Closed --> [*]
+    "Start" -> "New";
+    "New" -> "Valid";
+    "New" -> "Invalid";
+    "Valid" -> "Closed";
+    "Invalid" -> "End";
+    "Closed" -> "End";
 
 Payment
 -------
@@ -42,29 +39,28 @@ deposited before an order ships, and the rest afterwards.
 
 Below, you find the different states that a ``Payment`` can go through:
 
-.. uml ::
-    :alt: Payment State Flow
+.. digraph:: Payment_State_Flow
 
-    left to right direction
+    "Start" -> "New";
 
-    [*] --> New
-    
-    New --> Canceled
-    New --> Approving
-    
-    Approving --> Approved
-    Approving --> Failed
-    
-    Approved --> Depositing
-    
-    Depositing --> Deposited
-    Depositing --> Expired
-    Depositing --> Failed
+    "New" -> "Canceled"
+    "New" -> "Approving"
 
-    Canceled --> [*]
-    Failed --> [*]
-    Expired --> [*]
-    Deposited --> [*]
+    "Approving" -> "Approved"
+    "Approving" -> "Failed"
+
+    "Approved" -> "Depositing"
+
+    "Depositing" -> "Deposited"
+    "Depositing" -> "Expired"
+    "Depositing" -> "Failed"
+
+    "Canceled" -> "End"
+    "Failed" -> "End"
+    "Expired" -> "End"
+    "Deposited" -> "End"
+
+.. _model-financial-transaction:
 
 FinancialTransaction
 --------------------
@@ -73,27 +69,24 @@ represents a specific interaction with the payment backend. In the case of
 a credit card payment, this could for example be an authorization transaction.
 
 .. note ::
-    
-    There may only ever be one open transaction for each ``PaymentInstruction`` 
+
+    There may only ever be one open transaction for each ``PaymentInstruction``
     at a time. This is enforced, and guaranteed.
 
 Below, you find the different states that a ``FinancialTransaction`` can go through:
 
-.. uml ::
-    :alt: Financial Transaction State Flow
+.. digraph:: Financial_Transaction_State_Flow
 
-    left to right direction
+    "Start" -> "New"
 
-    [*] --> New
-    
-    New --> Pending
-    New --> Failed
-    New --> Success
-    New --> Canceled
+    "New" -> "Pending"
+    "New" -> "Failed"
+    "New" -> "Success"
+    "New" -> "Canceled"
 
-    Pending --> Failed
-    Pending --> Success
+    "Pending" -> "Failed"
+    "Pending" -> "Success"
 
-    Failed --> [*]
-    Success --> [*]
-    Canceled --> [*]
+    "Failed" -> "End"
+    "Success" -> "End"
+    "Canceled" -> "End"
