@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "This bundle is providing the foundation for various payment plugins.",
     "keywords": ["payment"],
-    "homepage": "http://jmsyst.com/bundles/JMSPaymentCoreBundle",
+    "homepage": "http://jmspaymentcorebundle.readthedocs.io",
     "license": "Apache2",
     "authors": [
         {
