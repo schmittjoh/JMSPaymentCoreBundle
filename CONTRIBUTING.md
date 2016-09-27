@@ -13,7 +13,6 @@ Before submitting your PR, make sure tests pass:
 ## Documentation
 Documentation is built using [Sphinx](http://www.sphinx-doc.org).
 
-
 ### Setup
 Make sure you have [pip installed](https://pip.pypa.io/en/stable/installing/) and then install the needed dependencies inside a [virtualenv](https://virtualenv.pypa.io) environment, in order not to pollute your system:
 

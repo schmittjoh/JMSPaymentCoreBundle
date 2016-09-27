@@ -3,7 +3,7 @@ JMSPaymentCoreBundle
 
 Introduction
 ------------
-JMSPaymentCoreBundle provides the foundation for different payment backends.
+This bundle provides the foundation for different payment backends.
 It abstracts away the differences between payment protocols, and offers a
 simple, and unified API for performing financial transactions.
 
@@ -19,7 +19,7 @@ Documentation
 
 .. toctree ::
     :hidden:
-    
+
     installation
     configuration
     model
@@ -37,7 +37,7 @@ Documentation
 License
 -------
 
-The code is released under the business-friendly `Apache2 license`_. 
+The code is released under the business-friendly `Apache2 license`_.
 
 Documentation is subject to the `Attribution-NonCommercial-NoDerivs 3.0 Unported
 license`_.
