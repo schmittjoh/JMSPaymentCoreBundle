@@ -1,6 +1,11 @@
-#JMSPaymentCoreBundle [![Build Status](https://secure.travis-ci.org/schmittjoh/JMSPaymentCoreBundle.png?branch=master)](http://travis-ci.org/schmittjoh/JMSPaymentCoreBundle)
+# JMSPaymentCoreBundle
+A unified API for processing payments with Symfony
 
-JMSPaymentCoreBundle provides the foundation for using different payment backends in Symfony projects. It abstracts away the differences between payment protocols and offers a simple and unified API for performing financial transactions.
+[![Build Status](https://img.shields.io/travis/schmittjoh/JMSPaymentCoreBundle/master.svg?style=flat-square)](http://travis-ci.org/schmittjoh/JMSPaymentCoreBundle)
+[![Total Downloads](https://img.shields.io/packagist/dt/jms/payment-core-bundle.svg?style=flat-square)](https://packagist.org/packages/jms/payment-core-bundle)
+[![Packagist Version](https://img.shields.io/packagist/v/jms/payment-core-bundle.svg?style=flat-square)](https://packagist.org/packages/jms/payment-core-bundle)
+
+This bundle provides the foundation for using different payment backends in Symfony projects. It abstracts away the differences between payment protocols and offers a simple and unified API for performing financial transactions.
 
 Key Points:
 
@@ -8,14 +13,13 @@ Key Points:
 - Persistence of Financial Entities (such as payments, transactions, etc.)
 - Transaction Management including Retry Logic
 - Encryption of Sensitive Data
-- Supports [many](http://jmsyst.com/bundles/JMSPaymentCoreBundle/master/payment_backends) payment backends out of the box
+- Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/latest/payment_backends.html) payment backends out of the box
 
-Documentation:
-[Resources/doc](http://jmsyst.com/bundles/JMSPaymentCoreBundle)
+# Documentation
 
+[View Documentation](http://jmspaymentcorebundle.readthedocs.io)
 
-Code License:
-[Resources/meta/LICENSE](https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/Resources/meta/LICENSE)
+# License
 
-Documentation License:
-[Resources/doc/LICENSE](https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/Resources/doc/LICENSE)
+* Code: [Apache2](https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/LICENSE)
+* Docs: [CC BY-NC-ND 3.0](https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/Resources/doc/LICENSE)
