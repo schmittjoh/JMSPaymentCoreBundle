@@ -1,29 +1,16 @@
 Plugins
 =======
+A plugin is a flexible way of providing access to a specific payment back end, payment processor, or payment service provider. Plugins are used to execute a :ref:`model-financial-transaction` against a payment service provider, such as Paypal.
 
-Introduction
-------------
-A plugin is a flexible way of providing access to a specific payment back end,
-payment processor, or payment service provider.
-
-.. note ::
-
-    If you are coming from symfony1, the term "plugin" as used by this bundle
-    has nothing to do with symfony1's plugin extension system.
-
-Plugins are used to execute a :ref:`model-financial-transaction` against a
-payment service provider, such as Paypal.
-
-Implementing a Custom Plugin
+Implementing a custom plugin
 ----------------------------
-The easiest way is to simply extend the provided ``AbstractPlugin`` class, and override
-the remaining abstract methods:
+The easiest way is to simply extend the provided ``AbstractPlugin`` class, and override the remaining abstract methods:
 
 .. code-block :: php
 
-    <?php
+    use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
 
-    class PaypalPlugin extends \JMS\Payment\CoreBundle\Plugin\AbstractPlugin
+    class PaypalPlugin extends AbstractPlugin
     {
         public function processes($name)
         {
@@ -31,8 +18,7 @@ the remaining abstract methods:
         }
     }
 
-Now, you only need to set-up your plugin as a service, and it will be added to the
-plugin controller automatically:
+Now, you only need to setup your plugin as a service, and it will be added to the plugin controller automatically:
 
 .. configuration-block ::
 
@@ -49,17 +35,13 @@ plugin controller automatically:
             <tag name="payment.plugin" />
         </service>
 
-That's it! You just created your first plugin :) Right now, it does not do anything
-useful, but we will get to the specific transactions that you can perform in
-the next section.
+That's it! You just created your first plugin :) Right now, it does not do anything useful, but we will get to the specific transactions that you can perform in the next section.
 
-Available Transaction Types
+Available transaction types
 ---------------------------
-Each plugin may implement a variety of available transaction types. Depending on the
-used payment method, and the capabilities of the backend, you rarely need all of them.
+Each plugin may implement a variety of available transaction types. Depending on the used payment method and the capabilities of the backend, you rarely need all of them.
 
-Following is a list of all available transactions, and two exemplary payment method
-plugins. A "x" indicates that the method is implement, "-" that it is not:
+Following is a list of all available transactions, and two exemplary payment method plugins. A "x" indicates that the method is implement, "-" that it is not:
 
 +----------------------------+------------------+-----------------------+
 | Financial Transaction      | CreditCardPlugin | ElectronicCheckPlugin |
@@ -83,28 +65,21 @@ plugins. A "x" indicates that the method is implement, "-" that it is not:
 | reverseCredit              |        x         |          \-           |
 +----------------------------+------------------+-----------------------+
 
-If you are unsure which transactions to implement, have a look at the ``PluginInterface``
-which contains detailed descriptions for each of them.
+If you are unsure which transactions to implement, have a look at the ``PluginInterface`` which contains detailed descriptions for each of them.
 
 .. tip ::
 
-    In cases, where a certain method does not make sense for your payment backend,
-    you should throw a ``FunctionNotSupportedException``. If you extend the ``AbstractPlugin``
-    base class, this is already done for you.
+    In cases, where a certain method does not make sense for your payment backend, you should throw a ``FunctionNotSupportedException``. If you extend the ``AbstractPlugin`` base class, this is already done for you.
 
-Available Exceptions
+Available exceptions
 --------------------
-Exceptions play an important part in the communication between the different payment plugin,
-and the ``PluginController`` which manages them.
+Exceptions play an important part in the communication between the different payment plugin, and the ``PluginController`` which manages them.
 
-Following is a list with available exceptions, and how they are treated by the ``PluginController``.
-Of course, you can also add your own exceptions, but it is recommend that you sub-class
-an existing exception when doing so.
+Following is a list with available exceptions, and how they are treated by the ``PluginController``. Of course, you can also add your own exceptions, but it is recommend that you sub-class an existing exception when doing so.
 
 .. tip ::
 
-    All exceptions which are relevant for plugins are located in the namespace
-    ``JMS\Payment\CoreBundle\Plugin\Exception``.
+    All exceptions which are relevant for plugins are located in the namespace ``JMS\Payment\CoreBundle\Plugin\Exception``.
 
 +------------------------------------+-----------------------------+---------------------------+
 | Class                              | Description                 | Payment Plugin Controller |
@@ -160,17 +135,13 @@ an existing exception when doing so.
 |                                    | the payment.                |                           |
 +------------------------------------+-----------------------------+---------------------------+
 
-Payment-related User Data
+Payment-related user data
 -------------------------
-The Form Type
+The form type
 ~~~~~~~~~~~~~
-The form type is necessary for collecting, and validating the user data that is necessary
-for your payment method. In the following, we assume that we are designing a form type for
-credit card payment which could look like this:
+The form type is necessary for collecting, and validating the user data that is necessary for your payment method. In the following, we assume that we are designing a form type for credit card payment which could look like this:
 
 .. code-block :: php
-
-    <?php
 
     use Symfony\Component\Form\AbstractType;
     use Symfony\Component\Form\FormBuilderInterface;
@@ -195,10 +166,9 @@ credit card payment which could look like this:
 
 .. note ::
 
-    Make sure to declare all fields as non-required. This is merely affecting
-    the client-side validation, server-side validation is not affected.
+    Make sure to declare all fields as non-required. This is merely affecting the client-side validation, server-side validation is not affected.
 
-Configuring Your Form Type
+Configuring the form type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Now, we need to wire the form type with the dependency injection container:
 
@@ -220,7 +190,7 @@ Now, we need to wire the form type with the dependency injection container:
             <tag name="payment.method_form_type" />
         </service>
 
-Validating the Submitted User Data
+Validating the submitted user data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Validation is handled by your ``Plugin`` class. It contains two methods for this:
 
@@ -230,8 +200,6 @@ Validation is handled by your ``Plugin`` class. It contains two methods for this
 We are now going to implement the ``checkPaymentInstruction`` method for our form type above:
 
 .. code-block :: php
-
-    <?php
 
     use JMS\Payment\CoreBundle\Plugin\AbstractPlugin;
     use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
@@ -272,4 +240,3 @@ We are now going to implement the ``checkPaymentInstruction`` method for our for
 
     The data errors are automatically mapped to the respective fields of the form.
     Global errors are applied to the form itself.
-

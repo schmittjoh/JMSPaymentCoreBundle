@@ -5,6 +5,8 @@
 #
 
 import sphinx_rtd_theme
+from sphinx.highlighting import lexers
+from pygments.lexers.web import PhpLexer
 
 project = u'JMSPaymentCoreBundle'
 
@@ -24,3 +26,7 @@ graphviz_dot_args = [
     '-Gbgcolor=transparent',
     '-Grankdir=LR',
 ]
+
+# Allow omiting ``<?php`` and still have syntax highlighting
+lexers['php'] = PhpLexer(startinline=True)
+lexers['php-annotations'] = PhpLexer(startinline=True)
