@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.2.0] - Unreleased
 ### Added
-- Added Support for Symfony 3.0. Note that Symfony 3.0 introduces BC breaks. This means that you'll probably need to do more than simply updating to version `1.2.0` of this bundle for your code to keep working under Symfony 3.0. Please see Symfony's [Upgrade Guide](https://github.com/symfony/symfony/blob/master/UPGRADE-3.0.md) for information on what you need to change.
+- Support for Symfony 3.0. Note that Symfony 3.0 introduces BC breaks. This means that you'll probably need to do more than simply updating to version `1.2.0` of this bundle for your code to keep working under Symfony 3.0. Please see Symfony's [Upgrade Guide](https://github.com/symfony/symfony/blob/master/UPGRADE-3.0.md) for information on what you need to change.
 
-- Updated examples in documentation for Symfony 3.0.
+- [Docs] More clear and detailed setup instructions
+- [Docs] Much more detailed guide on how to accept payments
+- [Docs] Update examples for Symfony 3
 
 ### Removed
 - Removed support for Symfony `<2.3`. In fact, It's not even guaranteed that versions earlier than `2.3` were ever supported. If you still want to try your chances, use `1.1.*`.

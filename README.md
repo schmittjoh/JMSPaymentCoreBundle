@@ -7,13 +7,14 @@ A unified API for processing payments with Symfony
 
 This bundle provides the foundation for using different payment backends in Symfony projects. It abstracts away the differences between payment protocols and offers a simple and unified API for performing financial transactions.
 
-Key Points:
+Features:
 
-- Simple, Unified API (integrate once, and use any payment provider)
-- Persistence of Financial Entities (such as payments, transactions, etc.)
-- Transaction Management including Retry Logic
-- Encryption of Sensitive Data
-- Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/latest/payment_backends.html) payment backends out of the box
+- Simple, unified API (integrate once and use any payment provider)
+- Persistence of financial entities (such as payments, transactions, etc.)
+- Transaction management including retry logic
+- Encryption of sensitive d≤ata
+- Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/latest/backends.html) payment backends out of the box
+- Easily support other payment backends
 
 # Documentation
 
