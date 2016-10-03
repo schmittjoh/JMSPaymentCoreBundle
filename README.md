@@ -12,7 +12,7 @@ Features:
 - Simple, unified API (integrate once and use any payment provider)
 - Persistence of financial entities (such as payments, transactions, etc.)
 - Transaction management including retry logic
-- Encryption of sensitive d≤ata
+- Encryption of sensitive data
 - Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/latest/backends.html) payment backends out of the box
 - Easily support other payment backends
 
