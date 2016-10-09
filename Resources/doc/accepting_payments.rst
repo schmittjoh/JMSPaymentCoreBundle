@@ -414,7 +414,11 @@ Now we'll call the ``createPayment`` method we implemented in the previous secti
             ]));
         }
 
-        throw new \Exception('Transaction was not successful: '.$result->getReasonCode());
+        throw $result->getPluginException();
+
+        // In a real-world application you wouldn't throw the exception. You would,
+        // for example, redirect to the showAction with a flash message informing
+        // the user that the payment was not successful.
     }
 
 
@@ -422,9 +426,7 @@ Now we'll call the ``createPayment`` method we implemented in the previous secti
 
     If you get an ``Unable to generate a URL`` exception, the transaction was successful. We just haven't created that action yet, we will be doing so later.
 
-.. tip ::
-
-    If you get a ``Transaction was not successful exception`` you might be using a payment backend which requires *offsite* operations. In the next section we explain what this means and how to support this.
+    If you get an ``ActionRequiredException``, you are using a payment backend which requires *offsite* operations. In the next section we explain what this means and how to support it.
 
 Performing the payment *offsite*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -450,16 +452,14 @@ We would add the following to our action:
             if ($action instanceof VisitUrl) {
                 return $this->redirect($action->getUrl());
             }
-
-            throw $ex;
         }
     }
 
-    throw new \Exception('Transaction was not successful: '.$result->getReasonCode());
+    throw $result->getPluginException();
 
 .. tip ::
 
-    If you get a ``Transaction was not successful exception`` you probably didn't configure the payment plugin correctly. Take a look at the respective plugin's documentation and make sure you followed the instructions.
+    If you get an exception, you probably didn't configure the payment plugin correctly. Take a look at the respective plugin's documentation and make sure you followed the instructions.
 
 Displaying a *Payment complete* page
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
