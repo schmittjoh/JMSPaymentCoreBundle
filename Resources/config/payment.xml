@@ -13,6 +13,7 @@
         <parameter key="payment.plugin_controller.entity.options.credit_class">JMS\Payment\CoreBundle\Entity\Credit</parameter>
 
         <parameter key="payment.form.choose_payment_method_type.class">JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType</parameter>
+        <parameter key="payment.form.choose_payment_method_transformer.class">JMS\Payment\CoreBundle\Form\Transformer\ChoosePaymentMethodTransformer</parameter>
 
         <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
@@ -43,9 +44,15 @@
             <argument>%payment.encryption_service.mode%</argument>
         </service>
 
+        <service id="payment.form.choose_payment_method_transformer" class="%payment.form.choose_payment_method_transformer.class%" />
+
         <service id="payment.form.choose_payment_method_type" class="%payment.form.choose_payment_method_type.class%">
             <argument type="service" id="payment.plugin_controller" />
             <tag name="form.type" alias="jms_choose_payment_method" />
+            <call method="setDataTransformer">
+                <argument type="service" id="payment.form.choose_payment_method_transformer" />
+            </call>
         </service>
+
     </services>
 </container>
