@@ -126,9 +126,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $options = array(
             'currency' => 'EUR',
-            'amount' => function () {
-                return '10.42';
-            },
+            'amount' => '10.42',
             'predefined_data' => array(
                 'foo' => new self(),
             ),
@@ -141,9 +139,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $options = array(
             'currency' => 'EUR',
-            'amount' => function () {
-                return '10.42';
-            },
+            'amount' => '10.42',
             'predefined_data' => array(
                 'foo' => array(
                     'bar' => 'baz',
