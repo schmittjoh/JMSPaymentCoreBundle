@@ -19,7 +19,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testTransformNotPaymentInstructionObject()
     {
-        $this->assertNull($this->transform(new self()));
+        $this->transform(new self());
     }
 
     public function testTransform()
@@ -68,7 +68,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testReverseTransformNotArray()
     {
-        $this->assertNull($this->reverseTransform(new self()));
+        $this->reverseTransform(new self());
     }
 
     /**
@@ -77,7 +77,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testReverseTransformNoAmount()
     {
-        $this->assertNull($this->reverseTransform(array()));
+        $this->reverseTransform(array());
     }
 
     /**
@@ -86,7 +86,7 @@ class ChoosePaymentMethodTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testReverseTransformNoCurrency()
     {
-        $this->assertNull($this->reverseTransform(array(), array('amount' => '10.42')));
+        $this->reverseTransform(array(), array('amount' => '10.42'));
     }
 
     public function testReverseTransform()

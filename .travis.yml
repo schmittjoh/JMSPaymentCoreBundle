@@ -13,15 +13,11 @@ matrix:
     # HHVM
     - php: hhvm
       env: SYMFONY_VERSION=3.1.*
-    # current PHP with all non-EOLed Symfony versions
+    # current PHP with all relevant Symfony versions
     - php: 7.0
       env: SYMFONY_VERSION=2.3.*
     - php: 7.0
-      env: SYMFONY_VERSION=2.7.*
-    - php: 7.0
       env: SYMFONY_VERSION=2.8.*
-    - php: 7.0
-      env: SYMFONY_VERSION=3.0.*
     - php: 7.0
       env: SYMFONY_VERSION=3.1.*
     - php: 7.0

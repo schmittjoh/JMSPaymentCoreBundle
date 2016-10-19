@@ -99,7 +99,6 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
             'default_method' => 'foo',
         ));
 
-        $this->assertTrue($form->isSynchronized());
         $this->assertEquals('foo', $form->get('method')->getConfig()->getOption('data'));
     }
 
@@ -112,8 +111,6 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
         $form = $this->createForm(array(
             'allowed_methods' => array('bar'),
         ));
-
-        $this->assertTrue($form->isSynchronized());
 
         $choices = $form->get('method')->getConfig()->getOption('choices');
         $this->assertArrayNotHasKey('form.label.foo', $choices);
@@ -136,6 +133,37 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
         $choices = $form->get('method')->getConfig()->getOption('choices');
         $this->assertArrayNotHasKey('foo', $choices);
         $this->assertArraySubset(array('bar' => 'form.label.bar'), $choices);
+    }
+
+    public function testMethodOptions()
+    {
+        $form = $this->createForm(array('method_options' => array(
+            'foo' => array(
+                'attr' => array('foo_attr'),
+            ),
+            'bar' => array(
+                'attr' => array('bar_attr'),
+            ),
+        )));
+
+        foreach (array('foo', 'bar') as $method) {
+            $this->assertArraySubset(
+                array($method.'_attr'),
+                $form->get('data_'.$method)->getConfig()->getOption('attr')
+            );
+        }
+    }
+
+    public function testChoiceOptions()
+    {
+        $form = $this->createForm(array('choice_options' => array(
+            'expanded' => false,
+            'data' => 'baz',
+        )));
+
+        $config = $form->get('method')->getConfig();
+        $this->assertFalse($config->getOption('expanded'));
+        $this->assertEquals('baz', $config->getOption('data'));
     }
 
     private function createForm($options = array(), $data = array())

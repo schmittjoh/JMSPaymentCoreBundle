@@ -46,32 +46,11 @@ class ChoosePaymentMethodType extends AbstractType
     {
         $options['available_methods'] = $this->getPaymentMethods($options['allowed_methods']);
 
-        $choiceType = Legacy::supportsFormTypeName()
-            ? 'choice'
-            : 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
-        ;
+        $this->buildChoiceList($builder, $options);
 
-        $builderOptions = array(
-            'expanded' => true,
-            'data'     => $options['default_method'],
-        );
-
-        $builderOptions['choices'] = array();
-        foreach ($options['available_methods'] as $methodKey => $methodClass) {
-            $label = 'form.label.'.$methodKey;
-
-            if (Legacy::formChoicesAsValues()) {
-                $builderOptions['choices'][$methodKey] = $label;
-            } else {
-                $builderOptions['choices'][$label] = $methodKey;
-            }
-        }
-
-        $builder->add('method', $choiceType, $builderOptions);
-
-        foreach ($options['available_methods'] as $methodKey => $methodClass) {
-            $methodOptions = isset($options['method_options'][$methodKey]) ? $options['method_options'] : array();
-            $builder->add('data_'.$methodKey, $methodClass, $methodOptions);
+        foreach ($options['available_methods'] as $method => $class) {
+            $methodOptions = isset($options['method_options'][$method]) ? $options['method_options'][$method] : array();
+            $builder->add('data_'.$method, $class, $methodOptions);
         }
 
         $self = $this;
@@ -88,6 +67,43 @@ class ChoosePaymentMethodType extends AbstractType
 
         $transformer->setOptions($options);
         $builder->addModelTransformer($transformer);
+    }
+
+    protected function buildChoiceList(FormBuilderInterface $builder, array $options)
+    {
+        $methods = $options['available_methods'];
+        $choiceOptions = $options['choice_options'];
+
+        $options = array_merge(array(
+            'expanded' => true,
+            'data' => $options['default_method'],
+        ), $options);
+
+        // Remove unwanted options
+        $options = array_intersect_key($options, array_flip(array(
+            'expanded',
+            'data',
+        )));
+
+        $options = array_merge($options, $choiceOptions);
+
+        $options['choices'] = array();
+        foreach (array_keys($methods) as $method) {
+            $label = 'form.label.'.$method;
+
+            if (Legacy::formChoicesAsValues()) {
+                $options['choices'][$method] = $label;
+            } else {
+                $options['choices'][$label] = $method;
+            }
+        }
+
+        $type = Legacy::supportsFormTypeName()
+            ? 'choice'
+            : 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+        ;
+
+        $builder->add('method', $type, $options);
     }
 
     public function validate(FormEvent $event, array $options)
@@ -122,31 +138,35 @@ class ChoosePaymentMethodType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'allowed_methods' => array(),
-            'default_method'  => null,
-            'predefined_data' => array(),
-        ));
-
         $resolver->setRequired(array(
             'amount',
             'currency',
         ));
 
+        $resolver->setDefaults(array(
+            'predefined_data' => array(),
+            'allowed_methods' => array(),
+            'default_method'  => null,
+            'method_options'  => array(),
+            'choice_options'  => array(),
+        ));
+
+        $allowedTypes = array(
+            'amount'          => array('numeric', 'closure'),
+            'currency'        => 'string',
+            'predefined_data' => 'array',
+            'allowed_methods' => 'array',
+            'default_method'  => array('null', 'string'),
+            'method_options'  => 'array',
+            'choice_options'  => 'array',
+        );
+
         if (Legacy::supportsFormTypeConfigureOptions()) {
-            $resolver->setAllowedTypes(array(
-                'allowed_methods' => 'array',
-                'amount'          => array('numeric', 'closure'),
-                'currency'        => 'string',
-                'predefined_data' => 'array',
-            ));
+            $resolver->setAllowedTypes($allowedTypes);
         } else {
-            $resolver
-                ->setAllowedTypes('allowed_methods', 'array')
-                ->setAllowedTypes('amount', array('numeric', 'closure'))
-                ->setAllowedTypes('currency', 'string')
-                ->setAllowedTypes('predefined_data', 'array')
-            ;
+            foreach ($allowedTypes as $key => $value) {
+                $resolver->addAllowedTypes($key, $value);
+            }
         }
     }
 
@@ -200,9 +220,9 @@ class ChoosePaymentMethodType extends AbstractType
         }
     }
 
-    private function getPaymentMethods($allowedMethods = array())
+    private function getPaymentMethods($allowedMethods)
     {
-        $allowAllMethods = !count($allowedMethods);
+        $allowAllMethods = empty($allowedMethods);
         $availableMethods = array();
 
         foreach ($this->paymentMethods as $methodKey => $methodClass) {
