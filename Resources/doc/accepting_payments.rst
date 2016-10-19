@@ -180,7 +180,7 @@ Once the ``Order`` has been created, the next step in our *Checkout* process is 
         ];
     }
 
-.. tip ::
+.. note ::
 
     If your Symfony version is earlier than ``3.0``, you must refer to the form by its alias instead of using the class directly:
 
@@ -212,77 +212,8 @@ If you now refresh the page in your browser, you should see the template rendere
 
     If you get a ``There is no payment method available`` exception, you haven't configured any payment backends yet. Please see :ref:`setup-configure-plugin` for information on how to do this.
 
-Customizing payment methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The payment plugins likely require you to provide additional configuration in order to create a payment. You can do this by passing an array to the ``predefined_data`` option of the form.
-
-As an example, if we would be using the Stripe plugin, we would need to provide a ``description``, which would look like the following:
-
-.. code-block :: php
-
-    // src/AppBundle/Controller/OrdersController.php
-
-    use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-
-    $config = [
-        'stripe_checkout' => [
-            'description' => 'My product',
-        ],
-    ];
-
-    $form = $this->createForm(ChoosePaymentMethodType::class, null, [
-        'amount'          => $order->getAmount(),
-        'currency'        => 'EUR',
-        'predefined_data' => $config,
-    ]);
-
-If you would be using multiple payment backends, the ``$config`` array would have an entry for each of the methods:
-
-.. code-block :: php
-
-    // src/AppBundle/Controller/OrdersController.php
-
-    $config = [
-        'paypal_express_checkout' => [...],
-        'stripe_checkout'         => [...],
-    ];
-
-Choosing payment methods
-~~~~~~~~~~~~~~~~~~~~~~~~
-In case you wish to constrain the methods presented to the user, use the ``allowed_methods`` option:
-
-.. code-block :: php
-
-    // src/AppBundle/Controller/OrdersController.php
-
-    use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-
-    $form = $this->createForm(ChoosePaymentMethodType::class, null, [
-        'amount'          => $order->getAmount(),
-        'currency'        => 'EUR',
-        'predefined_data' => $config,
-        'allowed_methods' => ['paypal_express_checkout']
-    ]);
-
-Setting a default payment method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-By default, no payment method is selected in the radio button, which means users must select one themselves. This is the case even if you only have one payment method available.
-
-If you wish to set a default payment method, you can use the ``default_method`` option:
-
-.. code-block :: php
-
-    // src/AppBundle/Controller/OrdersController.php
-
-    use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-
-    $form = $this->createForm(ChoosePaymentMethodType::class, null, [
-        'amount'          => $order->getAmount(),
-        'currency'        => 'EUR',
-        'predefined_data' => $config,
-        'allowed_methods' => ['paypal_express_checkout'],
-        'default_method'  => 'paypal_express_checkout',
-    ]);
+.. tip ::
+    See :doc:`payment_form` for information on all the available options you can pass to the form.
 
 Handling form submission
 ------------------------
@@ -335,29 +266,6 @@ Note that no remote calls to the payment backend are made in this action, we're 
             'form'  => $form->createView(),
         ];
     }
-
-Changing the amount dynamically
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You might want to add extra costs for a specific payment method. You can implement this by passing a closure to the ``amount`` option of the form:
-
-.. code-block :: php
-
-    // src/AppBundle/Controller/OrdersController.php
-
-    use JMS\Payment\CoreBundle\Entity\ExtendedData;
-    use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-
-    $amount = function ($currency, $paymentSystemName, ExtendedData $data) use ($order) {
-        return $paymentSystemName === 'paypal_express_checkout'
-            ? $order->getAmount() * 1.05
-            : $order->getAmount();
-    };
-
-    $form = $this->createForm(ChoosePaymentMethodType::class, null, [
-        'amount'   => $amount,
-        'currency' => 'EUR',
-    ]);
 
 Depositing money
 ----------------
@@ -479,55 +387,3 @@ The last step in out *Checkout* process is to tell the user the payment was succ
     {
         return new Response('Payment complete');
     }
-
-Changing how the form looks
----------------------------
-If you need to change how the form looks, you can use form theming, which allows you to customize how each element of the form is rendered. Our theme will be implemented in a separate Twig file, which we will then reference from the template where the form is rendered.
-
-.. tip ::
-
-    See the form component's `documentation <https://symfony.com/doc/current/form/form_customization.html>`_ for more information about form theming
-
-Start by creating an empty theme file:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
-
-    {% extends 'form_div_layout.html.twig' %}
-
-.. note ::
-
-    We're extending Symfony's default ``form_div_layout.html.twig`` theme. If your application is setup to use another theme, you probably want to extend that one instead.
-
-And then reference it from the template where the form is rendered:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/show.html.twig #}
-
-    {% form_theme form 'AppBundle:Orders:theme.html.twig' %}
-
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Pay € {{ order.amount }}" />
-    {{ form_end(form) }}
-
-Hiding the payment method radio button
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the form only has one available payment method (either because only one payment plugin is installed or because you used the ``allowed_methods`` option) you likely want to hide the payment method radio button completely. You can do so as follows:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
-
-    {# Don't render the radio button's label #}
-    {% block _jms_choose_payment_method_method_label %}
-    {% endblock %}
-
-    {# Hide each entry in the radio button #}
-    {% block _jms_choose_payment_method_method_widget %}
-        <div style="display: none;">
-            {{ parent() }}
-        </div>
-    {% endblock %}
