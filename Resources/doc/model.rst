@@ -1,5 +1,5 @@
-The Model
-=========
+Model
+=====
 
 PaymentInstruction
 ------------------
@@ -13,12 +13,9 @@ Below you find the different states that a ``PaymentInstruction`` can go through
 
 .. digraph:: PaymentInstruction_State_Flow
 
-    "Start" -> "New";
     "New" -> "Valid";
     "New" -> "Invalid";
     "Valid" -> "Closed";
-    "Invalid" -> "End";
-    "Closed" -> "End";
 
 Payment
 -------
@@ -29,8 +26,6 @@ This allows, for example, to request a fraction of the total amount to be deposi
 Below, you find the different states that a ``Payment`` can go through:
 
 .. digraph:: Payment_State_Flow
-
-    "Start" -> "New";
 
     "New" -> "Canceled"
     "New" -> "Approving"
@@ -43,11 +38,6 @@ Below, you find the different states that a ``Payment`` can go through:
     "Depositing" -> "Deposited"
     "Depositing" -> "Expired"
     "Depositing" -> "Failed"
-
-    "Canceled" -> "End"
-    "Failed" -> "End"
-    "Expired" -> "End"
-    "Deposited" -> "End"
 
 .. _model-financial-transaction:
 
@@ -63,8 +53,6 @@ Below, you find the different states that a ``FinancialTransaction`` can go thro
 
 .. digraph:: Financial_Transaction_State_Flow
 
-    "Start" -> "New"
-
     "New" -> "Pending"
     "New" -> "Failed"
     "New" -> "Success"
@@ -72,7 +60,3 @@ Below, you find the different states that a ``FinancialTransaction`` can go thro
 
     "Pending" -> "Failed"
     "Pending" -> "Success"
-
-    "Failed" -> "End"
-    "Success" -> "End"
-    "Canceled" -> "End"

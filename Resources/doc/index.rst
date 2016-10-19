@@ -22,6 +22,7 @@ Table of Contents
 
     setup
     accepting_payments
+    payment_form
     events
     plugins
     model
