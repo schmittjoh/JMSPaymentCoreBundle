@@ -48,23 +48,17 @@ class OrderController extends Controller
             : $this->get('request_stack')->getCurrentRequest()
         ;
 
-        if ('POST' === $request->getMethod()) {
-            if (Legacy::supportsHandleRequest()) {
-                $form->handleRequest($request);
-            } else {
-                $form->bindRequest($request);
-            }
+        $form->handleRequest($request);
 
-            if ($form->isValid()) {
-                $instruction = $form->getData();
-                $ppc->createPaymentInstruction($instruction);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $instruction = $form->getData();
+            $ppc->createPaymentInstruction($instruction);
 
-                $order->setPaymentInstruction($instruction);
-                $em->persist($order);
-                $em->flush();
+            $order->setPaymentInstruction($instruction);
+            $em->persist($order);
+            $em->flush();
 
-                return new Response('', 201);
-            }
+            return new Response('', 201);
         }
 
         return array('form' => $form->createView());
