@@ -4,6 +4,10 @@ namespace JMS\Payment\CoreBundle\Util;
 
 use Symfony\Component\HttpKernel\Kernel;
 
+/**
+ * @internal This class is meant for internal use and will not be subject to
+ * semantic versioning. Do not use in code outside this bundle
+ */
 class Legacy
 {
     /**
@@ -24,14 +28,6 @@ class Legacy
     public static function supportsFormTypeConfigureOptions()
     {
         return version_compare(Kernel::VERSION, '3.0.0', '<');
-    }
-
-    /**
-     * Form::handleRequest was introduced in Symfony 2.3.
-     */
-    public static function supportsHandleRequest()
-    {
-        return version_compare(Kernel::VERSION, '2.3.0', '>=');
     }
 
     /**
