@@ -375,7 +375,6 @@ class EntityPluginController extends PluginController
     protected function doRollback(\Exception $failure)
     {
         $this->entityManager->getConnection()->rollback();
-        $this->entityManager->close();
 
         throw $failure;
     }
