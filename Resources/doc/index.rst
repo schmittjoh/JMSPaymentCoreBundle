@@ -19,7 +19,7 @@ Getting started
 ---------------
 Once you followed the :doc:`setup` instructions, if you have no prior experience with this bundle or payment processing in general, you should follow the :doc:`guides/accepting_payments` guide.
 
-Once you grasp the how this bundle works, take a look at the :doc:`payment_form` chapter to learn how to customize the form.
+Once you grasp how this bundle works, take a look at the :doc:`payment_form` chapter to learn how to customize the form.
 
 License
 -------
