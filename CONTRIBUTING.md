@@ -30,9 +30,9 @@ You also need to install [Graphviz](http://www.graphviz.org), which is used for 
 Build the documentation with:
 
     source venv/bin/activate
-    sphinx-build Resources/doc Resources/doc/_build
+    sphinx-build -E Resources/doc Resources/doc/_build
 
 Alternatively, use `sphinx-autobuild` to watch changes and automatically refresh the browser:
 
     source venv/bin/activate
-    sphinx-autobuild -B Resources/doc Resources/doc/_build
+    sphinx-autobuild -E -B Resources/doc Resources/doc/_build

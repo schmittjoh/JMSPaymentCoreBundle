@@ -15,20 +15,32 @@ Features:
 - Support for :doc:`many <backends>` payment backends out of the box
 - Easily support other payment backends
 
-Table of Contents
------------------
+Getting started
+---------------
+Once you followed the :doc:`setup` instructions, if you have no prior experience with this bundle or payment processing in general, you should follow the :doc:`guides/accepting_payments` guide.
+
+Once you grasp the how this bundle works, take a look at the :doc:`payment_form` chapter to learn how to customize the form.
+
+License
+-------
+- Code: `Apache2 <http://www.apache.org/licenses/LICENSE-2.0.html>`_
+- Docs: `CC BY-NC-ND 3.0 <http://creativecommons.org/licenses/by-nc-nd/3.0/>`_
+
 .. toctree ::
+    :hidden:
     :maxdepth: 1
 
     setup
-    accepting_payments
     payment_form
     events
     plugins
     model
     backends
 
-License
--------
-- Code: `Apache2 <http://www.apache.org/licenses/LICENSE-2.0.html>`_
-- Docs: `CC BY-NC-ND 3.0 <http://creativecommons.org/licenses/by-nc-nd/3.0/>`_
+.. toctree::
+   :hidden:
+   :caption: Guides
+   :maxdepth: 1
+   :glob:
+
+   guides/*

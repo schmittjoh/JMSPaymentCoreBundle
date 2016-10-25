@@ -1,10 +1,13 @@
-Payment Form
+Payment form
 ============
 This bundle ships with a form type that automatically renders a ``choice`` (radio button, select) so that the user can choose their preferred payment method.
 
 Additionally, each payment plugin you have installed, includes a specific form that is also rendered. This form is dependent on the payment method itself, different methods will have different forms.
 
 As an example, if you have both the PayPal and Paymill plugins installed, both their forms will be rendered. In PayPal's case, the form is empty (since the user does not enter any information on your site) but for Paymill a Credit Card form is rendered.
+
+.. tip ::
+    See the :doc:`guides/accepting_payments` guide for detailed instructions on how to integrate the form in your application, namely how to handle form submission.
 
 Creating the form
 -----------------
@@ -34,8 +37,60 @@ When creating the form you need to specify at least the ``amount`` and ``currenc
             'currency' => 'EUR',
         ]);
 
+Changing how the form looks
+---------------------------
+If you need to change how the form looks, you can use form theming, which allows you to customize how each element of the form is rendered. Our theme will be implemented in a separate Twig file, which we will then reference from the template where the form is rendered.
+
 .. tip ::
-    See the :doc:`accepting_payments` guide for detailed information on how to integrate the form in your application.
+
+    See the form component's `documentation <https://symfony.com/doc/current/form/form_customization.html>`_ for more information about form theming
+
+Start by creating an empty theme file:
+
+.. code-block :: twig
+
+    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
+
+    {% extends 'form_div_layout.html.twig' %}
+
+.. note ::
+
+    We're extending Symfony's default ``form_div_layout.html.twig`` theme. If your application is setup to use another theme, you probably want to extend that one instead.
+
+And then reference it from the template where the form is rendered:
+
+.. code-block :: twig
+
+    {# src/AppBundle/Resources/views/Orders/show.html.twig #}
+
+    {% form_theme form 'AppBundle:Orders:theme.html.twig' %}
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type="submit" value="Pay € {{ order.amount }}" />
+    {{ form_end(form) }}
+
+Hiding the payment method radio button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the form only has one available payment method (either because only one payment plugin is installed or because you used the ``allowed_methods`` option) you likely want to hide the payment method radio button completely. You can do so as follows:
+
+.. code-block :: twig
+
+    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
+
+    {# Don't render the radio button's label #}
+    {% block _jms_choose_payment_method_method_label %}
+    {% endblock %}
+
+    {# Hide each entry in the radio button #}
+    {% block _jms_choose_payment_method_method_widget %}
+        <div style="display: none;">
+            {{ parent() }}
+        </div>
+    {% endblock %}
+
+.. tip ::
+    If you hide the radio button, you will want to use the :ref:`form-default-method` option to automatically select the payment method.
 
 Available options
 -----------------
@@ -228,58 +283,3 @@ Pass options to each payment method's form type. For example, to hide the main l
             ],
         ],
     ]);
-
-Changing how the form looks
----------------------------
-If you need to change how the form looks, you can use form theming, which allows you to customize how each element of the form is rendered. Our theme will be implemented in a separate Twig file, which we will then reference from the template where the form is rendered.
-
-.. tip ::
-
-    See the form component's `documentation <https://symfony.com/doc/current/form/form_customization.html>`_ for more information about form theming
-
-Start by creating an empty theme file:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
-
-    {% extends 'form_div_layout.html.twig' %}
-
-.. note ::
-
-    We're extending Symfony's default ``form_div_layout.html.twig`` theme. If your application is setup to use another theme, you probably want to extend that one instead.
-
-And then reference it from the template where the form is rendered:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/show.html.twig #}
-
-    {% form_theme form 'AppBundle:Orders:theme.html.twig' %}
-
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Pay € {{ order.amount }}" />
-    {{ form_end(form) }}
-
-Hiding the payment method radio button
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the form only has one available payment method (either because only one payment plugin is installed or because you used the ``allowed_methods`` option) you likely want to hide the payment method radio button completely. You can do so as follows:
-
-.. code-block :: twig
-
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
-
-    {# Don't render the radio button's label #}
-    {% block _jms_choose_payment_method_method_label %}
-    {% endblock %}
-
-    {# Hide each entry in the radio button #}
-    {% block _jms_choose_payment_method_method_widget %}
-        <div style="display: none;">
-            {{ parent() }}
-        </div>
-    {% endblock %}
-
-.. tip ::
-    If you hide the radio button, you will want to use the :ref:`form-default-method` option to automatically select the payment method.

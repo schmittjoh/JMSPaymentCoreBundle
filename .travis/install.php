@@ -12,10 +12,16 @@ if (isLatestPhp() && isLatestSymfony()) {
     // latest symfony version.
     run('composer update --prefer-dist');
 } else {
-    if (getPhpVersion() === '5.3' && getSymfonyVersion() === '2.8.*') {
+    if (getPhpVersion() === '5.3') {
         // Prevent Travis throwing an out of memory error
-        run('echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini');
+        run('echo "memory_limit=-1" >> ~/.phpenv/versions/5.3/etc/conf.d/travis.ini');
     }
 
     run('composer require --prefer-dist symfony/symfony:'.getSymfonyVersion());
+}
+
+if (shouldBuildDocs()) {
+    run('sudo apt-get -qq update');
+    run('sudo apt-get install -y graphviz');
+    run('sudo -H pip install -r requirements.txt');
 }
