@@ -15,11 +15,17 @@ extensions = [
     'sphinx.ext.graphviz',
 ]
 
+nitpicky = True
+
 master_doc = 'index'
 
 html_show_copyright = False
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_static_path = ['_static']
+
+def setup(app):
+    app.add_stylesheet('custom.css')
 
 graphviz_output_format = 'png'
 graphviz_dot_args = [

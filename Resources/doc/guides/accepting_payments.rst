@@ -1,6 +1,6 @@
-Accepting Payments
+Accepting payments
 ==================
-In this chapter, we explore how to accept payments using this bundle, by building a simplified *Checkout* system from scratch.
+In this guide, we explore how to accept payments using this bundle, by building a simplified *Checkout* system from scratch.
 
 .. tip ::
     In no way are you forced to use the presented system in your application, this is merely the simplest way to show this bundle in action. We recomend you follow the steps below and, once you grasp how this bundle works, think about the best way to integrate it into your application.
@@ -19,7 +19,7 @@ The ``Order`` entity represents what is being purchased and usually contains:
 
 .. tip ::
 
-    If you're wondering what a ``PaymentInstruction`` is, take a look at :doc:`The Model <model>`, though you don't strictly need to understand it to follow the instructions below.
+    If you're wondering what a ``PaymentInstruction`` is, take a look at :doc:`The Model </model>`, though you don't strictly need to understand it to follow the instructions below.
 
 Here's the full code for a minimal ``Order`` entity:
 
@@ -213,7 +213,7 @@ If you now refresh the page in your browser, you should see the template rendere
     If you get a ``There is no payment method available`` exception, you haven't configured any payment backends yet. Please see :ref:`setup-configure-plugin` for information on how to do this.
 
 .. tip ::
-    See :doc:`payment_form` for information on all the available options you can pass to the form.
+    See :doc:`/payment_form` for information on all the available options you can pass to the form.
 
 Handling form submission
 ------------------------

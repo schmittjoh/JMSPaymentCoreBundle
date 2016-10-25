@@ -1,8 +1,8 @@
 <?php
 
-function withCodeCoverage()
+function shouldBuildDocs()
 {
-    return isLatestPhp() && in_array(getSymfonyVersion(), array('2.3.*', '3.1.*'));
+    return isLatestPhp() && isLatestSymfony();
 }
 
 function isHhvm()

@@ -116,3 +116,7 @@ And configure it:
 .. note ::
 
     :doc:`Other plugins <backends>` will require different configuration. Take a look at their documentation for complete instructions.
+
+Next steps
+----------
+If you have no prior experience with this bundle or payment processing in general, you should follow the :doc:`guides/accepting_payments` guide. Otherwise, proceed to the :doc:`payment_form` chapter.

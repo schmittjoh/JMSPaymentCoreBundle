@@ -3,6 +3,11 @@ language: php
 branches:
   only:
     - master
+
+before_install: ./.travis/before_install.php
+install: ./.travis/install.php
+script: ./.travis/script.php
+
 matrix:
   include:
     # old PHP versions with latest Symfony version
@@ -24,7 +29,3 @@ matrix:
       env: SYMFONY_VERSION=dev-master
   allow_failures:
     - env: SYMFONY_VERSION=dev-master
-
-before_install: ./.travis/before_install.php
-install: ./.travis/install.php
-script: ./.travis/script.php
