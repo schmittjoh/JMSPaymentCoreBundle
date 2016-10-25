@@ -79,7 +79,9 @@ Here's the full code for a minimal ``Order`` entity:
 
 .. warning ::
 
-    Note the *precision* and *scale* in the ``$amount`` column definition, which are set to 10 and 5 respectively. This means that the greatest amount you will be able to accept is 99999.99999.
+    Note that the ``precision`` and ``scale`` in the ``$amount`` column definition are set to ``10`` and ``5``, respectively. This is consistent with the mapping this bundle uses internally and means that the greatest amount you will be able to accept is ``99999.99999``.
+
+    See the :doc:`overriding_entity_mapping` guide for instructions on how to override this limit.
 
 Before proceeding, make sure you update your database schema, in order to create the ``orders`` table:
 

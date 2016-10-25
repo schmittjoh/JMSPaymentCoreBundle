@@ -7,7 +7,7 @@
 
     <entity name="JMS\Payment\CoreBundle\Entity\Payment" table="payments" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
-        
+
         <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
         <field name="approvingAmount" column="approving_amount" type="decimal" scale="5" />
         <field name="creditedAmount" column="credited_amount" type="decimal" scale="5" />
@@ -24,25 +24,25 @@
         <field name="expired" type="boolean" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
-        
+
         <many-to-one field="paymentInstruction" target-entity="PaymentInstruction" inversed-by="payments">
-            <join-column name="payment_instruction_id" 
-                         referenced-column-name="id" 
-                         nullable="false" 
+            <join-column name="payment_instruction_id"
+                         referenced-column-name="id"
+                         nullable="false"
                          on-delete="CASCADE" />
         </many-to-one>
-        
+
         <one-to-many field="transactions" mapped-by="payment" target-entity="FinancialTransaction">
             <cascade>
                 <cascade-remove/>
                 <cascade-refresh/>
             </cascade>
         </one-to-many>
-        
+
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPreSave" />
             <lifecycle-callback type="preUpdate" method="onPreSave" />
         </lifecycle-callbacks>
     </entity>
-    
-</doctrine-mapping> 
+
+</doctrine-mapping>
