@@ -12,7 +12,7 @@ This is the list of currently supported payment backends, through community-crea
 - `Atos SIPS <https://github.com/KptiveStudio/KptivePaymentSipsBundle>`_
 - `Be2Bill (Rentabiliweb) <https://github.com/rezzza/PaymentBe2billBundle>`_
 - `Dotpay <https://github.com/ETSGlobal/ETSPaymentDotpayBundle>`_
-- `Ogone <https://github.com/ETSGlobal/ETSPaymentDotpayBundle>`_
+- `Ogone <https://github.com/ETSGlobal/ETSPaymentOgoneBundle>`_
 - `Merchant e-Solutions (Trident) <https://github.com/immersivelabs/PaymentMeSBundle>`_
 - `Mollie <https://github.com/ruudk/PaymentMollieBundle>`_
 - `Multisafepay <https://github.com/ruudk/PaymentMultisafepayBundle>`_
