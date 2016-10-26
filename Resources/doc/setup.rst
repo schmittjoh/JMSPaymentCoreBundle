@@ -73,7 +73,7 @@ Or, if you're using migrations:
 
 .. warning ::
 
-    It's assumed you have entity auto mapping enabled, which is usually the case. If you don't, you need to either enabled it:
+    It's assumed you have entity auto mapping enabled, which is usually the case. If you don't, you need to either enable it:
 
     .. code-block :: yaml
 
@@ -83,7 +83,7 @@ Or, if you're using migrations:
             orm:
                 auto_mapping: true
 
-    Or explicitely register the configuration from this bunde:
+    Or explicitly register the configuration from this bundle:
 
     .. code-block :: yaml
 
