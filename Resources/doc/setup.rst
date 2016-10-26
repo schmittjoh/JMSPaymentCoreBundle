@@ -71,6 +71,29 @@ Or, if you're using migrations:
     bin/console doctrine:migrations:diff
     bin/console doctrine:migrations:migrate
 
+.. warning ::
+
+    It's assumed you have entity auto mapping enabled, which is usually the case. If you don't, you need to either enabled it:
+
+    .. code-block :: yaml
+
+        # app/config/config.yml
+
+        doctrine:
+            orm:
+                auto_mapping: true
+
+    Or explicitely register the configuration from this bunde:
+
+    .. code-block :: yaml
+
+        # app/config/config.yml
+
+        doctrine:
+            orm:
+                mappings:
+                    JMSPaymentCoreBundle: ~
+
 .. _setup-configure-plugin:
 
 Configure a payment backend

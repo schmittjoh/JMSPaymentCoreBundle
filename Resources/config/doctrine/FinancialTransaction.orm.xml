@@ -7,7 +7,7 @@
 
     <entity name="JMS\Payment\CoreBundle\Entity\FinancialTransaction" table="financial_transactions" change-tracking-policy="DEFERRED_EXPLICIT">
         <id name="id" type="integer"><generator strategy="AUTO"/></id>
-        
+
         <field name="extendedData" column="extended_data" type="extended_payment_data" nullable="true" />
         <field name="processedAmount" column="processed_amount" type="decimal" scale="5" />
         <field name="reasonCode" column="reason_code" type="string" length="100" nullable="true" />
@@ -19,17 +19,17 @@
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         <field name="trackingId" column="tracking_id" type="string" length="100" nullable="true" />
         <field name="transactionType" column="transaction_type" type="smallint" />
-        
+
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="onPrePersist"/>
             <lifecycle-callback type="preUpdate" method="onPrePersist" />
             <lifecycle-callback type="postLoad" method="onPostLoad" />
         </lifecycle-callbacks>
-        
+
         <many-to-one field="credit" target-entity="Credit" inversed-by="transactions">
             <join-column name="credit_id" nullable="true" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
-        
+
         <many-to-one field="payment" target-entity="Payment" inversed-by="transactions">
             <join-column name="payment_id" nullable="true" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
