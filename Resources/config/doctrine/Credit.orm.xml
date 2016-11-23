@@ -10,6 +10,7 @@
 
         <indexes>
             <index columns="attention_required"/>
+            <index name="attention_required_id_index" columns="attention_required,id"/>
         </indexes>
 
         <field name="attentionRequired" column="attention_required" type="boolean" />
