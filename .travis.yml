@@ -1,9 +1,5 @@
 language: php
 
-branches:
-  only:
-    - master
-
 before_install: ./.travis/before_install.php
 install: ./.travis/install.php
 script: ./.travis/script.php
