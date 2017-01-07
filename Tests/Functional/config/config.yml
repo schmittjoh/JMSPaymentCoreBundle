@@ -1,7 +1,6 @@
 imports:
-    - { resource: framework.yml }
     - { resource: doctrine.yml }
-    - { resource: twig.yml }
+    - { resource: framework.php }
 
 jms_payment_core:
     secret: test

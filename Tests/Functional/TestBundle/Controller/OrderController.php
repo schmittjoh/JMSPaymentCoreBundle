@@ -32,7 +32,6 @@ class OrderController extends Controller
         $form = $this->get('form.factory')->create($formType, null, array(
             'currency' => 'EUR',
             'amount' => $order->getAmount(),
-            'csrf_protection' => false,
             'predefined_data' => array(
                 'paypal_express_checkout' => array(
                     'foo' => 'bar',
