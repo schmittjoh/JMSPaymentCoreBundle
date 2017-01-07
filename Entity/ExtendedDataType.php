@@ -6,6 +6,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\ObjectType;
 use JMS\Payment\CoreBundle\Cryptography\EncryptionServiceInterface;
+use JMS\Payment\CoreBundle\Model\ExtendedDataInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -41,23 +42,35 @@ class ExtendedDataType extends ObjectType
 
     public function convertToDatabaseValue($extendedData, AbstractPlatform $platform)
     {
-        if (null === $extendedData) {
+        if ($extendedData === null) {
             return null;
         }
 
-        $reflection = new \ReflectionProperty($extendedData, 'data');
-        $reflection->setAccessible(true);
-        $data = $reflection->getValue($extendedData);
-        $reflection->setAccessible(false);
+        if (!$extendedData instanceof ExtendedDataInterface) {
+            throw new \InvalidArgumentException(
+                '$extendedData must implement JMS\Payment\CoreBundle\Model\ExtendedDataInterface'
+            );
+        }
 
-        foreach ($data as $name => $value) {
-            if (false === $value[2]) {
-                unset($data[$name]);
+        $data = array();
+
+        foreach (array_keys($extendedData->all()) as $name) {
+            if (!$extendedData->mayBePersisted($name)) {
                 continue;
             }
-            if (true === $value[1]) {
-                $data[$name][0] = self::$encryptionService->encrypt(serialize($value[0]));
+
+            $value = $extendedData->get($name);
+            $isEncryptionRequired = $extendedData->isEncryptionRequired($name);
+
+            if ($isEncryptionRequired) {
+                $value = self::$encryptionService->encrypt(serialize($value));
             }
+
+            $data[$name] = array(
+                $value,
+                $isEncryptionRequired,
+                $mayBePersisted = true,
+            );
         }
 
         return parent::convertToDatabaseValue($data, $platform);
@@ -67,25 +80,28 @@ class ExtendedDataType extends ObjectType
     {
         $data = parent::convertToPHPValue($value, $platform);
 
-        if (null === $data) {
+        if ($data === null) {
             return null;
-        } elseif (is_array($data)) {
-            foreach ($data as $name => $value) {
-                if (true === $value[1]) {
-                    $data[$name][0] = unserialize(self::$encryptionService->decrypt($value[0]));
-                }
-            }
+        }
 
-            $extendedData = new ExtendedData();
-            $reflection = new \ReflectionProperty($extendedData, 'data');
-            $reflection->setAccessible(true);
-            $reflection->setValue($extendedData, $data);
-            $reflection->setAccessible(false);
-
-            return $extendedData;
-        } else {
+        if (!is_array($data)) {
             throw ConversionException::conversionFailed($value, $this->getName());
         }
+
+        $extendedData = new ExtendedData();
+
+        foreach ($data as $name => $value) {
+            $isEncryptionRequired = (bool) $value[1];
+            $value = $value[0];
+
+            if ($isEncryptionRequired) {
+                $value = unserialize(self::$encryptionService->decrypt($value));
+            }
+
+            $extendedData->set($name, $value, $isEncryptionRequired);
+        }
+
+        return $extendedData;
     }
 
     public function getName()

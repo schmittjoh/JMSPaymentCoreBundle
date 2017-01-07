@@ -3,6 +3,7 @@ language: php
 branches:
   only:
     - master
+    - v2
 
 before_install: ./.travis/before_install.php
 install: ./.travis/install.php

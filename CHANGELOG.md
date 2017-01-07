@@ -3,6 +3,13 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - (Unreleased)
+### Changed
+- `JMS\Payment\CoreBundle\Model\ExtendedDataInterface` has changed. If any of your classes implement this interface, you need to update them accordingly:
+    - Added missing `mayBePersisted` method
+    - Added missing `$persist` parameter to `set` method
+- `JMS\Payment\CoreBundle\EntityExtendedDataType::convertToDatabaseValue` now throws an exception when attempting to convert an object which does not implement `JMS\Payment\CoreBundle\Model\ExtendedDataInterface`.
+
 ## [1.2.0] - 2016-10-03
 ### Added
 - Added support for Symfony 3.0. Note that Symfony 3.0 introduces BC breaks. This means that you'll probably need to do more than simply updating to version `1.2.0` of this bundle for your code to keep working under Symfony 3.0. Please see Symfony's [Upgrade Guide](https://github.com/symfony/symfony/blob/master/UPGRADE-3.0.md) for information on what you need to change.
