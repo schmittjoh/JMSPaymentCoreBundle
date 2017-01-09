@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - Added support for custom encryption providers.
+- Added support for data encryption with [defuse/php-encryption](https://github.com/defuse/php-encryption).
+- Added ability to configure which crypto provider should be used. Current available options are `mcrypt` (not recommended since it will be removed in PHP 7.2) and `defuse_php_encryption`.
+
+### Removed
+- Removed support for PHP 5.3. If you're still using PHP 5.3, please consider upgrading since it reached End Of Life in August 2014. Otherwise, use `1.2.*`.
 
 ## [1.2.0] - 2016-10-03
 ### Added

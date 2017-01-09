@@ -12,12 +12,12 @@ function isHhvm()
 
 function isLatestPhp()
 {
-    return getPhpVersion() === '7.0';
+    return getPhpVersion() === '7.1';
 }
 
 function isLatestSymfony()
 {
-    return getSymfonyVersion() === '3.1.*';
+    return getSymfonyVersion() === '3.2.*';
 }
 
 function getSymfonyVersion()

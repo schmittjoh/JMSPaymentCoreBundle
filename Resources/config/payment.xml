@@ -20,6 +20,9 @@
         <parameter key="payment.encryption.mcrypt.cipher">rijndael-256</parameter>
         <parameter key="payment.encryption.mcrypt.mode">ctr</parameter>
 
+        <parameter key="payment.encryption.defuse_php_encryption.class">JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService</parameter>
+        <parameter key="payment.encryption.defuse_php_encryption.secret"></parameter>
+
         <!-- DEPRECATED since 1.3, will be removed in 2.0: use the payment.encryption.mcrypt.* parameters instead -->
         <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
@@ -53,6 +56,11 @@
             <argument>%payment.encryption.mcrypt.cipher%</argument>
             <argument>%payment.encryption.mcrypt.mode%</argument>
             <tag name="payment.encryption" alias="mcrypt" />
+        </service>
+
+        <service id="payment.encryption.defuse_php_encryption" class="%payment.encryption.defuse_php_encryption.class%">
+            <argument>%payment.encryption.defuse_php_encryption.secret%</argument>
+            <tag name="payment.encryption" alias="defuse_php_encryption" />
         </service>
 
         <service id="payment.form.choose_payment_method_transformer" class="%payment.form.choose_payment_method_transformer.class%" />

@@ -3,7 +3,7 @@
 namespace JMS\Payment\CoreBundle\Tests\Entity;
 
 use Doctrine\DBAL\Types\Type;
-use JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService;
+use JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService;
 use JMS\Payment\CoreBundle\Entity\ExtendedData;
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 
@@ -20,7 +20,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testStaticSetGetEncryptionService()
     {
-        $service = new MCryptEncryptionService('foo');
+        $service = new DefusePhpEncryptionService('def00000812bba10524777c97f1155877f0c91a4fac2c9f3d71a39d0df7214eab90d492faa58d2db667c5003c3c2228e3f19ad493ae86c74079a600a1ed51cd65e21f28e');
 
         $this->assertNull(ExtendedDataType::getEncryptionService());
         ExtendedDataType::setEncryptionService($service);
@@ -37,7 +37,7 @@ class ExtendedDataTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConversion()
     {
-        ExtendedDataType::setEncryptionService(new MCryptEncryptionService('foo'));
+        ExtendedDataType::setEncryptionService(new DefusePhpEncryptionService('def00000812bba10524777c97f1155877f0c91a4fac2c9f3d71a39d0df7214eab90d492faa58d2db667c5003c3c2228e3f19ad493ae86c74079a600a1ed51cd65e21f28e'));
 
         $extendedData = new ExtendedData();
         $extendedData->set('foo', 'foo', false);

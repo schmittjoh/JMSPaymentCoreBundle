@@ -16,25 +16,22 @@ script: ./.travis/script.php
 matrix:
   include:
     # old PHP versions with latest Symfony version
-    - php: 5.3
+    - php: 5.4
       env: SYMFONY_VERSION=2.8.* # Symfony 3 doesn't support PHP 5.3
     - php: 5.6
+      env: SYMFONY_VERSION=3.2.*
+    - php: 7.0
       env: SYMFONY_VERSION=3.2.*
     - php: hhvm
       env: SYMFONY_VERSION=3.2.*
     # current PHP with all relevant Symfony versions
-    - php: 7.0
+    - php: 7.1
       env: SYMFONY_VERSION=2.3.*
-    - php: 7.0
+    - php: 7.1
       env: SYMFONY_VERSION=2.8.*
-    - php: 7.0
-      env: SYMFONY_VERSION=3.1.*
-    - php: 7.0
-      env: SYMFONY_VERSION=3.2.*
     - php: 7.1
       env: SYMFONY_VERSION=3.2.*
-    - php: 7.0
+    - php: 7.1
       env: SYMFONY_VERSION=dev-master
   allow_failures:
     - env: SYMFONY_VERSION=dev-master
-    - php: 7.1

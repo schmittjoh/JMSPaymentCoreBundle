@@ -2,4 +2,6 @@ imports:
     - { resource: default.yml }
 
 jms_payment_core:
-    secret: test
+    encryption:
+        provider: defuse_php_encryption
+        secret: def00000812bba10524777c97f1155877f0c91a4fac2c9f3d71a39d0df7214eab90d492faa58d2db667c5003c3c2228e3f19ad493ae86c74079a600a1ed51cd65e21f28e
