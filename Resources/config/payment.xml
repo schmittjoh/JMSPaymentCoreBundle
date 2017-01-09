@@ -15,10 +15,17 @@
         <parameter key="payment.form.choose_payment_method_type.class">JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType</parameter>
         <parameter key="payment.form.choose_payment_method_transformer.class">JMS\Payment\CoreBundle\Form\Transformer\ChoosePaymentMethodTransformer</parameter>
 
+        <parameter key="payment.crypto.mcrypt.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
+        <parameter key="payment.crypto.mcrypt.secret"></parameter>
+        <parameter key="payment.crypto.mcrypt.cipher">rijndael-256</parameter>
+        <parameter key="payment.crypto.mcrypt.mode">ctr</parameter>
+
+        <!-- DEPRECATED since 1.3, will be removed in 2.0: use the payment.crypto.mcrypt.* parameters instead -->
         <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
         <parameter key="payment.encryption_service.secret"></parameter>
         <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
         <parameter key="payment.encryption_service.mode">ctr</parameter>
+
     </parameters>
 
     <services>
@@ -38,10 +45,13 @@
 
         <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
 
-        <service id="payment.encryption_service" class="%payment.encryption_service.class%">
-            <argument>%payment.encryption_service.secret%</argument>
-            <argument>%payment.encryption_service.cipher%</argument>
-            <argument>%payment.encryption_service.mode%</argument>
+        <!-- DEPRECATED since 1.3, will be removed in 2.0: use payment.crypto.mcrypt directly instead -->
+        <service id="payment.encryption_service" alias="payment.crypto.mcrypt" />
+
+        <service id="payment.crypto.mcrypt" class="%payment.crypto.mcrypt.class%">
+            <argument>%payment.crypto.mcrypt.secret%</argument>
+            <argument>%payment.crypto.mcrypt.cipher%</argument>
+            <argument>%payment.crypto.mcrypt.mode%</argument>
         </service>
 
         <service id="payment.form.choose_payment_method_transformer" class="%payment.form.choose_payment_method_transformer.class%" />

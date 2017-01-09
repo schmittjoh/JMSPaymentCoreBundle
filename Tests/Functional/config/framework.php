@@ -4,7 +4,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 $assets = array('assets' => false);
 
-if (Kernel::MAJOR_VERSION == 2 && Kernel::MINOR_VERSION < 7) {
+if (version_compare(Kernel::VERSION, '2.7', '<')) {
     // The 'assets' configuration is only available for Symfony >= 2.7
     $assets = array();
 }
