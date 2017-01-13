@@ -25,9 +25,7 @@ And register the bundle in your ``AppKernel.php``:
 
 Configuration
 -------------
-The configuration is as simple as setting a random secret which will be used for encrypting data, in case this is requested.
-
-You can generate the secret with the following command:
+The configuration is as simple as setting an encryption key which will be used for encrypting data. You can generate a random key with the following command:
 
 .. code-block :: bash
 
@@ -35,22 +33,20 @@ You can generate the secret with the following command:
 
 And then use it in your configuration:
 
-.. configuration-block ::
+.. code-block :: yaml
 
-    .. code-block :: yaml
-
-        # app/config/config.yml
-        jms_payment_core:
-            encryption:
-                secret: output_of_above_command
+    # app/config/config.yml
+    jms_payment_core:
+        encryption:
+            secret: output_of_above_command
 
 .. warning ::
 
-    If you change the secret, all data encrypted with the old secret will become unreadable.
+    If you change the ``secret`` or the ``crypto`` provider, all encrypted data will become unreadable.
 
 Create database tables
 ----------------------
-This bundle requires a few database tables to function. You can create these tables as follows.
+This bundle requires a few database tables, which you can create as follows.
 
 If you're not using database migrations:
 
@@ -65,14 +61,13 @@ Or, if you're using migrations:
     bin/console doctrine:migrations:diff
     bin/console doctrine:migrations:migrate
 
-.. warning ::
+.. note ::
 
     It's assumed you have entity auto mapping enabled, which is usually the case. If you don't, you need to either enable it:
 
     .. code-block :: yaml
 
         # app/config/config.yml
-
         doctrine:
             orm:
                 auto_mapping: true
@@ -82,7 +77,6 @@ Or, if you're using migrations:
     .. code-block :: yaml
 
         # app/config/config.yml
-
         doctrine:
             orm:
                 mappings:

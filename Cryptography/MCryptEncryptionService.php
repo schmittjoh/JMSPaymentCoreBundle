@@ -46,11 +46,13 @@ class MCryptEncryptionService implements EncryptionServiceInterface
             throw new \RuntimeException('The mcrypt extension must be loaded.');
         }
 
-        if (!in_array($cipher, mcrypt_list_algorithms(), true)) {
+        @trigger_error('mcrypt has been deprecated in PHP 7.1 and is removed in PHP 7.2. Refer to http://jmspaymentcorebundle.readthedocs.io/en/stable/guides/mcrypt.html for instructions on how to migrate away from mcrypt', E_USER_DEPRECATED);
+
+        if (!in_array($cipher, @mcrypt_list_algorithms(), true)) {
             throw new \InvalidArgumentException(sprintf('The cipher "%s" is not supported.', $cipher));
         }
 
-        if (!in_array($mode, mcrypt_list_modes(), true)) {
+        if (!in_array($mode, @mcrypt_list_modes(), true)) {
             throw new \InvalidArgumentException(sprintf('The mode "%s" is not supported.', $mode));
         }
 
@@ -62,7 +64,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
         }
 
         $key = hash('sha256', $secret, true);
-        if (strlen($key) > $size = mcrypt_get_key_size($this->cipher, $this->mode)) {
+        if (strlen($key) > $size = @mcrypt_get_key_size($this->cipher, $this->mode)) {
             $key = substr($key, 0, $size);
         }
         $this->key = $key;
