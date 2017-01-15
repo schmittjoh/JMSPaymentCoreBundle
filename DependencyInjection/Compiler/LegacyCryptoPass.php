@@ -49,7 +49,7 @@ class LegacyCryptoPass implements CompilerPassInterface
                 $container->setParameter('payment.crypto.mcrypt.'.$parameter, $modernValue);
             } elseif ($legacyValue !== $defaultValue) {
                 $container->setParameter('payment.crypto.mcrypt.'.$parameter, $legacyValue);
-                @trigger_error('payment.encryption_service.'.$parameter.' has been deprecated in favor of payment.crypto.mcrypt.'.$parameter.' and will be removed in 2.0', E_USER_NOTICE);
+                @trigger_error('payment.encryption_service.'.$parameter.' has been deprecated in favor of payment.crypto.mcrypt.'.$parameter.' and will be removed in 2.0', E_USER_DEPRECATED);
             }
         }
     }

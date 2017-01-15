@@ -43,12 +43,8 @@ And then use it in your configuration:
 
         # app/config/config.yml
         jms_payment_core:
-            secret: yoursecret
-
-    .. code-block :: xml
-
-        <!-- app/config/config.xml -->
-        <jms-payment-core secret="yoursecret" />
+            encryption:
+                secret: yoursecret
 
 .. note ::
 

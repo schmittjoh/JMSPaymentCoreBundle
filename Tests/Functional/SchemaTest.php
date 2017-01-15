@@ -7,6 +7,9 @@ use JMS\Payment\CoreBundle\Util\Legacy;
 
 class SchemaTest extends BaseTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testLegacySchemaIsValid()
     {
         if (!Legacy::supportsSecureRandom()) {
@@ -18,6 +21,9 @@ class SchemaTest extends BaseTestCase
         $this->doTestSchemaIsValid();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSchemaIsValid()
     {
         if (Legacy::supportsSecureRandom()) {
@@ -29,6 +35,9 @@ class SchemaTest extends BaseTestCase
         $this->doTestSchemaIsValid();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     private function doTestSchemaIsValid()
     {
         $this->createClient();
