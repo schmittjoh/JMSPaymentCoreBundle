@@ -3,7 +3,6 @@
 namespace JMS\Payment\CoreBundle\DependencyInjection;
 
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -44,12 +43,21 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
         $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $xmlLoader->load('payment.xml');
 
-        $configuration = new Configuration();
-        $processor = new Processor();
-        $config = $processor->process($configuration->getConfigTree(), $configs);
+        $config = $this->processConfiguration(
+            $this->getConfiguration($configs, $container),
+            $configs
+        );
 
-        if (isset($config['secret'])) {
-            $container->setParameter('payment.crypto.mcrypt.secret', $config['secret']);
+        if ($config['encryption']['enabled']) {
+            $container->setParameter('payment.crypto.mcrypt.secret', $config['encryption']['secret']);
+        } else {
+            $container->removeAlias('payment.encryption_service');
+            $container->removeDefinition('payment.crypto.mcrypt');
         }
+    }
+
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration($this->getAlias());
     }
 }

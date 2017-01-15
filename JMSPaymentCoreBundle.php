@@ -29,7 +29,9 @@ class JMSPaymentCoreBundle extends Bundle
 {
     public function boot()
     {
-        ExtendedDataType::setEncryptionService($this->container->get('payment.crypto.mcrypt'));
+        if ($this->container->has('payment.crypto.mcrypt')) {
+            ExtendedDataType::setEncryptionService($this->container->get('payment.crypto.mcrypt'));
+        }
     }
 
     public function build(ContainerBuilder $builder)

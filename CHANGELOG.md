@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
     - Added missing `mayBePersisted` method
     - Added missing `$persist` parameter to `set` method
 - `JMS\Payment\CoreBundle\EntityExtendedDataType::convertToDatabaseValue` now throws an exception when attempting to convert an object which does not implement `JMS\Payment\CoreBundle\Model\ExtendedDataInterface`.
+- Encryption is now optional and disabled by default, unless the `secret` configuration option is set. This ensures existing installations keep working as expected.
 
 ### Deprecated
 - The service `payment.encryption_service` has been deprecated and is now an alias to `payment.crypto.mcrypt`. Parameters specified for `payment.encryption_service` are automatically set for `payment.crypto.mcrypt` so no changes are required in service configuration until `payment.encryption_service` is removed in 2.0.
+- The `secret` configuration option has been deprecated in favor of `encryption.secret` and will be removed in 2.0.
 
 ## [1.2.0] - 2016-10-03
 ### Added

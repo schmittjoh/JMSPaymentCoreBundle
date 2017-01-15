@@ -62,7 +62,7 @@ class ExtendedDataType extends ObjectType
             $value = $extendedData->get($name);
             $isEncryptionRequired = $extendedData->isEncryptionRequired($name);
 
-            if ($isEncryptionRequired) {
+            if ($isEncryptionRequired && self::$encryptionService) {
                 $value = self::$encryptionService->encrypt(serialize($value));
             }
 
@@ -94,7 +94,7 @@ class ExtendedDataType extends ObjectType
             $isEncryptionRequired = (bool) $value[1];
             $value = $value[0];
 
-            if ($isEncryptionRequired) {
+            if ($isEncryptionRequired && self::$encryptionService) {
                 $value = unserialize(self::$encryptionService->decrypt($value));
             }
 

@@ -48,7 +48,8 @@
         "symfony/templating": "~2.3|~3.0",
         "symfony/twig-bundle": "~2.3|~3.0",
         "symfony/twig-bridge": "~2.3|~3.0",
-        "twig/twig": "~1.0"
+        "twig/twig": "~1.0",
+        "matthiasnoback/symfony-config-test": "^2.1"
 
     },
     "autoload": {
