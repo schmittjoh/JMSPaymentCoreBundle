@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -50,11 +49,7 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
         if (isset($config['secret'])) {
-            $container->setParameter('payment.encryption_service.secret', $config['secret']);
-        }
-
-        if (version_compare(Kernel::VERSION, '2.1.0-DEV', '<')) {
-            $container->removeDefinition('payment.form.choose_payment_method_type');
+            $container->setParameter('payment.crypto.mcrypt.secret', $config['secret']);
         }
     }
 }
