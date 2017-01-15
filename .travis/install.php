@@ -3,8 +3,6 @@
 
 include_once 'common.php';
 
-run('composer self-update');
-
 if (isLatestPhp() && isLatestSymfony()) {
     // Make sure composer.json references all necessary components by having one
     // job run a `composer update`. Since `composer update` will install the
