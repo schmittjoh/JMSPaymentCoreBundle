@@ -20,7 +20,7 @@ class BaseTestCase extends WebTestCase
         $fs->remove(sys_get_temp_dir().'/JMSPaymentCoreBundle/');
     }
 
-    final protected function importDatabaseSchema()
+    protected function importDatabaseSchema()
     {
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 

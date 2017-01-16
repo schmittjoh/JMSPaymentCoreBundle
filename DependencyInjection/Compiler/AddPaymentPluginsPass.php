@@ -31,7 +31,7 @@ class AddPaymentPluginsPass implements CompilerPassInterface
         }
 
         $def = $container->findDefinition('payment.plugin_controller');
-        foreach ($container->findTaggedServiceIds('payment.plugin') as $id => $attr) {
+        foreach ($container->findTaggedServiceIds('payment.plugin') as $id => $attrs) {
             $def->addMethodCall('addPlugin', array(new Reference($id)));
         }
     }
