@@ -54,12 +54,13 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
             $container->setParameter('payment.encryption', $config['encryption']['provider']);
             $container->setParameter('payment.encryption.secret', $config['encryption']['secret']);
 
-            foreach (array('mcrypt') as $provider) {
+            foreach (array('mcrypt', 'defuse_php_encryption') as $provider) {
                 $container->setParameter("payment.encryption.$provider.secret", $config['encryption']['secret']);
             }
         } else {
             $container->removeAlias('payment.encryption_service');
             $container->removeDefinition('payment.encryption.mcrypt');
+            $container->removeDefinition('payment.encryption.defuse_php_encryption');
             $container->removeDefinition('payment.encryption');
         }
     }

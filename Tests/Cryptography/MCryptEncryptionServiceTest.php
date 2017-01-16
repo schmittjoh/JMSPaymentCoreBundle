@@ -8,6 +8,10 @@ class MCryptEncryptionServiceTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            $this->markTestSkipped('mcrypt is deprecated since PHP 7.1');
+        }
+
         if (false !== strpos(PHP_OS, 'WIN')) {
             $this->markTestSkipped('Windows is not suited for generating random data.');
         }
