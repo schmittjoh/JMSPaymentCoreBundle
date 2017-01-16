@@ -9,11 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
     - Added missing `mayBePersisted` method
     - Added missing `$persist` parameter to `set` method
 - `JMS\Payment\CoreBundle\EntityExtendedDataType::convertToDatabaseValue` now throws an exception when attempting to convert an object which does not implement `JMS\Payment\CoreBundle\Model\ExtendedDataInterface`.
-- Encryption is now optional and disabled by default, unless the `secret` configuration option is set. This ensures existing installations keep working as expected.
+- Encryption is now optional and disabled by default, unless the `secret` configuration option is set.
+- `defuse_php_encryption` is now the default encryption provider, unless when using the `secret` configuration option, in which case the default is set to `mcrypt`.
 
 ### Deprecated
 - The service `payment.encryption_service` has been deprecated and is now an alias to `payment.encryption.mcrypt`. Parameters specified for `payment.encryption_service` are automatically set for `payment.encryption.mcrypt` so no changes are required in service configuration until `payment.encryption_service` is removed in 2.0.
-- The `secret` configuration option has been deprecated in favor of `encryption.secret` and will be removed in 2.0.
+- The `secret` configuration option has been deprecated in favor of `encryption.secret` and will be removed in 2.0. Please note that if you start using `encryption.secret` you also need to set `encryption.provider` to `mcrypt` since mcrypt is not the default when using the `encryption.*` options.
 
 ### Added
 - Added support for custom encryption providers.
