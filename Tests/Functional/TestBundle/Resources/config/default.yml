@@ -1,6 +1,16 @@
 imports:
-    - { resource: doctrine.yml }
+    - { resource: database.php }
     - { resource: framework.php }
+
+doctrine:
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                auto_mapping: true
+
+services:
+    em: "@doctrine.orm.entity_manager"
 
 jms_payment_paypal:
     username: schmit_1283340315_biz_api1.gmail.com

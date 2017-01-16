@@ -4,7 +4,8 @@ namespace JMS\Payment\CoreBundle;
 
 use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentMethodFormTypesPass;
 use JMS\Payment\CoreBundle\DependencyInjection\Compiler\AddPaymentPluginsPass;
-use JMS\Payment\CoreBundle\DependencyInjection\Compiler\LegacyCryptoPass;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\ConfigureEncryptionPass;
+use JMS\Payment\CoreBundle\DependencyInjection\Compiler\LegacyEncryptionPass;
 use JMS\Payment\CoreBundle\Entity\ExtendedDataType;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,8 +30,8 @@ class JMSPaymentCoreBundle extends Bundle
 {
     public function boot()
     {
-        if ($this->container->has('payment.crypto.mcrypt')) {
-            ExtendedDataType::setEncryptionService($this->container->get('payment.crypto.mcrypt'));
+        if ($this->container->has('payment.encryption')) {
+            ExtendedDataType::setEncryptionService($this->container->get('payment.encryption'));
         }
     }
 
@@ -40,6 +41,7 @@ class JMSPaymentCoreBundle extends Bundle
 
         $builder->addCompilerPass(new AddPaymentPluginsPass());
         $builder->addCompilerPass(new AddPaymentMethodFormTypesPass());
-        $builder->addCompilerPass(new LegacyCryptoPass());
+        $builder->addCompilerPass(new LegacyEncryptionPass());
+        $builder->addCompilerPass(new ConfigureEncryptionPass());
     }
 }

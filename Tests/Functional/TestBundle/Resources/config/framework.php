@@ -19,7 +19,7 @@ $container->loadFromExtension('framework', array_merge($assets, array(
         'engines' => array('twig', 'php'),
     ),
     'router' => array(
-        'resource' => '%kernel.root_dir%/config/routing.yml',
+        'resource' => '%kernel.root_dir%/TestBundle/Resources/config/routing.yml',
     ),
     'form' => true,
     'validation' => array(

@@ -14,7 +14,10 @@ class ConfigurationTest extends AbstractConfigurationTestCase
 
         $this->assertConfigurationEquals(
             array(),
-            array('encryption' => array('enabled' => false))
+            array('encryption' => array(
+                'enabled' => false,
+                'provider' => 'mcrypt',
+            ))
         );
     }
 
@@ -29,6 +32,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
                 'encryption' => array(
                     'enabled' => true,
                     'secret' => 'foo',
+                    'provider' => 'mcrypt',
                 ),
             )
         );
@@ -43,6 +47,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array(),
             array('encryption' => array(
                 'enabled' => false,
+                'provider' => 'mcrypt',
             ))
         );
 
@@ -50,6 +55,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array('encryption' => false),
             array('encryption' => array(
                 'enabled' => false,
+                'provider' => 'mcrypt',
             ))
         );
 
@@ -59,6 +65,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             )),
             array('encryption' => array(
                 'enabled' => false,
+                'provider' => 'mcrypt',
             ))
         );
     }
@@ -84,6 +91,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array('encryption' => array(
                 'enabled' => true,
                 'secret' => 'foo',
+                'provider' => 'mcrypt',
             ))
         );
     }

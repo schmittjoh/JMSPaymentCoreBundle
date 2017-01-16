@@ -40,9 +40,8 @@ class Configuration implements ConfigurationInterface
                     ->canBeEnabled()
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('secret')
-                            ->cannotBeEmpty()
-                        ->end()
+                        ->scalarNode('provider')->defaultValue('mcrypt')->end()
+                        ->scalarNode('secret')->cannotBeEmpty()->end()
                     ->end()
                     ->validate()
                         ->ifTrue(function ($config) {

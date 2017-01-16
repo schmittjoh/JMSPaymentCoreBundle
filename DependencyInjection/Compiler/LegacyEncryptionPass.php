@@ -7,12 +7,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * The service `payment.encryption_service` has been deprecated in favor of
- * `payment.crypto.mcrypt`. This compiler pass makes sure parameters specified
- * for `payment.encryption_service` are instead set for `payment.crypto.mcrypt`.
+ * `payment.encryption.mcrypt`. This compiler pass makes sure parameters specified
+ * for `payment.encryption_service` are instead set for `payment.encryption.mcrypt`.
  *
  * @deprecated 1.3 Will be removed in 2.0
  */
-class LegacyCryptoPass implements CompilerPassInterface
+class LegacyEncryptionPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
@@ -20,7 +20,7 @@ class LegacyCryptoPass implements CompilerPassInterface
             return;
         }
 
-        if (!$container->has('payment.crypto.mcrypt')) {
+        if (!$container->has('payment.encryption.mcrypt')) {
             return;
         }
 
@@ -36,20 +36,20 @@ class LegacyCryptoPass implements CompilerPassInterface
                 continue;
             }
 
-            if (!$container->hasParameter('payment.crypto.mcrypt.'.$parameter)) {
+            if (!$container->hasParameter('payment.encryption.mcrypt.'.$parameter)) {
                 continue;
             }
 
             $legacyValue = $container->getParameter('payment.encryption_service.'.$parameter);
-            $modernValue = $container->getParameter('payment.crypto.mcrypt.'.$parameter);
+            $modernValue = $container->getParameter('payment.encryption.mcrypt.'.$parameter);
 
-            // Parameters set for payment.crypto.mcrypt take precedence over
+            // Parameters set for payment.encryption.mcrypt take precedence over
             // ones set for payment.encryption_service
             if ($modernValue !== $defaultValue) {
-                $container->setParameter('payment.crypto.mcrypt.'.$parameter, $modernValue);
+                $container->setParameter('payment.encryption.mcrypt.'.$parameter, $modernValue);
             } elseif ($legacyValue !== $defaultValue) {
-                $container->setParameter('payment.crypto.mcrypt.'.$parameter, $legacyValue);
-                @trigger_error('payment.encryption_service.'.$parameter.' has been deprecated in favor of payment.crypto.mcrypt.'.$parameter.' and will be removed in 2.0', E_USER_DEPRECATED);
+                $container->setParameter('payment.encryption.mcrypt.'.$parameter, $legacyValue);
+                @trigger_error('payment.encryption_service.'.$parameter.' has been deprecated in favor of payment.encryption.mcrypt.'.$parameter.' and will be removed in 2.0', E_USER_DEPRECATED);
             }
         }
     }

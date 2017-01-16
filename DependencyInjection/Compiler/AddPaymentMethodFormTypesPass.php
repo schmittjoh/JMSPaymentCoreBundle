@@ -20,21 +20,21 @@ class AddPaymentMethodFormTypesPass implements CompilerPassInterface
         }
 
         $paymentMethodFormTypes = array();
-        foreach ($container->findTaggedServiceIds('payment.method_form_type') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds('payment.method_form_type') as $id => $attrs) {
             $definition = $container->getDefinition($id);
 
             // check that this definition is also registered as a form type
-            $attributes = $definition->getTag('form.type');
-            if (!$attributes) {
+            $attrs = $definition->getTag('form.type');
+            if (!$attrs) {
                 throw new \RuntimeException(sprintf('The service "%s" is marked as payment method form type (tagged with "payment.method_form_type"), but is not registered as a form type with the Form Component. Please also add a "form.type" tag.', $id));
             }
 
-            if (!isset($attributes[0]['alias'])) {
+            if (!isset($attrs[0]['alias'])) {
                 throw new \RuntimeException(sprintf('Please define an alias attribute for tag "form.type" of service "%s".', $id));
             }
 
-            $paymentMethodFormTypes[$attributes[0]['alias']] = Legacy::supportsFormTypeName()
-                ? $attributes[0]['alias']
+            $paymentMethodFormTypes[$attrs[0]['alias']] = Legacy::supportsFormTypeName()
+                ? $attrs[0]['alias']
                 : $definition->getClass()
             ;
         }
