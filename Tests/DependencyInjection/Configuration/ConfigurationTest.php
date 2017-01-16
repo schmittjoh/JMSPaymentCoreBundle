@@ -16,7 +16,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array(),
             array('encryption' => array(
                 'enabled' => false,
-                'provider' => 'mcrypt',
+                'provider' => 'defuse_php_encryption',
             ))
         );
     }
@@ -47,7 +47,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array(),
             array('encryption' => array(
                 'enabled' => false,
-                'provider' => 'mcrypt',
+                'provider' => 'defuse_php_encryption',
             ))
         );
 
@@ -55,7 +55,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array('encryption' => false),
             array('encryption' => array(
                 'enabled' => false,
-                'provider' => 'mcrypt',
+                'provider' => 'defuse_php_encryption',
             ))
         );
 
@@ -65,7 +65,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             )),
             array('encryption' => array(
                 'enabled' => false,
-                'provider' => 'mcrypt',
+                'provider' => 'defuse_php_encryption',
             ))
         );
     }
@@ -83,6 +83,21 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             'secret' => 'foo',
         )));
 
+        $this->assertConfigurationIsValid(array('encryption' => array(
+            'secret' => 'foo',
+        )));
+
+        $this->assertConfigurationEquals(
+            array('encryption' => array(
+                'secret' => 'foo',
+            )),
+            array('encryption' => array(
+                'enabled' => true,
+                'secret' => 'foo',
+                'provider' => 'defuse_php_encryption',
+            ))
+        );
+
         $this->assertConfigurationEquals(
             array('encryption' => array(
                 'enabled' => true,
@@ -91,7 +106,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
             array('encryption' => array(
                 'enabled' => true,
                 'secret' => 'foo',
-                'provider' => 'mcrypt',
+                'provider' => 'defuse_php_encryption',
             ))
         );
     }

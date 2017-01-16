@@ -31,9 +31,10 @@ You can generate the secret with the following command:
 
 .. code-block :: bash
 
-    # Feel free to increase the length of the generated string by
-    # passing a larger number to openssl_random_pseudo_bytes
-    php -r 'echo bin2hex(openssl_random_pseudo_bytes(16))."\n";'
+    php -r '
+        require "vendor/autoload.php";
+        echo (\Defuse\Crypto\Key::createNewRandomKey())->saveToAsciiSafeString()."\n";
+    '
 
 And then use it in your configuration:
 
@@ -44,9 +45,9 @@ And then use it in your configuration:
         # app/config/config.yml
         jms_payment_core:
             encryption:
-                secret: yoursecret
+                secret: output_of_above_command
 
-.. note ::
+.. warning ::
 
     If you change the secret, all data encrypted with the old secret will become unreadable.
 
