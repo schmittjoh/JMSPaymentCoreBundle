@@ -31,10 +31,7 @@ You can generate the secret with the following command:
 
 .. code-block :: bash
 
-    php -r '
-        require "vendor/autoload.php";
-        echo (\Defuse\Crypto\Key::createNewRandomKey())->saveToAsciiSafeString()."\n";
-    '
+    bin/console jms_payment_core:generate-key
 
 And then use it in your configuration:
 
