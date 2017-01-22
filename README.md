@@ -13,7 +13,7 @@ Features:
 - Persistence of financial entities (such as payments, transactions, etc.)
 - Transaction management including retry logic
 - Encryption of sensitive data
-- Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/latest/backends.html) payment backends out of the box
+- Supports [many](http://jmspaymentcorebundle.readthedocs.io/en/stable/backends.html) payment backends out of the box
 - Easily support other payment backends
 
 # Documentation
