@@ -11,36 +11,40 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/order")
+ * @Template("TestBundle:Order:order.html.twig")
  *
  * @author Johannes
  */
 class OrderController extends Controller
 {
     /**
-     * @Route("/{id}/payment-details", name = "payment_details")
-     * @Template("TestBundle:Order:paymentDetails.html.twig")
+     * @Route("/{id}/payment", name="payment")
      *
      * @param Order $order
      */
-    public function paymentDetailsAction(Order $order)
+    public function paymentAction(Order $order)
     {
+        return $this->handleRequest($order, array(
+            'paypal_express_checkout' => array(
+                'foo' => 'bar',
+            ),
+        ));
+    }
+
+    private function handleRequest($order, array $predefinedData)
+    {
+        $formData = array(
+            'currency' => 'EUR',
+            'amount' => $order->getAmount(),
+            'predefined_data' => $predefinedData,
+        );
+
         $formType = Legacy::supportsFormTypeName()
             ? 'jms_choose_payment_method'
             : 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
         ;
 
-        $form = $this->get('form.factory')->create($formType, null, array(
-            'currency' => 'EUR',
-            'amount' => $order->getAmount(),
-            'predefined_data' => array(
-                'paypal_express_checkout' => array(
-                    'foo' => 'bar',
-                ),
-            ),
-        ));
-
-        $em = $this->getDoctrine()->getManager();
-        $ppc = $this->get('payment.plugin_controller');
+        $form = $this->get('form.factory')->create($formType, null, $formData);
 
         $request = Legacy::supportsRequestService()
             ? $this->getRequest()
@@ -50,6 +54,9 @@ class OrderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $ppc = $this->get('payment.plugin_controller');
+
             $instruction = $form->getData();
             $ppc->createPaymentInstruction($instruction);
 
