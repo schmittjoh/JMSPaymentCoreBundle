@@ -60,10 +60,7 @@ class ChoosePaymentMethodType extends AbstractType
 
         // To maintain BC, we instantiate a new ChoosePaymentMethodTransformer in
         // case it hasn't been supplied.
-        $transformer = $this->transformer
-            ? $this->transformer
-            : new ChoosePaymentMethodTransformer()
-        ;
+        $transformer = $this->transformer ?: new ChoosePaymentMethodTransformer();
 
         $transformer->setOptions($options);
         $builder->addModelTransformer($transformer);
