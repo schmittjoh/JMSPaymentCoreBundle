@@ -58,7 +58,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
 
     public function testMethodChoices()
     {
-        if (Legacy::formChoicesAsValues()) {
+        if (!Legacy::formChoicesAsValues()) {
             $this->markTestSkipped();
         }
 
@@ -72,7 +72,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
 
     public function testLegacyMethodChoices()
     {
-        if (!Legacy::formChoicesAsValues()) {
+        if (Legacy::formChoicesAsValues()) {
             $this->markTestSkipped();
         }
 
@@ -104,7 +104,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
 
     public function testAllowedMethods()
     {
-        if (Legacy::formChoicesAsValues()) {
+        if (!Legacy::formChoicesAsValues()) {
             $this->markTestSkipped();
         }
 
@@ -122,7 +122,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
 
     public function testLegacyAllowedMethods()
     {
-        if (!Legacy::formChoicesAsValues()) {
+        if (Legacy::formChoicesAsValues()) {
             $this->markTestSkipped();
         }
 
@@ -173,9 +173,9 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
             'currency' => 'EUR',
         ), $options);
 
-        $form = Legacy::supportsFormTypeName()
-            ? 'jms_choose_payment_method'
-            : 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
+        $form = Legacy::supportsFormTypeClass()
+            ? 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
+            : 'jms_choose_payment_method'
         ;
 
         $form = $this->factory->create($form, null, $options);
@@ -196,10 +196,10 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
     {
         $pluginType = new ExpressCheckoutType();
 
-        if (Legacy::supportsFormTypeName()) {
-            $pluginTypeName = $pluginType->getName();
-        } else {
+        if (Legacy::supportsFormTypeClass()) {
             $pluginTypeName = get_class($pluginType);
+        } else {
+            $pluginTypeName = $pluginType->getName();
         }
 
         $type = new ChoosePaymentMethodType($this->pluginController, array(
@@ -207,13 +207,13 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
             'bar' => $pluginTypeName,
         ));
 
-        if (Legacy::supportsFormTypeName()) {
+        if (Legacy::supportsFormTypeClass()) {
+            $extensions = array($pluginType, $type);
+        } else {
             $extensions = array(
                 $pluginType->getName() => $pluginType,
                 $type->getName() => $type,
             );
-        } else {
-            $extensions = array($pluginType, $type);
         }
 
         return array(new PreloadedExtension($extensions, array()));

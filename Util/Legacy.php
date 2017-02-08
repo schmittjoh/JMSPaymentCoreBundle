@@ -11,23 +11,30 @@ use Symfony\Component\HttpKernel\Kernel;
 class Legacy
 {
     /**
-     * Symfony 3.0 removes support for form type names.
+     * Symfony 2.8 adds support for form type as FQCN.
      *
-     * Instead of referencing types by name, they must be referenced by their
+     * Instead of referencing types by name, they should be referenced by their
      * fully-qualified class name (FQCN).
      */
-    public static function supportsFormTypeName()
+    public static function supportsFormTypeClass()
     {
-        return version_compare(Kernel::VERSION, '3.0.0', '<');
+        return method_exists(
+            'Symfony\Component\Form\AbstractType',
+            'getBlockPrefix'
+        );
     }
 
     /**
-     * Symfony 3.0 requires using `configureOptions` instead of `setDefaultOptions`
-     * in form types.
+     * Before Symfony 2.6, setAllowedTypes() and addAllowedTypes() expected the
+     * values to be given as an array mapping option names to allowed types:
+     * $resolver->setAllowedTypes(array('port' => array('null', 'int')));
      */
-    public static function supportsFormTypeConfigureOptions()
+    public static function supportsOptionsResolverSetAllowedTypesAsArray()
     {
-        return version_compare(Kernel::VERSION, '3.0.0', '<');
+        return !method_exists(
+            'Symfony\Component\OptionsResolver\OptionsResolver',
+            'setDefined'
+        );
     }
 
     /**
@@ -43,7 +50,22 @@ class Legacy
      */
     public static function formChoicesAsValues()
     {
-        return version_compare(Kernel::VERSION, '3.0.0', '<');
+        return method_exists(
+            'Symfony\Component\Form\AbstractType',
+            'configureOptions'
+        );
+    }
+
+    /**
+     * When using `choices_as_values` before Symfony 3.0, one must make sure to
+     * set the `choices_as_values` option to true
+     */
+    public static function needsChoicesAsValuesOption()
+    {
+        return self::formChoicesAsValues() && method_exists(
+            'Symfony\Component\Form\FormTypeInterface',
+            'setDefaultOptions'
+        );
     }
 
     /**

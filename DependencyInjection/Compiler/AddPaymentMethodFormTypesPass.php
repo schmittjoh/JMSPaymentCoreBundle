@@ -33,9 +33,9 @@ class AddPaymentMethodFormTypesPass implements CompilerPassInterface
                 throw new \RuntimeException(sprintf('Please define an alias attribute for tag "form.type" of service "%s".', $id));
             }
 
-            $paymentMethodFormTypes[$attrs[0]['alias']] = Legacy::supportsFormTypeName()
-                ? $attrs[0]['alias']
-                : $definition->getClass()
+            $paymentMethodFormTypes[$attrs[0]['alias']] = Legacy::supportsFormTypeClass()
+                ? $definition->getClass()
+                : $attrs[0]['alias']
             ;
         }
 

@@ -92,15 +92,18 @@ class ChoosePaymentMethodType extends AbstractType
             $label = 'form.label.'.$method;
 
             if (Legacy::formChoicesAsValues()) {
-                $options['choices'][$method] = $label;
-            } else {
                 $options['choices'][$label] = $method;
+                if (Legacy::needsChoicesAsValuesOption()) {
+                    $options['choices_as_values'] = true;
+                }
+            } else {
+                $options['choices'][$method] = $label;
             }
         }
 
-        $type = Legacy::supportsFormTypeName()
-            ? 'choice'
-            : 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+        $type = Legacy::supportsFormTypeClass()
+            ? 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            : 'choice'
         ;
 
         $builder->add('method', $type, $options);
@@ -161,11 +164,11 @@ class ChoosePaymentMethodType extends AbstractType
             'choice_options'  => 'array',
         );
 
-        if (Legacy::supportsFormTypeConfigureOptions()) {
+        if (Legacy::supportsOptionsResolverSetAllowedTypesAsArray()) {
             $resolver->setAllowedTypes($allowedTypes);
         } else {
             foreach ($allowedTypes as $key => $value) {
-                $resolver->addAllowedTypes($key, $value);
+                $resolver->setAllowedTypes($key, $value);
             }
         }
     }
