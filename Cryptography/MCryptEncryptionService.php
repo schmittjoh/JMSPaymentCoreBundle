@@ -75,11 +75,11 @@ class MCryptEncryptionService implements EncryptionServiceInterface
      */
     public function decrypt($encryptedValue)
     {
-        $size = mcrypt_get_iv_size($this->cipher, $this->mode);
+        $size = @mcrypt_get_iv_size($this->cipher, $this->mode);
         $encryptedValue = base64_decode($encryptedValue);
         $iv = substr($encryptedValue, 0, $size);
 
-        return rtrim(mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv));
+        return rtrim(@mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv));
     }
 
     /**
@@ -87,10 +87,10 @@ class MCryptEncryptionService implements EncryptionServiceInterface
      */
     public function encrypt($rawValue)
     {
-        $size = mcrypt_get_iv_size($this->cipher, $this->mode);
-        $iv = mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
+        $size = @mcrypt_get_iv_size($this->cipher, $this->mode);
+        $iv = @mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
 
-        return base64_encode($iv.mcrypt_encrypt($this->cipher, $this->key, $rawValue, $this->mode, $iv));
+        return base64_encode($iv.@mcrypt_encrypt($this->cipher, $this->key, $rawValue, $this->mode, $iv));
     }
 
     public function getCipher()
