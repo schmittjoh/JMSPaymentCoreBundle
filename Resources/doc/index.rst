@@ -33,6 +33,7 @@ License
     setup
     payment_form
     events
+    data_encryption
     plugins
     model
     backends
