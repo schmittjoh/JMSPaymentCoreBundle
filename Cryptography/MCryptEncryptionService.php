@@ -79,7 +79,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
         $encryptedValue = base64_decode($encryptedValue);
         $iv = substr($encryptedValue, 0, $size);
 
-        return rtrim(mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv));
+        return rtrim(mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv), "\0");
     }
 
     /**
