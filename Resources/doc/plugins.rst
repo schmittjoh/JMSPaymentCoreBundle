@@ -179,6 +179,7 @@ Now, we need to wire the form type with the dependency injection container:
         services:
             credit_card_type:
                 class: CreditCardType
+                arguments: [%kernel.debug%]
                 tags:
                     - { name: form.type, alias: credit_card }
                     - { name: payment.method_form_type }
