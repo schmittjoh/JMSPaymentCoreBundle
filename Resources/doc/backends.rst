@@ -16,7 +16,7 @@ This is the list of currently supported payment backends, through community-crea
 - `Merchant e-Solutions (Trident) <https://github.com/immersivelabs/PaymentMeSBundle>`_
 - `Mollie <https://github.com/ruudk/PaymentMollieBundle>`_
 - `Multisafepay <https://github.com/ruudk/PaymentMultisafepayBundle>`_
-- `Paymill <https://github.com/memeoirs/paymill-bundle>`_
+- `Paymill <https://github.com/regularjack/paymill-bundle>`_
 - `Paypal <http://jmspaymentpaypalbundle.readthedocs.io>`_
 - `Qiwi <https://github.com/chewbacco/ChewbaccoPaymentQiwiWalletBundle>`_
 - `Robokassa <https://github.com/karser/RobokassaBundle>`_

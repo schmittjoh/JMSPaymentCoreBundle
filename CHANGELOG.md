@@ -3,6 +3,10 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.1] - Unreleased
+### Added
+- Added encryption [documentation](http://jmspaymentcorebundle.readthedocs.io/en/stable/encryption.html)
+
 ## [1.3.0] - 2017-01-22
 ### Changed
 - `JMS\Payment\CoreBundle\Model\ExtendedDataInterface` has changed. If any of your classes implement this interface, you need to update them accordingly:

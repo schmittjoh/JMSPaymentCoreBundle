@@ -32,6 +32,7 @@ License
 
     setup
     payment_form
+    encryption
     events
     plugins
     model

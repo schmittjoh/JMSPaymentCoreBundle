@@ -1,8 +1,8 @@
 Setup
 =====
 
-Installation
--------------
+Installing
+----------
 Install with composer:
 
 .. code-block :: bash
@@ -23,29 +23,8 @@ And register the bundle in your ``AppKernel.php``:
         );
     }
 
-Configuration
--------------
-The configuration is as simple as setting an encryption key which will be used for encrypting data. You can generate a random key with the following command:
-
-.. code-block :: bash
-
-    bin/console jms_payment_core:generate-key
-
-And then use it in your configuration:
-
-.. code-block :: yaml
-
-    # app/config/config.yml
-    jms_payment_core:
-        encryption:
-            secret: output_of_above_command
-
-.. warning ::
-
-    If you change the ``secret`` or the ``crypto`` provider, all encrypted data will become unreadable.
-
-Create database tables
-----------------------
+Creating database tables
+------------------------
 This bundle requires a few database tables, which you can create as follows.
 
 If you're not using database migrations:
@@ -84,8 +63,8 @@ Or, if you're using migrations:
 
 .. _setup-configure-plugin:
 
-Configure a payment backend
----------------------------
+Configuring a payment backend
+-----------------------------
 In addition to setting up this bundle, you will also need to install a *plugin* for each payment backend you intend to support. Plugins are simply bundles you add to your application, as you would with any other Symfony bundle.
 
 .. tip ::
@@ -127,6 +106,10 @@ And configure it:
 .. note ::
 
     :doc:`Other plugins <backends>` will require different configuration. Take a look at their documentation for complete instructions.
+
+Encrypting sensitive data
+-------------------------
+This bundle can encrypt sensitive data before storing it in the database. However, this feature is disabled by default. See :doc:`encryption` for instructions on how to enable it.
 
 Next steps
 ----------

@@ -31,6 +31,20 @@ class OrderController extends Controller
         ));
     }
 
+    /**
+     * @Route("/{id}/payment-no-encryption", name="payment_no_encryption")
+     *
+     * @param Order $order
+     */
+    public function paymentNoEncryptionAction(Order $order)
+    {
+        return $this->handleRequest($order, array(
+            'paypal_express_checkout' => array(
+                'foo' => 'bar',
+            ),
+        ));
+    }
+
     private function handleRequest($order, array $predefinedData)
     {
         $formData = array(
