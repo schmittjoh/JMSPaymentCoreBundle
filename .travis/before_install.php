@@ -3,7 +3,5 @@
 
 include_once 'common.php';
 
-if (!isHhvm()) {
-    // Disable XDebug
-    run('phpenv config-rm xdebug.ini');
-}
+// Disable XDebug
+run('phpenv config-rm xdebug.ini');

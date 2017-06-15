@@ -22,8 +22,6 @@ matrix:
       env: SYMFONY_VERSION=3.2.*
     - php: 7.0
       env: SYMFONY_VERSION=3.2.*
-    - php: hhvm
-      env: SYMFONY_VERSION=3.2.*
     # current PHP with all relevant Symfony versions
     - php: 7.1
       env: SYMFONY_VERSION=2.3.*
