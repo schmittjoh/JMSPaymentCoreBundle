@@ -9,7 +9,7 @@ This is the list of currently supported payment backends, through community-crea
     If you have implemented a payment backend, please add it to this list by `editing this file on GitHub <https://github.com/schmittjoh/JMSPaymentCoreBundle/blob/master/Resources/doc/backends.rst>`_ and submitting a Pull Request.
 
 - `Adyen <https://github.com/ruudk/PaymentAdyenBundle>`_
-- `Atos SIPS <https://github.com/KptiveStudio/KptivePaymentSipsBundle>`_
+- `Atos SIPS <https://github.com/phcorp/KptivePaymentSipsBundle>`_
 - `Be2Bill (Rentabiliweb) <https://github.com/rezzza/PaymentBe2billBundle>`_
 - `Dotpay <https://github.com/ETSGlobal/ETSPaymentDotpayBundle>`_
 - `Ogone <https://github.com/ETSGlobal/ETSPaymentOgoneBundle>`_
