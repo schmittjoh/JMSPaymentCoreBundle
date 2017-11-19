@@ -39,7 +39,6 @@
         "phpunit/phpunit": "~4.8|~5.4",
         "symfony/phpunit-bridge": "~2.7",
         "doctrine/doctrine-bundle": "~1.6",
-        "jms/payment-paypal-bundle": "~1.0",
         "sensio/framework-extra-bundle": "~3.0",
         "symfony/dom-crawler": "~2.3|~3.0",
         "symfony/doctrine-bridge": "~2.3|~3.0",
