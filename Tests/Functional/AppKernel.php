@@ -2,6 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
+use JMS\Payment\CoreBundle\Tests\Functional\TestPlugin\TestPluginBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
@@ -34,7 +35,7 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),
             new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
-            new \JMS\Payment\PaypalBundle\JMSPaymentPaypalBundle(),
+            new TestPluginBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
         );
     }

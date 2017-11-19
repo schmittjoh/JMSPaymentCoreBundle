@@ -3,8 +3,8 @@
 namespace JMS\Payment\CoreBundle\Tests\Form\ChoosePaymentMethodTypeTest;
 
 use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
+use JMS\Payment\CoreBundle\Tests\Functional\TestPlugin\Form\TestPluginType;
 use JMS\Payment\CoreBundle\Util\Legacy;
-use JMS\Payment\PaypalBundle\Form\ExpressCheckoutType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpKernel\Kernel;
@@ -50,7 +50,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
             $config = $form->get('data_'.$method)->getConfig();
 
             $this->assertInstanceOf(
-                'JMS\Payment\PaypalBundle\Form\ExpressCheckoutType',
+                'JMS\Payment\CoreBundle\Tests\Functional\TestPlugin\Form\TestPluginType',
                 $config->getType()->getInnerType()
             );
         }
@@ -194,7 +194,7 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
 
     protected function getExtensions()
     {
-        $pluginType = new ExpressCheckoutType();
+        $pluginType = new TestPluginType();
 
         if (Legacy::supportsFormTypeClass()) {
             $pluginTypeName = get_class($pluginType);
