@@ -1,0 +1,11 @@
+services:
+    test_plugin:
+        class: JMS\Payment\CoreBundle\Tests\Functional\TestPlugin\Plugin\TestPlugin
+        tags:
+            - { name: payment.plugin }
+
+    test_plugin_type:
+        class: JMS\Payment\CoreBundle\Tests\Functional\TestPlugin\Form\TestPluginType
+        tags:
+            - { name: payment.method_form_type }
+            - { name: form.type, alias: test_plugin }

@@ -33,7 +33,7 @@ class OrderController extends Controller
             'currency' => 'EUR',
             'amount' => $order->getAmount(),
             'predefined_data' => array(
-                'paypal_express_checkout' => array(
+                'test_plugin' => array(
                     'foo' => 'bar',
                 ),
             ),
