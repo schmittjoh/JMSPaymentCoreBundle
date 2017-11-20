@@ -31,5 +31,21 @@ matrix:
       env: SYMFONY_VERSION=3.3.*
     - php: 7.1
       env: SYMFONY_VERSION=dev-master
+    - php: 7.1
+      env: DEPENDENCIES=beta
+    # experimental PHP with all relevant Symfony versions
+    - php: nightly
+      env: SYMFONY_VERSION=^3.0
+    - php: nightly
+      env: SYMFONY_VERSION=2.3.*
+    - php: nightly
+      env: SYMFONY_VERSION=2.8.*
+    - php: nightly
+      env: SYMFONY_VERSION=3.3.*
+    - php: nightly
+      env: SYMFONY_VERSION=dev-master
+    - php: nightly
+      env: DEPENDENCIES=beta
   allow_failures:
+    - php: nightly
     - env: SYMFONY_VERSION=dev-master

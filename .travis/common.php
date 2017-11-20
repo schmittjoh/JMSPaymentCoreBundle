@@ -5,9 +5,19 @@ function shouldBuildDocs()
     return isLatestPhp() && isLatestSymfony();
 }
 
+function usesBetaDependencies()
+{
+    return getenv('DEPENDENCIES') === 'beta';
+}
+
 function isLatestPhp()
 {
     return getPhpVersion() === '7.1';
+}
+
+function isNonExperimentalPhp()
+{
+    return getPhpVersion() !== 'nightly';
 }
 
 function isLatestSymfony()
