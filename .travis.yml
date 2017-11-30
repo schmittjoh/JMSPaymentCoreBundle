@@ -22,7 +22,6 @@ matrix:
       env: SYMFONY_VERSION=3.2.*
     - php: 7.0
       env: SYMFONY_VERSION=3.2.*
-    # current PHP with all relevant Symfony versions
     - php: 7.1
       env: SYMFONY_VERSION=2.3.*
     - php: 7.1
@@ -32,6 +31,17 @@ matrix:
     - php: 7.1
       env: SYMFONY_VERSION=dev-master
     - php: 7.1
+      env: DEPENDENCIES=beta
+    # current PHP with all relevant Symfony versions
+    - php: 7.2
+      env: SYMFONY_VERSION=2.3.*
+    - php: 7.2
+      env: SYMFONY_VERSION=2.8.*
+    - php: 7.2
+      env: SYMFONY_VERSION=3.3.*
+    - php: 7.2
+      env: SYMFONY_VERSION=dev-master
+    - php: 7.2
       env: DEPENDENCIES=beta
     # experimental PHP with all relevant Symfony versions
     - php: nightly

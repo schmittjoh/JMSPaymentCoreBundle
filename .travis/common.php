@@ -12,7 +12,7 @@ function usesBetaDependencies()
 
 function isLatestPhp()
 {
-    return getPhpVersion() === '7.1';
+    return getPhpVersion() === '7.2';
 }
 
 function isNonExperimentalPhp()
