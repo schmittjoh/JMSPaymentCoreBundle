@@ -190,7 +190,6 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->disableOriginalClone()
             ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
             ->getMock();
 
         parent::setUp();
