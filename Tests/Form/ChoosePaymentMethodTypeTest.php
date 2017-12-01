@@ -187,6 +187,9 @@ class ChoosePaymentMethodTypeTest extends TypeTestCase
     protected function setUp()
     {
         $this->pluginController = $this->getMockBuilder('JMS\Payment\CoreBundle\PluginController\PluginControllerInterface')
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
             ->getMock();
 
         parent::setUp();
