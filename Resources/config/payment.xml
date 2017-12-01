@@ -46,26 +46,26 @@
             <argument type="service" id="event_dispatcher" />
         </service>
 
-        <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
+        <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" public="true" />
 
         <!-- DEPRECATED since 1.3, will be removed in 2.0: use payment.encryption.mcrypt directly instead -->
         <service id="payment.encryption_service" alias="payment.encryption.mcrypt" />
 
-        <service id="payment.encryption.mcrypt" class="%payment.encryption.mcrypt.class%">
+        <service id="payment.encryption.mcrypt" class="%payment.encryption.mcrypt.class%" public="true">
             <argument>%payment.encryption.mcrypt.secret%</argument>
             <argument>%payment.encryption.mcrypt.cipher%</argument>
             <argument>%payment.encryption.mcrypt.mode%</argument>
             <tag name="payment.encryption" alias="mcrypt" />
         </service>
 
-        <service id="payment.encryption.defuse_php_encryption" class="%payment.encryption.defuse_php_encryption.class%">
+        <service id="payment.encryption.defuse_php_encryption" class="%payment.encryption.defuse_php_encryption.class%" public="true">
             <argument>%payment.encryption.defuse_php_encryption.secret%</argument>
             <tag name="payment.encryption" alias="defuse_php_encryption" />
         </service>
 
-        <service id="payment.form.choose_payment_method_transformer" class="%payment.form.choose_payment_method_transformer.class%" />
+        <service id="payment.form.choose_payment_method_transformer" class="%payment.form.choose_payment_method_transformer.class%" public="true" />
 
-        <service id="payment.form.choose_payment_method_type" class="%payment.form.choose_payment_method_type.class%">
+        <service id="payment.form.choose_payment_method_type" class="%payment.form.choose_payment_method_type.class%" public="true">
             <argument type="service" id="payment.plugin_controller" />
             <tag name="form.type" alias="jms_choose_payment_method" />
             <call method="setDataTransformer">
