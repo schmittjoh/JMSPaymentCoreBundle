@@ -19,5 +19,6 @@
 
     <php>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+        <env name="SHELL_VERBOSITY" value="-1" />
     </php>
 </phpunit>
