@@ -7,12 +7,12 @@ function shouldBuildDocs()
 
 function isLatestPhp()
 {
-    return getPhpVersion() === '7.1';
+    return getPhpVersion() === '7.2';
 }
 
 function isLatestSymfony()
 {
-    return getSymfonyVersion() === '3.3.*';
+    return getSymfonyVersion() === '3.4.*';
 }
 
 function getSymfonyVersion()
