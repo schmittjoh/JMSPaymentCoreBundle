@@ -15,6 +15,8 @@ if (isLatestPhp() && isLatestSymfony()) {
 
 if (shouldBuildDocs()) {
     run('sudo apt-get -qq update');
-    run('sudo apt-get install -y graphviz');
-    run('sudo -H pip install -r requirements.txt');
+    run('sudo apt-get install -y graphviz python3 python3-pip');
+    run('pip3 install --user virtualenv');
+    run('virtualenv venv');
+    run('venv/bin/pip install -r requirements.txt');
 }

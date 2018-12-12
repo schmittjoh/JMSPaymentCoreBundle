@@ -6,5 +6,5 @@ include_once 'common.php';
 run('vendor/bin/phpunit');
 
 if (shouldBuildDocs()) {
-    run('sphinx-build -E -W Resources/doc Resources/doc/_build');
+    run('venv/bin/sphinx-build -E -W Resources/doc Resources/doc/_build');
 }
