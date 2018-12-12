@@ -8,9 +8,9 @@ if (isLatestPhp() && isLatestSymfony()) {
     // job run a `composer update`. Since `composer update` will install the
     // latest Symfony, this should be done for the job corresponding to the
     // latest symfony version.
-    run('composer update --prefer-dist');
+    run('COMPOSER_MEMORY_LIMIT=-1 composer update --prefer-dist');
 } else {
-    run('composer require --prefer-dist symfony/symfony:'.getSymfonyVersion());
+    run('COMPOSER_MEMORY_LIMIT=-1 composer require --prefer-dist symfony/symfony:'.getSymfonyVersion());
 }
 
 if (shouldBuildDocs()) {
