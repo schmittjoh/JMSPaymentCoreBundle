@@ -3,6 +3,10 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.0] - YYYY-MM-DD
+### Removed
+- Removed support for PHP 5.4. If you're still using PHP 5.4, please consider upgrading. Otherwise, use `1.3.*`.
+
 ## [1.3.0] - 2017-01-22
 ### Changed
 - `JMS\Payment\CoreBundle\Model\ExtendedDataInterface` has changed. If any of your classes implement this interface, you need to update them accordingly:
