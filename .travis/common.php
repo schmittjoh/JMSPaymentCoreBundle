@@ -12,7 +12,7 @@ function isLatestPhp()
 
 function isLatestSymfony()
 {
-    return getSymfonyVersion() === '3.4.*';
+    return getSymfonyVersion() === '4.2.*';
 }
 
 function getSymfonyVersion()
