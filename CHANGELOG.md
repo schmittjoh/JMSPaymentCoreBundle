@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.4.0] - YYYY-MM-DD
 ### Removed
-- Removed support for PHP 5.4. If you're still using PHP 5.4, please consider upgrading. Otherwise, use `1.3.*`.
+- Removed support for PHP versions earlier than 5.6.
 
 ## [1.3.0] - 2017-01-22
 ### Changed

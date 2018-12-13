@@ -15,12 +15,8 @@ script: ./.travis/script.php
 
 matrix:
   include:
-    # old PHP versions with latest Symfony version
     - php: 5.6
       env: SYMFONY_VERSION=3.4.*
-    - php: 7.0
-      env: SYMFONY_VERSION=3.4.*
-    # current PHP with all relevant Symfony versions
     - php: 7.2
       env: SYMFONY_VERSION=2.3.*
     - php: 7.2
@@ -28,6 +24,6 @@ matrix:
     - php: 7.2
       env: SYMFONY_VERSION=3.4.*
     - php: 7.2
-      env: SYMFONY_VERSION=dev-master
-  allow_failures:
-    - env: SYMFONY_VERSION=dev-master
+      env: SYMFONY_VERSION=4.1.*
+    - php: 7.2
+      env: SYMFONY_VERSION=4.2.*
