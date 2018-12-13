@@ -9,4 +9,3 @@ venv:
 
 docs: venv Resources/doc
 	venv/bin/sphinx-build -E Resources/doc Resources/doc/_build
-
