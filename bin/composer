@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z "$COMPOSER_HOME" ]; then
+    COMPOSER_HOME=~/.composer
+fi
+
+docker run --rm --interactive --tty \
+    --volume $PWD:/app \
+    --user $(id -u):$(id -g) \
+    --volume ~/.composer:/tmp \
+    composer "$@"
