@@ -4,11 +4,6 @@ branches:
   only:
     - master
 
-cache:
-  directories:
-  - vendor
-  - venv
-
 before_install: ./.travis/before_install.php
 install: ./.travis/install.php
 script: ./.travis/script.php
