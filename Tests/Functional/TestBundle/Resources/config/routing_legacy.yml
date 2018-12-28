@@ -1,3 +1,4 @@
-TestBundle:
-  resource: "@TestBundle/Controller/"
-  type: annotation
+payment_details:
+  path:     /orders/{id}/payment-details
+  defaults:
+    _controller: TestBundle:LegacyOrder:paymentDetails
