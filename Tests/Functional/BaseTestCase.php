@@ -14,6 +14,15 @@ class BaseTestCase extends WebTestCase
         );
     }
 
+    protected function getContainer()
+    {
+        if (isset(self::$container)) {
+            return self::$container;
+        }
+
+        return self::$kernel->getContainer();
+    }
+
     protected function setUp()
     {
         $fs = new Filesystem();
