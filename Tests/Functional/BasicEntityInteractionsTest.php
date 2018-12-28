@@ -14,9 +14,9 @@ class BasicEntityInteractionsTest extends BaseTestCase
         $this->createClient();
         $this->importDatabaseSchema();
 
-        $c = self::$kernel->getContainer();
-        $ppc = $c->get('payment.plugin_controller');
-        $em = $c->get('doctrine.orm.entity_manager');
+        $ppc = $this->getContainer()->get('payment.plugin_controller');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+
         $instruction = new PaymentInstruction(123.45, 'EUR', 'test_plugin');
         $ppc->createPaymentInstruction($instruction);
         $credit = $ppc->createIndependentCredit($instruction->getId(), 123);

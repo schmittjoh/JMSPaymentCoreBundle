@@ -2,6 +2,7 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional;
 
+use Doctrine\ORM\EntityManager;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 use JMS\Payment\CoreBundle\Util\Number;
 
@@ -9,7 +10,8 @@ abstract class BasePaymentWorkflowTest extends BaseTestCase
 {
     protected function getRawExtendedData($paymentInstruction)
     {
-        $em = self::$kernel->getContainer()->get('em');
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('em');
 
         $stmt = $em->getConnection()->prepare(
             'SELECT extended_data FROM payment_instructions WHERE id = '.$paymentInstruction->getId()
@@ -26,8 +28,9 @@ abstract class BasePaymentWorkflowTest extends BaseTestCase
         $client = $this->createClient();
         $this->importDatabaseSchema();
 
-        $em = self::$kernel->getContainer()->get('em');
-        $router = self::$kernel->getContainer()->get('router');
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('em');
+        $router = $this->getContainer()->get('router');
 
         $order = new Order(123.45);
         $em->persist($order);
