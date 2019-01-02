@@ -29,8 +29,10 @@ class ConfigureEncryptionPass implements CompilerPassInterface
             throw new \RuntimeException("The configured encryption provider ($configuredProvider) must match the alias of one of the services tagged with 'payment.encryption'");
         }
 
-        $container
-            ->setAlias('payment.encryption', $providers[$configuredProvider])
-            ->setPublic(true);
+        $alias = $container->setAlias('payment.encryption', $providers[$configuredProvider]);
+
+        if ($alias) {
+            $alias->setPublic(true);
+        }
     }
 }

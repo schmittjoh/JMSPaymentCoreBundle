@@ -2,10 +2,12 @@
 
 namespace JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller;
 
+use JMS\Payment\CoreBundle\PluginController\PluginController;
 use JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Entity\Order;
 use JMS\Payment\CoreBundle\Util\Legacy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,16 +16,20 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Johannes
  */
-class OrderController extends Controller
+class OrderController extends AbstractController
 {
     /**
-     * @Route("/{id}/payment-details", name = "payment_details")
+     * @Route("/{orderId}/payment-details", name = "payment_details")
      * @Template("TestBundle:Order:paymentDetails.html.twig")
      *
-     * @param Order $order
+     * @param int $orderId
+     * @param PluginController $pluginController
+     * @return array|Response
      */
-    public function paymentDetailsAction(Order $order)
+    public function paymentDetailsAction($orderId, PluginController $pluginController)
     {
+        $order = $this->getDoctrine()->getManager()->getRepository(Order::class)->find($orderId);
+
         $formType = Legacy::supportsFormTypeClass()
             ? 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
             : 'jms_choose_payment_method'
@@ -40,7 +46,6 @@ class OrderController extends Controller
         ));
 
         $em = $this->getDoctrine()->getManager();
-        $ppc = $this->get('payment.plugin_controller');
 
         $request = Legacy::supportsRequestService()
             ? $this->getRequest()
@@ -51,7 +56,7 @@ class OrderController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $instruction = $form->getData();
-            $ppc->createPaymentInstruction($instruction);
+            $pluginController->createPaymentInstruction($instruction);
 
             $order->setPaymentInstruction($instruction);
             $em->persist($order);
