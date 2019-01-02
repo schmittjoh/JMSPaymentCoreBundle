@@ -11,7 +11,7 @@ abstract class BasePaymentWorkflowTest extends BaseTestCase
     protected function getRawExtendedData($paymentInstruction)
     {
         /** @var EntityManager $em */
-        $em = $this->getContainer()->get('em');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $stmt = $em->getConnection()->prepare(
             'SELECT extended_data FROM payment_instructions WHERE id = '.$paymentInstruction->getId()
@@ -29,14 +29,14 @@ abstract class BasePaymentWorkflowTest extends BaseTestCase
         $this->importDatabaseSchema();
 
         /** @var EntityManager $em */
-        $em = $this->getContainer()->get('em');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $router = $this->getContainer()->get('router');
 
         $order = new Order(123.45);
         $em->persist($order);
         $em->flush();
 
-        $crawler = $client->request('GET', $router->generate('payment_details', array('id' => $order->getId())));
+        $crawler = $client->request('GET', $router->generate('payment_details', ['orderId' => $order->getId()]));
         $form = $crawler->selectButton('submit_btn')->form();
         $form['jms_choose_payment_method[method]']->select('test_plugin');
         $client->submit($form);

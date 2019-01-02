@@ -10,8 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LegacyOrderController extends Controller
 {
-    public function paymentDetailsAction(Order $order)
+    public function paymentDetailsAction($orderId)
     {
+        $order = $this->getDoctrine()->getManager()->getRepository(Order::class)->find($orderId);
+
         $formType = Legacy::supportsFormTypeClass()
             ? 'JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType'
             : 'jms_choose_payment_method'

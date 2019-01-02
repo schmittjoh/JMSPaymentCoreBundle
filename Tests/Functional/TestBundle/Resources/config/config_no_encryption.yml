@@ -1,4 +1,4 @@
 imports:
-    - { resource: default.yml }
+    - { resource: default.php }
 
 jms_payment_core: ~

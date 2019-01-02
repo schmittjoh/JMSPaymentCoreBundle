@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  JMS\Payment\CoreBundle\Tests\Functional\TestBundle\Controller\OrderController:
+    tags: ['controller.service_arguments']

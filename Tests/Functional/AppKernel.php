@@ -29,15 +29,15 @@ class AppKernel extends Kernel
 
     public function registerBundles()
     {
-        return array(
+        return [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),
+            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
             new TestPluginBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-        );
+            new \JMS\Payment\CoreBundle\Tests\Functional\TestBundle\TestBundle(),
+        ];
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
