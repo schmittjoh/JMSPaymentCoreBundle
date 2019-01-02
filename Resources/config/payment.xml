@@ -34,7 +34,11 @@
     <services>
         <service id="payment.orm.entity_manager" alias="doctrine.orm.default_entity_manager" public="false" />
 
-        <service id="payment.plugin_controller.entity" class="%payment.plugin_controller.entity.class%" public="false">
+        <service id="payment.plugin_controller" alias="JMS\Payment\CoreBundle\PluginController\PluginController" />
+        <service id="JMS\Payment\CoreBundle\PluginController\PluginController" alias="JMS\Payment\CoreBundle\PluginController\EntityPluginController" />
+
+        <service id="payment.plugin_controller.entity" alias="JMS\Payment\CoreBundle\PluginController\EntityPluginController" public="false"/>
+        <service id="JMS\Payment\CoreBundle\PluginController\EntityPluginController" class="%payment.plugin_controller.entity.class%">
             <argument type="service" id="payment.orm.entity_manager"/>
             <argument type="collection">
                 <argument key="result_class">%payment.plugin_controller.entity.options.result_class%</argument>
@@ -46,8 +50,6 @@
             <argument type="service" id="event_dispatcher" />
         </service>
 
-        <service id="payment.plugin_controller" alias="payment.plugin_controller.entity" />
-
         <!-- DEPRECATED since 1.3, will be removed in 2.0: use payment.encryption.mcrypt directly instead -->
         <service id="payment.encryption_service" alias="payment.encryption.mcrypt" />
 
@@ -58,7 +60,8 @@
             <tag name="payment.encryption" alias="mcrypt" />
         </service>
 
-        <service id="payment.encryption.defuse_php_encryption" class="%payment.encryption.defuse_php_encryption.class%">
+        <service id="payment.encryption.defuse_php_encryption" alias="JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService"/>
+        <service id="JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService" class="%payment.encryption.defuse_php_encryption.class%" public="true">
             <argument>%payment.encryption.defuse_php_encryption.secret%</argument>
             <tag name="payment.encryption" alias="defuse_php_encryption" />
         </service>
