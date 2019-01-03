@@ -25,9 +25,9 @@ Here's the full code for a minimal ``Order`` entity:
 
 .. code-block :: php
 
-    // src/AppBundle/Entity/Order.php
+    // src/App/Entity/Order.php
 
-    namespace AppBundle\Entity;
+    namespace App\Entity;
 
     use Doctrine\ORM\Mapping as ORM;
     use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
@@ -45,10 +45,14 @@ Here's the full code for a minimal ``Order`` entity:
          */
         private $id;
 
-        /** @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Entity\PaymentInstruction") */
+        /**
+         * @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Entity\PaymentInstruction")
+         */
         private $paymentInstruction;
 
-        /** @ORM\Column(type="decimal", precision=10, scale=5) */
+        /**
+         * @ORM\Column(type="decimal", precision=10, scale=5)
+         */
         private $amount;
 
         public function __construct($amount)
@@ -104,17 +108,17 @@ Go ahead and create the controller:
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
-    namespace AppBundle\Controller;
+    namespace App\Controller;
 
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-    use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+    use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
     /**
      * @Route("/orders")
      */
-    class OrdersController extends Controller
+    class OrdersController extends AbstractController
     {
     }
 
@@ -128,10 +132,10 @@ Create the ``newAction`` in the ``OrdersController``:
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use AppBundle\Entity\Order;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+    use Symfony\Component\Routing\Annotation\Route;
 
     /**
      * @Route("/new/{amount}")
@@ -144,9 +148,9 @@ Create the ``newAction`` in the ``OrdersController``:
         $em->persist($order);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('app_orders_show', [
-            'id' => $order->getId(),
-        ]));
+        return $this->redirectToRoute('app_orders_show', [
+            'orderId' => $order->getId(),
+        ]);
     }
 
 If you navigate to ``/orders/new/42.24``, a new ``Order`` will be inserted in the database with ``42.24`` as the ``amount`` and you will be redirected to the ``showAction``, which we will create next.
@@ -157,29 +161,29 @@ Once the ``Order`` has been created, the next step in our *Checkout* process is 
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
-    use AppBundle\Entity\Order;
+    use App\Entity\Order;
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+    use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Component\HttpFoundation\Request;
 
     /**
-     * @Route("/{id}/show")
-     * @Template
+     * @Route("/{orderId}/show")
      */
-    public function showAction(Request $request, Order $order)
+    public function showAction($orderId, Request $request, PluginController $ppc)
     {
+        $order = $this->getDoctrine()->getManager()->getRepository(Order::class)->find($orderId);
+
         $form = $this->createForm(ChoosePaymentMethodType::class, null, [
             'amount'   => $order->getAmount(),
             'currency' => 'EUR',
         ]);
 
-        return [
+        return $this->render('Orders/show.html.twig', [
             'order' => $order,
             'form'  => $form->createView(),
-        ];
+        ]);
     }
 
 .. note ::
@@ -199,7 +203,7 @@ And the corresponding template:
 
 .. code-block :: twig
 
-    {# src/AppBundle/Resources/views/Orders/show.html.twig #}
+    {# templates/Orders/show.html.twig #}
 
     Total price: € {{ order.amount }}
 
@@ -227,19 +231,17 @@ Note that no remote calls to the payment backend are made in this action, we're 
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
-    use AppBundle\Entity\Order;
+    use App\Entity\Order;
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+    use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Component\HttpFoundation\Request;
 
     /**
-     * @Route("/{id}/show")
-     * @Template
+     * @Route("/{orderId}/show")
      */
-    public function showAction(Request $request, Order $order)
+    public function showAction($orderId, Request $request, PluginController $ppc)
     {
         $form = $this->createForm(ChoosePaymentMethodType::class, null, [
             'amount'   => $order->getAmount(),
@@ -249,7 +251,6 @@ Note that no remote calls to the payment backend are made in this action, we're 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $ppc = $this->get('payment.plugin_controller');
             $ppc->createPaymentInstruction($instruction = $form->getData());
 
             $order->setPaymentInstruction($instruction);
@@ -258,15 +259,15 @@ Note that no remote calls to the payment backend are made in this action, we're 
             $em->persist($order);
             $em->flush($order);
 
-            return $this->redirect($this->generateUrl('app_orders_paymentcreate', [
-                'id' => $order->getId(),
-            ]));
+            return $this->redirectToRoute('app_orders_paymentcreate', [
+                'orderId' => $order->getId(),
+            ]);
         }
 
-        return [
+        return $this->render('Orders/show.html.twig', [
             'order' => $order,
             'form'  => $form->createView(),
-        ];
+        ]);
     }
 
 Depositing money
@@ -279,9 +280,12 @@ Let's start by creating a private method in our controller, which will aid us in
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
-    private function createPayment($order)
+    use App\Entity\Order;
+    use JMS\Payment\CoreBundle\PluginController\PluginController;
+
+    private function createPayment(Order $order, PluginController $ppc)
     {
         $instruction = $order->getPaymentInstruction();
         $pendingTransaction = $instruction->getPendingTransaction();
@@ -290,7 +294,6 @@ Let's start by creating a private method in our controller, which will aid us in
             return $pendingTransaction->getPayment();
         }
 
-        $ppc = $this->get('payment.plugin_controller');
         $amount = $instruction->getAmount() - $instruction->getDepositedAmount();
 
         return $ppc->createPayment($instruction->getId(), $amount);
@@ -302,26 +305,28 @@ Now we'll call the ``createPayment`` method we implemented in the previous secti
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
-    use AppBundle\Entity\Order;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+    use App\Entity\Order;
+    use Symfony\Component\Routing\Annotation\Route;
+    use JMS\Payment\CoreBundle\PluginController\PluginController;
     use JMS\Payment\CoreBundle\PluginController\Result;
 
     /**
-     * @Route("/{id}/payment/create")
+     * @Route("/{orderId}/payment/create")
      */
-    public function paymentCreateAction(Order $order)
+    public function paymentCreateAction($orderId, PluginController $ppc)
     {
-        $payment = $this->createPayment($order);
+        $order = $this->getDoctrine()->getManager()->getRepository(Order::class)->find($orderId);
 
-        $ppc = $this->get('payment.plugin_controller');
+        $payment = $this->createPayment($order, $ppc);
+
         $result = $ppc->approveAndDeposit($payment->getId(), $payment->getTargetAmount());
 
         if ($result->getStatus() === Result::STATUS_SUCCESS) {
-            return $this->redirect($this->generateUrl('app_orders_paymentcomplete', [
-                'id' => $order->getId(),
-            ]));
+            return $this->redirectToRoute('app_orders_paymentcomplete', [
+                'orderId' => $order->getId(),
+            ]);
         }
 
         throw $result->getPluginException();
@@ -347,7 +352,7 @@ We would add the following to our action:
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
     use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
@@ -377,15 +382,15 @@ The last step in out *Checkout* process is to tell the user the payment was succ
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use Symfony\Component\HttpFoundation\Response;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+    use Symfony\Component\Routing\Annotation\Route;
 
     /**
-     * @Route("/{id}/payment/complete")
+     * @Route("/{orderId}/payment/complete")
      */
-    public function paymentCompleteAction(Order $order)
+    public function paymentCompleteAction($orderId)
     {
         return new Response('Payment complete');
     }

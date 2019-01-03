@@ -15,7 +15,7 @@ When creating the form you need to specify at least the ``amount`` and ``currenc
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -30,7 +30,7 @@ When creating the form you need to specify at least the ``amount`` and ``currenc
 
     .. code-block :: php
 
-        // src/AppBundle/Controller/OrdersController.php
+        // src/App/Controller/OrdersController.php
 
         $form = $this->createForm('jms_choose_payment_method', null, [
             'amount'   => '10.42',
@@ -49,7 +49,7 @@ Start by creating an empty theme file:
 
 .. code-block :: twig
 
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
+    {# templates/Orders/theme.html.twig #}
 
     {% extends 'form_div_layout.html.twig' %}
 
@@ -61,9 +61,9 @@ And then reference it from the template where the form is rendered:
 
 .. code-block :: twig
 
-    {# src/AppBundle/Resources/views/Orders/show.html.twig #}
+    {# templates/Orders/show.html.twig #}
 
-    {% form_theme form 'AppBundle:Orders:theme.html.twig' %}
+    {% form_theme form 'Orders\theme.html.twig' %}
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
@@ -76,7 +76,7 @@ When the form only has one available payment method (either because only one pay
 
 .. code-block :: twig
 
-    {# src/AppBundle/Resources/views/Orders/theme.html.twig #}
+    {# templates/Orders/theme.html.twig #}
 
     {# Don't render the radio button's label #}
     {% block _jms_choose_payment_method_method_label %}
@@ -103,7 +103,7 @@ The amount (i.e. total price) of the payment.
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -116,7 +116,7 @@ You might want to add extra costs for a specific payment method. You can impleme
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Entity\ExtendedData;
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
@@ -144,7 +144,7 @@ The three-letter currency code, i.e. ``EUR`` or ``USD``.
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -165,7 +165,7 @@ As an example, if we would be using the Stripe plugin, we would need to provide 
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -185,7 +185,7 @@ If you would be using multiple payment backends, the ``$predefinedData`` array w
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     $predefinedData = [
         'paypal_express_checkout' => [...],
@@ -202,7 +202,7 @@ In case you wish to constrain the methods presented to the user, use the ``allow
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -226,7 +226,7 @@ If you wish to set a default payment method, you can use the ``default_method`` 
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -248,7 +248,7 @@ For example, to display a select instead of a radio button, set the ``expanded``
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
@@ -270,7 +270,7 @@ Pass options to each payment method's form type. For example, to hide the main l
 
 .. code-block :: php
 
-    // src/AppBundle/Controller/OrdersController.php
+    // src/App/Controller/OrdersController.php
 
     use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 
