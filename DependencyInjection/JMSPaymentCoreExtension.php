@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -42,6 +43,10 @@ class JMSPaymentCoreExtension extends Extension implements PrependExtensionInter
     {
         $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $xmlLoader->load('payment.xml');
+
+        if (version_compare(Kernel::VERSION, '3.0', '>=')) {
+            $xmlLoader->load('commands.xml');
+        }
 
         $config = $this->processConfiguration(
             $this->getConfiguration($configs, $container),
