@@ -3,7 +3,33 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.4.0] - YYYY-MM-DD
+## [1.4.0] - 2019-01-03
+### Added
+- Added support for Symfony 4
+- Added service aliases for auto-wiring
+
+Since services on Symfony 4 are private by default, instead of doing:
+
+```php
+public function someAction($id)
+{
+    $ppc = $container->get('payment.plugin_controller');
+}
+```
+
+you should instead inject `JMS\Payment\CoreBundle\PluginController\PluginController` into your controller actions:
+
+```php
+use JMS\Payment\CoreBundle\PluginController\PluginController;
+
+public function someAction($id, PluginController $ppc)
+{
+}
+```
+
+### Changed
+- Updated documentation to Symfony 4 directory structure
+
 ### Removed
 - Removed support for PHP versions earlier than 5.6.
 
