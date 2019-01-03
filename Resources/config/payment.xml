@@ -75,6 +75,5 @@
                 <argument type="service" id="payment.form.choose_payment_method_transformer" />
             </call>
         </service>
-
     </services>
 </container>
