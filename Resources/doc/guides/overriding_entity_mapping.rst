@@ -16,10 +16,10 @@ Start by copying the mapping files from this bundle to your application:
 .. code-block :: shell
 
     cd my-app
-    mkdir -p app/Resources/config/JMSPaymentCoreBundle
-    cp vendor/jms/payment-core-bundle/JMS/Payment/CoreBundle/Resources/config/doctrine/* app/Resources/config/JMSPaymentCoreBundle/
+    mkdir -p config/packages/JMSPaymentCoreBundle
+    cp vendor/jms/payment-core-bundle/JMS/Payment/CoreBundle/Resources/config/doctrine/* config/packages/JMSPaymentCoreBundle/
 
-You now have a copy of the following mapping files under ``app/Resources/config/JMSPaymentCoreBundle``:
+You now have a copy of the following mapping files under ``config/packages/JMSPaymentCoreBundle``:
 
 - ``Credit.orm.xml``
 - ``FinancialTransaction.orm.xml``
@@ -32,7 +32,7 @@ The next step is to tell Symfony to use your copy of the files instead of the on
 
 .. code-block :: yaml
 
-    # app/config/config.yml
+    # config/packages/doctrine.yml
 
     doctrine:
         orm:
@@ -40,7 +40,7 @@ The next step is to tell Symfony to use your copy of the files instead of the on
             mappings:
                 JMSPaymentCoreBundle:
                     type: xml
-                    dir: '%kernel.root_dir%/../app/Resources/config/JMSPaymentCoreBundle'
+                    dir: '%kernel.root_dir%/config/packages/JMSPaymentCoreBundle'
                     prefix: JMS\Payment\CoreBundle\Entity
                     alias: JMSPaymentCoreBundle
 
@@ -50,7 +50,7 @@ Symfony is now using your custom mapping. Taking ``PaymentInstruction.orm.xml`` 
 
 .. code-block :: xml
 
-    <!-- app/Resources/config/JMSPaymentCoreBundle/PaymentInstruction.orm.xml -->
+    <!-- config/packages/JMSPaymentCoreBundle/PaymentInstruction.orm.xml -->
 
     <!-- Set maximum value to 9999999999.99999 -->
     <field name="amount" type="decimal" precision="15" scale="5" />

@@ -9,20 +9,6 @@ Install with composer:
 
     composer require jms/payment-core-bundle
 
-And register the bundle in your ``AppKernel.php``:
-
-.. code-block :: php
-
-    // app/AppKernel.php
-
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            new JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
-        );
-    }
-
 Configuration
 -------------
 The configuration is as simple as setting an encryption key which will be used for encrypting data. You can generate a random key with the following command:
@@ -35,7 +21,7 @@ And then use it in your configuration:
 
 .. code-block :: yaml
 
-    # app/config/config.yml
+    # config/packages/payment.yaml
     jms_payment_core:
         encryption:
             secret: output_of_above_command
@@ -67,7 +53,7 @@ Or, if you're using migrations:
 
     .. code-block :: yaml
 
-        # app/config/config.yml
+        # config/packages/doctrine.yaml
         doctrine:
             orm:
                 auto_mapping: true
@@ -76,7 +62,7 @@ Or, if you're using migrations:
 
     .. code-block :: yaml
 
-        # app/config/config.yml
+        # config/packages/doctrine.yaml
         doctrine:
             orm:
                 mappings:
@@ -98,26 +84,11 @@ Using the `Paypal plugin <https://github.com/schmittjoh/JMSPaymentPaypalBundle>`
 
     composer require jms/payment-paypal-bundle
 
-Register it in your ``AppKernel.php``:
-
-.. code-block :: php
-
-    // app/AppKernel.php
-
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            new JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
-            new JMS\Payment\PaypalBundle\JMSPaymentPaypalBundle(),
-        );
-    }
-
 And configure it:
 
 .. code-block :: yaml
 
-    # app/config/config.yml
+    # config/packages/payment.yaml
 
     jms_payment_paypal:
         username: your api username
