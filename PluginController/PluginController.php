@@ -986,6 +986,7 @@ abstract class PluginController implements PluginControllerInterface
             $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT);
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             $transaction->setRequestedAmount($amount);
+            $payment->addTransaction($transaction);
 
             $payment->setReversingDepositedAmount($amount);
             $instruction->setReversingDepositedAmount($instruction->getReversingDepositedAmount() + $amount);
