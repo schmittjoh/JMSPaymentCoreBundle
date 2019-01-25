@@ -956,8 +956,11 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
         }
 
-        if (PaymentInterface::STATE_APPROVED !== $payment->getState()) {
-            throw new InvalidPaymentException('Payment must be in STATE_APPROVED.');
+        if (!in_array($payment->getState(), [
+            PaymentInterface::STATE_APPROVED,
+            PaymentInterface::STATE_DEPOSITED,
+        ])) {
+            throw new InvalidPaymentException('Payment must be in STATE_APPROVED or STATE_DEPOSITED.');
         }
 
         $transaction = $instruction->getPendingTransaction();
