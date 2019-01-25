@@ -429,7 +429,11 @@ abstract class PluginController implements PluginControllerInterface
         }
 
         $paymentState = $payment->getState();
-        if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+        if (!in_array($paymentState, [
+                PaymentInterface::STATE_APPROVED,
+                PaymentInterface::STATE_EXPIRED,
+                PaymentInterface::STATE_DEPOSITED,
+        ])) {
             throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
         }
 
