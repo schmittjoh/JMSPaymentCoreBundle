@@ -474,10 +474,15 @@ abstract class PluginController implements PluginControllerInterface
                 throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Credit restriction).', $credit->getTargetAmount()));
             }
 
+            $payment = null;
             if (false === $credit->isIndependent()) {
                 $payment = $credit->getPayment();
                 $paymentState = $payment->getState();
-                if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+                if (!in_array($paymentState, [
+                    PaymentInterface::STATE_APPROVED,
+                    PaymentInterface::STATE_DEPOSITED,
+                    PaymentInterface::STATE_EXPIRED,
+                ])) {
                     throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
                 }
 
