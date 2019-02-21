@@ -4,7 +4,7 @@ namespace JMS\Payment\CoreBundle\Tests\Cryptography;
 
 use JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService;
 
-class MCryptEncryptionServiceTest extends \PHPUnit_Framework_TestCase
+class LegacyMCryptEncryptionServiceTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {

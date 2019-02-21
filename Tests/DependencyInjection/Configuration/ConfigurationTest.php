@@ -21,7 +21,7 @@ class ConfigurationTest extends AbstractConfigurationTestCase
         );
     }
 
-    public function testSecret()
+    public function testLegacySecret()
     {
         $this->assertConfigurationIsValid(array('secret' => 'foo'));
 
