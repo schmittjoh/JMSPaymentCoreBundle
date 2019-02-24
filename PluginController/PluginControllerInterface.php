@@ -496,7 +496,7 @@ interface PluginControllerInterface
      *
      * The implementation will ensure that:
      * - PaymentInstruction is in STATE_VALID
-     * - Payment is in STATE_APPROVED
+     * - Payment is in STATE_APPROVED or STATE_DEPOSITED
      * - any pending transaction is belonging to this payment, and is a reverseDeposit transaction
      * - for non-retry transactions: requested amount <= PaymentInstruction.depositedAmount - PaymentInstruction.reversingDepositedAmount
      * - for non-retry transactions: requested amount <= Payment.depositedAmount

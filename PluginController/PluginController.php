@@ -429,7 +429,11 @@ abstract class PluginController implements PluginControllerInterface
         }
 
         $paymentState = $payment->getState();
-        if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+        if (!in_array($paymentState, [
+                PaymentInterface::STATE_APPROVED,
+                PaymentInterface::STATE_EXPIRED,
+                PaymentInterface::STATE_DEPOSITED,
+        ])) {
             throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
         }
 
@@ -470,10 +474,15 @@ abstract class PluginController implements PluginControllerInterface
                 throw new \InvalidArgumentException(sprintf('$amount cannot be greater than %.2f (Credit restriction).', $credit->getTargetAmount()));
             }
 
+            $payment = null;
             if (false === $credit->isIndependent()) {
                 $payment = $credit->getPayment();
                 $paymentState = $payment->getState();
-                if (PaymentInterface::STATE_APPROVED !== $paymentState && PaymentInterface::STATE_EXPIRED !== $paymentState) {
+                if (!in_array($paymentState, [
+                    PaymentInterface::STATE_APPROVED,
+                    PaymentInterface::STATE_DEPOSITED,
+                    PaymentInterface::STATE_EXPIRED,
+                ])) {
                     throw new InvalidPaymentException('Payment\'s state must be APPROVED, or EXPIRED.');
                 }
 
@@ -956,8 +965,11 @@ abstract class PluginController implements PluginControllerInterface
             throw new InvalidPaymentInstructionException('PaymentInstruction must be in STATE_VALID.');
         }
 
-        if (PaymentInterface::STATE_APPROVED !== $payment->getState()) {
-            throw new InvalidPaymentException('Payment must be in STATE_APPROVED.');
+        if (!in_array($payment->getState(), [
+            PaymentInterface::STATE_APPROVED,
+            PaymentInterface::STATE_DEPOSITED,
+        ])) {
+            throw new InvalidPaymentException('Payment must be in STATE_APPROVED or STATE_DEPOSITED.');
         }
 
         $transaction = $instruction->getPendingTransaction();
@@ -974,6 +986,7 @@ abstract class PluginController implements PluginControllerInterface
             $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REVERSE_DEPOSIT);
             $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
             $transaction->setRequestedAmount($amount);
+            $payment->addTransaction($transaction);
 
             $payment->setReversingDepositedAmount($amount);
             $instruction->setReversingDepositedAmount($instruction->getReversingDepositedAmount() + $amount);
