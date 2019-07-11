@@ -11,7 +11,7 @@
 
         <indexes>
             <index columns="attention_required"/>
-            <index name="attention_required_id_index" columns="attention_required,id"/>
+            <index name="payment_attention_required_id_index" columns="attention_required,id"/>
         </indexes>
 
         <field name="approvedAmount" column="approved_amount" type="decimal" scale="5" />
