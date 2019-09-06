@@ -29,6 +29,15 @@ namespace JMS\Payment\CoreBundle\Cryptography;
  */
 class MCryptEncryptionService implements EncryptionServiceInterface
 {
+    private const MCRYPT_FUNCTIONS = [
+        'mcrypt_list_algorithms',
+        'mcrypt_list_modes',
+        'mcrypt_get_key_size',
+        'mcrypt_decrypt',
+        'mcrypt_encrypt',
+        'mcrypt_create_iv',
+    ];
+
     protected $cipher;
     protected $key;
     protected $mode;
@@ -42,17 +51,17 @@ class MCryptEncryptionService implements EncryptionServiceInterface
      */
     public function __construct($secret, $cipher = 'rijndael-256', $mode = 'ctr')
     {
-        if (!extension_loaded('mcrypt')) {
-            throw new \RuntimeException('The mcrypt extension must be loaded.');
+        foreach (self::MCRYPT_FUNCTIONS as $function) {
+            if (!function_exists($function)) {
+                throw new \RuntimeException('The mcrypt extension must be loaded.');
+            }
         }
 
-        @trigger_error('mcrypt has been deprecated in PHP 7.1 and is removed in PHP 7.2. Refer to http://jmspaymentcorebundle.readthedocs.io/en/stable/guides/mcrypt.html for instructions on how to migrate away from mcrypt', E_USER_DEPRECATED);
-
-        if (!in_array($cipher, @mcrypt_list_algorithms(), true)) {
+        if (!in_array($cipher, mcrypt_list_algorithms(), true)) {
             throw new \InvalidArgumentException(sprintf('The cipher "%s" is not supported.', $cipher));
         }
 
-        if (!in_array($mode, @mcrypt_list_modes(), true)) {
+        if (!in_array($mode, mcrypt_list_modes(), true)) {
             throw new \InvalidArgumentException(sprintf('The mode "%s" is not supported.', $mode));
         }
 
@@ -64,7 +73,7 @@ class MCryptEncryptionService implements EncryptionServiceInterface
         }
 
         $key = hash('sha256', $secret, true);
-        if (strlen($key) > $size = @mcrypt_get_key_size($this->cipher, $this->mode)) {
+        if (strlen($key) > $size = mcrypt_get_key_size($this->cipher, $this->mode)) {
             $key = substr($key, 0, $size);
         }
         $this->key = $key;
@@ -75,11 +84,11 @@ class MCryptEncryptionService implements EncryptionServiceInterface
      */
     public function decrypt($encryptedValue)
     {
-        $size = @mcrypt_get_iv_size($this->cipher, $this->mode);
+        $size = mcrypt_get_iv_size($this->cipher, $this->mode);
         $encryptedValue = base64_decode($encryptedValue);
         $iv = substr($encryptedValue, 0, $size);
 
-        return rtrim(@mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv));
+        return rtrim(mcrypt_decrypt($this->cipher, $this->key, substr($encryptedValue, $size), $this->mode, $iv));
     }
 
     /**
@@ -87,10 +96,10 @@ class MCryptEncryptionService implements EncryptionServiceInterface
      */
     public function encrypt($rawValue)
     {
-        $size = @mcrypt_get_iv_size($this->cipher, $this->mode);
-        $iv = @mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
+        $size = mcrypt_get_iv_size($this->cipher, $this->mode);
+        $iv = mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
 
-        return base64_encode($iv.@mcrypt_encrypt($this->cipher, $this->key, $rawValue, $this->mode, $iv));
+        return base64_encode($iv.mcrypt_encrypt($this->cipher, $this->key, $rawValue, $this->mode, $iv));
     }
 
     public function getCipher()
