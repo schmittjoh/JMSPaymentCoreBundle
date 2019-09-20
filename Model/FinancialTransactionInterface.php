@@ -33,6 +33,7 @@ interface FinancialTransactionInterface
     const TRANSACTION_TYPE_REVERSE_APPROVAL = 5;
     const TRANSACTION_TYPE_REVERSE_CREDIT = 6;
     const TRANSACTION_TYPE_REVERSE_DEPOSIT = 7;
+    const TRANSACTION_TYPE_REAPPROVE = 8;
 
     /**
      * @return \JMS\Payment\CoreBundle\Model\CreditInterface|null

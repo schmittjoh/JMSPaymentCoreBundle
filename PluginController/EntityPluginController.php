@@ -71,6 +71,9 @@ class EntityPluginController extends PluginController
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function reApprove($paymentId, $amount)
     {
         $this->entityManager->getConnection()->beginTransaction();
@@ -87,12 +90,10 @@ class EntityPluginController extends PluginController
 
             return $result;
         } catch (\Exception $failure) {
-            $this->entityManager->getConnection()->rollback();
-            $this->entityManager->close();
-
-            throw $failure;
+            $this->doRollback($failure);
         }
     }
+
     /**
      * {@inheritdoc}
      */

@@ -51,7 +51,6 @@ abstract class PluginController implements PluginControllerInterface
     public function __construct(array $options = array(), EventDispatcherInterface $dispatcher = null)
     {
         $this->options = $options;
-
         $this->dispatcher = $dispatcher;
         $this->plugins = array();
     }
@@ -219,7 +218,6 @@ abstract class PluginController implements PluginControllerInterface
             $payment->setState(PaymentInterface::STATE_APPROVING);
             $payment->setApprovingAmount($amount);
             $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
-
             $this->dispatchPaymentStateChange($payment, PaymentInterface::STATE_NEW);
         } elseif (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (Number::compare($payment->getTargetAmount(), $amount) !== 0) {
@@ -295,7 +293,6 @@ abstract class PluginController implements PluginControllerInterface
     protected function doReApprove(PaymentInterface $payment, $amount) {
 
         $instruction = $payment->getPaymentInstruction();
-
         if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
             throw new InvalidPaymentInstructionException('The PaymentInstruction must be in STATE_VALID.');
         }
@@ -312,12 +309,15 @@ abstract class PluginController implements PluginControllerInterface
             }
 
             $plugin = $this->getPlugin($instruction->getPaymentSystemName());
-            $transaction = $payment->getApproveTransaction();
+            $transaction = $this->buildFinancialTransaction();
+            /** @var FinancialTransactionInterface $transaction */
+            $transaction->setPayment($payment->getApproveTransaction()->getPayment());
+            $transaction->setTransactionType(FinancialTransactionInterface::TRANSACTION_TYPE_REAPPROVE);
+            $transaction->setRequestedAmount($payment->getApproveTransaction()->getRequestedAmount());
             $oldState = $payment->getState();
 
             try {
                 $plugin->reApprove($transaction);
-
                 if (PluginInterface::RESPONSE_CODE_SUCCESS === $transaction->getResponseCode()) {
                     $transaction->setState(FinancialTransactionInterface::STATE_SUCCESS);
                     $payment->setState(PaymentInterface::STATE_APPROVED);
@@ -342,26 +342,7 @@ abstract class PluginController implements PluginControllerInterface
                 return $result;
             } catch (PluginBlockedException $blocked) {
                 $transaction->setState(FinancialTransactionInterface::STATE_PENDING);
-
-                if ($blocked instanceof PluginTimeoutException) {
-                    $reasonCode = PluginInterface::REASON_CODE_TIMEOUT;
-                } else if ($blocked instanceof PluginActionRequiredException) {
-
-                    $payment->setState(PaymentInterface::STATE_APPROVING);
-                    $payment->setApprovingAmount($amount);
-                    $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
-                    $instruction->setApprovedAmount(0.0);
-                    $payment->setApprovedAmount(0.0);
-                    $this->dispatchPaymentStateChange($payment, $oldState);
-
-                    $reasonCode = PluginInterface::REASON_CODE_ACTION_REQUIRED;
-                } else if (null === $reasonCode = $transaction->getReasonCode()) {
-                    $reasonCode = PluginInterface::REASON_CODE_BLOCKED;
-                }
-                $transaction->setReasonCode($reasonCode);
-                $transaction->setResponseCode(PluginInterface::RESPONSE_CODE_PENDING);
-
-                $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, $reasonCode);
+                $result = $this->buildFinancialTransactionResult($transaction, Result::STATUS_PENDING, $transaction->getResponseCode());
                 $result->setPluginException($blocked);
                 $result->setRecoverable();
 
@@ -378,7 +359,6 @@ abstract class PluginController implements PluginControllerInterface
     protected function doApproveAndDeposit(PaymentInterface $payment, $amount)
     {
         $instruction = $payment->getPaymentInstruction();
-
         if (PaymentInstructionInterface::STATE_VALID !== $instruction->getState()) {
             throw new InvalidPaymentInstructionException('PaymentInstruction\'s state must be VALID.');
         }
@@ -398,16 +378,13 @@ abstract class PluginController implements PluginControllerInterface
             $transaction->setPayment($payment);
             $transaction->setRequestedAmount($amount);
             $payment->addTransaction($transaction);
-
             $payment->setApprovingAmount($amount);
             $payment->setDepositingAmount($amount);
             $payment->setState(PaymentInterface::STATE_APPROVING);
-
             $instruction->setApprovingAmount($instruction->getApprovingAmount() + $amount);
             $instruction->setDepositingAmount($instruction->getDepositingAmount() + $amount);
 
             $this->dispatchPaymentStateChange($payment, $paymentState);
-
             $retry = false;
         } elseif (PaymentInterface::STATE_APPROVING === $paymentState) {
             if (0 !== Number::compare($amount, $payment->getApprovingAmount())) {
