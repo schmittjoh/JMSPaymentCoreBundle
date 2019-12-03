@@ -21,23 +21,6 @@ class ConfigurationTest extends AbstractConfigurationTestCase
         );
     }
 
-    public function testSecret()
-    {
-        $this->assertConfigurationIsValid(array('secret' => 'foo'));
-
-        $this->assertConfigurationEquals(
-            array('secret' => 'foo'),
-            array(
-                'secret' => 'foo',
-                'encryption' => array(
-                    'enabled' => true,
-                    'secret' => 'foo',
-                    'provider' => 'mcrypt',
-                ),
-            )
-        );
-    }
-
     public function testEncryptionDisabled()
     {
         $this->assertConfigurationIsValid(array());

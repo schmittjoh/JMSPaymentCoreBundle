@@ -15,20 +15,8 @@
         <parameter key="payment.form.choose_payment_method_type.class">JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType</parameter>
         <parameter key="payment.form.choose_payment_method_transformer.class">JMS\Payment\CoreBundle\Form\Transformer\ChoosePaymentMethodTransformer</parameter>
 
-        <parameter key="payment.encryption.mcrypt.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
-        <parameter key="payment.encryption.mcrypt.secret"></parameter>
-        <parameter key="payment.encryption.mcrypt.cipher">rijndael-256</parameter>
-        <parameter key="payment.encryption.mcrypt.mode">ctr</parameter>
-
         <parameter key="payment.encryption.defuse_php_encryption.class">JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService</parameter>
         <parameter key="payment.encryption.defuse_php_encryption.secret"></parameter>
-
-        <!-- DEPRECATED since 1.3, will be removed in 2.0: use the payment.encryption.mcrypt.* parameters instead -->
-        <parameter key="payment.encryption_service.class">JMS\Payment\CoreBundle\Cryptography\MCryptEncryptionService</parameter>
-        <parameter key="payment.encryption_service.secret"></parameter>
-        <parameter key="payment.encryption_service.cipher">rijndael-256</parameter>
-        <parameter key="payment.encryption_service.mode">ctr</parameter>
-
     </parameters>
 
     <services>
@@ -48,16 +36,6 @@
                 <argument key="credit_class">%payment.plugin_controller.entity.options.credit_class%</argument>
             </argument>
             <argument type="service" id="event_dispatcher" />
-        </service>
-
-        <!-- DEPRECATED since 1.3, will be removed in 2.0: use payment.encryption.mcrypt directly instead -->
-        <service id="payment.encryption_service" alias="payment.encryption.mcrypt" />
-
-        <service id="payment.encryption.mcrypt" class="%payment.encryption.mcrypt.class%">
-            <argument>%payment.encryption.mcrypt.secret%</argument>
-            <argument>%payment.encryption.mcrypt.cipher%</argument>
-            <argument>%payment.encryption.mcrypt.mode%</argument>
-            <tag name="payment.encryption" alias="mcrypt" />
         </service>
 
         <service id="payment.encryption.defuse_php_encryption" alias="JMS\Payment\CoreBundle\Cryptography\DefusePhpEncryptionService"/>
