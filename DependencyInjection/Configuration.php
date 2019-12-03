@@ -62,12 +62,6 @@ class Configuration implements ConfigurationInterface
                 ->then(function ($config) {
                     @trigger_error($this->getSecretDeprecationMessage(), E_USER_DEPRECATED);
 
-                    $config['encryption'] = array(
-                        'enabled'  => true,
-                        'provider' => 'mcrypt',
-                        'secret'   => $config['secret'],
-                    );
-
                     return $config;
                 })
             ->end()
