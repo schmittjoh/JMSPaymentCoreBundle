@@ -1,4 +1,0 @@
-payment_details:
-  path:     /orders/{orderId}/payment-details
-  defaults:
-    _controller: TestBundle:LegacyOrder:paymentDetails

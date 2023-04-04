@@ -1,0 +1,9 @@
+services:
+  php:
+    build:
+      context: ./
+      target: app
+      args:
+        XDEBUG_ENABLED: 1
+    container_name: gsoi.jmscore.php
+    volumes: [ "./:/var/www" ]
